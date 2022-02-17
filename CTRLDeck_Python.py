@@ -2,7 +2,8 @@ import serial
 from time import sleep
 import sys
 import time
-counter=32
+import re
+
 
 ser = serial.Serial(
     port='COM20',\
@@ -21,8 +22,15 @@ while True:
         # create string, convert serial input data to a string a store it
         line =  str(ser.readline())
         
+        line.rstrip().lstrip
         # print the count, serial data string, and up the count
-        print(str(count) + str(': ') + str(line) )
+        #try:
+        #    found = re.search('(.+?)|', line).group(1)
+        #    print(found)
+        #except AttributeError:
+        #    pass
+        
+        print(line)
         count +=1
         
         # sleep for .02 seconds because arduino is outputting every 10 milliseconds
