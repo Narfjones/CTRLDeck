@@ -5,6 +5,8 @@ import time
 import re
 
 
+import strstr
+
 ser = serial.Serial(
     port='COM20',\
     baudrate=9600,\
@@ -17,11 +19,20 @@ print("connected to: " + ser.portstr)
 count=1
 
 
+def getIntegers(string):
+        numbers = [int(x) for x in string.split() if x.isnumeric()]
+        return numbers
+
 
 while True:
         # create string, convert serial input data to a string a store it
         line =  str(ser.readline())
+
+        slider1 = ''.join(x for x in strstr.serial_conversion_1(line) if x.isdigit())
+        slider2 = ''.join(i for i in strstr.serial_conversion_2(line) if i.isdigit())
+
         
+
         line.rstrip().lstrip
         # print the count, serial data string, and up the count
         #try:
@@ -37,10 +48,14 @@ while True:
         sleep(.002)
         
         # clear input buffer to dump and gathered data during our downtime
+
+
+        print(slider1)
+
+
         ser.reset_input_buffer() 
+        sleep(.0001)
         
-        # sleep for another .02 seconds or clearing input buffer prevents new input
-        sleep(.002)
         
         
 ser.close()
