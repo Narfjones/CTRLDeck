@@ -4,8 +4,9 @@ import sys
 import time
 import re
 
-
+# serial data to string functions
 import strstr
+
 
 ser = serial.Serial(
     port='COM20',\
@@ -16,12 +17,7 @@ ser = serial.Serial(
         timeout=0)
 
 print("connected to: " + ser.portstr)
-count=1
 
-
-def getIntegers(string):
-        numbers = [int(x) for x in string.split() if x.isnumeric()]
-        return numbers
 
 
 while True:
@@ -30,30 +26,16 @@ while True:
 
         slider1 = ''.join(x for x in strstr.serial_conversion_1(line) if x.isdigit())
         slider2 = ''.join(i for i in strstr.serial_conversion_2(line) if i.isdigit())
-
-        
-
-        line.rstrip().lstrip
-        # print the count, serial data string, and up the count
-        #try:
-        #    found = re.search('(.+?)|', line).group(1)
-        #    print(found)
-        #except AttributeError:
-        #    pass
-        
-        print(line)
-        count +=1
         
         # sleep for .02 seconds because arduino is outputting every 10 milliseconds
         sleep(.002)
-        
+
+
+        print(slider1, slider2)
+
         # clear input buffer to dump and gathered data during our downtime
-
-
-        print(slider1)
-
-
         ser.reset_input_buffer() 
+        # without this the buffer is empty even after pulling serial data
         sleep(.0001)
         
         

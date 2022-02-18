@@ -14,6 +14,6 @@ def serial_conversion_2(line):
 
     sliderlst2 = line.split("|")
 
-    slider2str = str(sliderlst2[-0])
+    slider2str = str(sliderlst2[-1])
 
     return slider2str
