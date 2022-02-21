@@ -24,9 +24,10 @@ while True:
         # create string, convert serial input data to a string a store it
         line =  str(ser.readline())
 
-        slider1 = ''.join(x for x in strstr.serial_conversion_1(line) if x.isdigit())
-        slider2 = ''.join(i for i in strstr.serial_conversion_2(line) if i.isdigit())
-        
+        slider1str = ''.join(x for x in strstr.serial_conversion_1(line) if x.isdigit())
+        slider2str = ''.join(i for i in strstr.serial_conversion_2(line) if i.isdigit())
+        slider1 = int(slider1str)
+        slider2 = int(slider2str)
         # sleep for .02 seconds because arduino is outputting every 10 milliseconds
         sleep(.002)
 
