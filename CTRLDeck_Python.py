@@ -3,7 +3,7 @@ from time import sleep
 import sys
 import time
 import re
-from GUI import arduinoport
+from gui import arduinoport
 
 # serial data to string functions
 import strstr
