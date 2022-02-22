@@ -10,19 +10,14 @@ root.geometry('827x508')
 # Create background image
 bg = PhotoImage(file = "6x4deck-bkgrd.png")
 
-labelbg = Label(root, image = bg)
-labelbg.place(x=0, y=0)
-
 # Create a child frame from root
-frm = ttk.Frame(root, padding=10)
+frm = ttk.Frame(root, padding = 0)
 
 # Generate grid for alignment purposes
-# frm.grid()
+frm.grid()
 
-# Create Label and align upper left
-label2 = Label(frm, text="CTRLdeck") # .grid(column=0, row=0)
-
-
+labelbg = Label(frm, image = bg, width = bg.width(), height = bg.height())
+labelbg.grid(column = 0, row = 0)
 
 #----------------------------------------------------------------------------
 #   - Call list of COM ports from getCOM.py
@@ -41,13 +36,13 @@ def show():
     portLabel.config( textvariable = portsVar.get() )
 
 # Create dropdown menu
-portDrop = OptionMenu(frm, portsVar, *portOptions) # .grid(column=3, row=0)
+portDrop = OptionMenu(frm, portsVar, *portOptions).place(x = 450, y = 10)
 
 # Create portDropdown button
-# portButton = Button( frm, text = "Choose Your Port", command = show ) #.grid(column=2, row=0)
+choosePortLabel= Label( frm, text = "Choose Your Port:").place(x = 350, y = 15)
 
 # Create dropdown label
-portLabel = Label( frm , textvariable=" " ) #.grid( column=3 , row=0 )
+portLabel = Label( frm , textvariable=" " )
 
 # Loops the window processes
 root.mainloop()
