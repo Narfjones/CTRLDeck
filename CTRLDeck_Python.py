@@ -3,13 +3,14 @@ from time import sleep
 import sys
 import time
 import re
+from GUI import arduinoport
 
 # serial data to string functions
 import strstr
 
 
 ser = serial.Serial(
-    port='COM20',\
+    port = arduinoport,\
     baudrate=9600,\
     parity=serial.PARITY_NONE,\
     stopbits=serial.STOPBITS_ONE,\
