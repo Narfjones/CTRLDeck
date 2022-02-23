@@ -6,6 +6,7 @@ import re
 from tkinter import *
 from tkinter import ttk
 from getCOM import serial_ports
+import volume_by_process
 import strstr # serial data to string functions
 
 #------------------------------------------------------------------
@@ -72,11 +73,38 @@ portsVar.set("Choose your port:")
 def show():
     portLabel.config( textvariable = portsVar.get() )
 
-# Create dropdown menu
+# Create port dropdown menu
 portDrop = OptionMenu(frm, portsVar, *portOptions, command=saveChoice).place(x = 375, y = 5)
 
-# Create dropdown label
-portLabel = Label( frm , textvariable=" " )
+# Create port dropdown label
+portLabel = Label( frm , textvariable = " " )
+
+# Get list of audio sessions
+sessionOptions = []
+sessionOptions.extend(volume_by_process.main())
+
+# Store audio sessions for slider 1
+sessionsVar_slider1 = StringVar()
+sessionsVar_slider1.set("Slider 1")
+
+# Store audio sessions for slider 2
+sessionsVar_slider2 = StringVar()
+sessionsVar_slider2.set("Slider 2")
+
+# Create dropdown for audio sessions list for slider 1
+def show_audio_sessions_slider1():
+    sessionLabel_slider1.config( textvariable = sessionsVar_slider1.get() )
+
+# Create session dropdown menu
+sessionsDrop_slider1 = OptionMenu(frm, sessionsVar_slider1, *sessionOptions).place(x=355, y=60)
+
+# Create session dropdown label
+sessionLabel_slider1 = Label( frm , textvariable = " " )
+
+def show_audio_sessions_slider2():
+    sessionLabel_slider2.config( textvariable = sessionsVar_slider2.get())
+sessionsDrop_slider2 = OptionMenu(frm, sessionsVar_slider2, *sessionOptions).place(x=460, y=60)
+sessionLabel_slider2 = Label( frm, textvariable = " ")
 
 #------------------------------------------------------------------
 #       Create function to retrieve variables and 
