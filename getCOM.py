@@ -2,6 +2,11 @@ import sys
 import glob
 import serial
 
+#------------------------------------------------------------------------
+# Create list and populate it with available COM ports by checking all 
+#           ports and appending them to list if they return 
+#                   a response to the open command
+#------------------------------------------------------------------------
 
 def serial_ports():
     """ Lists serial port names

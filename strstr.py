@@ -2,6 +2,10 @@ import serial
 import re
 from time import sleep
 
+#---------------------------------------------------------------------------------
+#   Receive Serial data, extract slider values, and store them as strings
+#---------------------------------------------------------------------------------
+
 def serial_conversion_1(line):
 
     sliderlst1 = line.split("|")
