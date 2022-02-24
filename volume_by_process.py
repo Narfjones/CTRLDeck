@@ -6,7 +6,8 @@ sessionsList = []
 def main():
     sessions = AudioUtilities.GetAllSessions()
     for session in sessions:
-        sessionsList.append(session.Process.name())
+        if session.Process and session.Process.name() != None:
+            sessionsList.append(session.Process.name())
     return(sessionsList)
 
 if __name__ == "__main__":

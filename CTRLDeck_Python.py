@@ -5,10 +5,12 @@ import time
 import re
 from tkinter import *
 from tkinter import ttk
+
+from serial.serialwin32 import Serial
 from getCOM import serial_ports
 import volume_by_process
-#from volume_by_process import AudioController
 import strstr # serial data to string functions
+from pycaw.pycaw import AudioUtilities
 
 #------------------------------------------------------------------
 #       Create Functions for getting user chosen port and
@@ -32,8 +34,7 @@ def saveChoice(event):
 # get chosen sessionID from drop down menu and set session volume to slider 1 value
 def saveSlider1(event):
     process_Name = str(sessionsVar_slider1.get()[0:-4])
-    process_Name.strip('.exe')
-    globals()[process_Name +"_controller"] = AudioController(sessionsVar_slider1.get())
+    #globals()[process_Name +"_controller"] = (sessionsVar_slider1.get())
     print(process_Name)
 
 # get chosen sessionID from drop down menu and set session volume to slider 2 value
@@ -51,7 +52,8 @@ def connectSerial(chosenPort1):
         parity=serial.PARITY_NONE,\
         stopbits=serial.STOPBITS_ONE,\
         bytesize=serial.EIGHTBITS,\
-            timeout=0)    
+            timeout=0)
+    sleep(.01)
     print("connected to: " + chosenPort1)
     
 
@@ -106,8 +108,8 @@ portLabel = Label( frm , textvariable = " " )
 #----------------------------------------------------------------------------
 
 # Get list of audio sessions
-sessionOptions = []
-sessionOptions.extend(volume_by_process.main())
+sessionOptions = (volume_by_process.main())
+
 
 # Store audio sessions for slider 1
 sessionsVar_slider1 = StringVar()
@@ -147,14 +149,22 @@ def getValues():
                 slider2 = int(slider2str)
 
                 # sleep for .02 seconds because arduino is outputting every 10 milliseconds
-                sleep(.002)
+                sleep(.001)
 
                 print(slider1, slider2)
 
                 # clear input buffer to dump and gathered data during our downtime
                 ser.reset_input_buffer() 
                 # without this the buffer is empty even after pulling serial data
-                sleep(.0001)        
+                sleep(.001)  
+
+                print(slider1, slider2)      
+
+print(ser)
+
+#if connectSerial.ser.in_waiting > 0:
+        #while True:
+                #getValues()
 
 # Loops the window processes
 root.mainloop()
