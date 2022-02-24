@@ -8,7 +8,6 @@ def main():
     for session in sessions:
         sessionsList.append(session.Process.name())
     return(sessionsList)
-    
 
 if __name__ == "__main__":
     main()

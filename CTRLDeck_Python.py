@@ -7,6 +7,7 @@ from tkinter import *
 from tkinter import ttk
 from getCOM import serial_ports
 import volume_by_process
+#from volume_by_process import AudioController
 import strstr # serial data to string functions
 
 #------------------------------------------------------------------
@@ -22,6 +23,24 @@ def saveChoice(event):
     chosenPort = str(portsVar.get()[2:-3])
     connectSerial(chosenPort)
     #print(chosenPort)
+
+
+#------------------------------------------------------------------
+#       Create Functions for getting user chosen AudioSession and
+#             using it to create AudioController object  
+#------------------------------------------------------------------
+# get chosen sessionID from drop down menu and set session volume to slider 1 value
+def saveSlider1(event):
+    process_Name = str(sessionsVar_slider1.get()[0:-4])
+    process_Name.strip('.exe')
+    globals()[process_Name +"_controller"] = AudioController(sessionsVar_slider1.get())
+    print(process_Name)
+
+# get chosen sessionID from drop down menu and set session volume to slider 2 value
+def saveSlider2(event):
+    process_Name = str(sessionsVar_slider2.get())
+    #volume_by_process.set_volume(process_Name)
+    print(process_Name)
 
 # Create serial connect with chosen COM port and store in global serial variable
 def connectSerial(chosenPort1):
@@ -79,6 +98,13 @@ portDrop = OptionMenu(frm, portsVar, *portOptions, command=saveChoice).place(x =
 # Create port dropdown label
 portLabel = Label( frm , textvariable = " " )
 
+#----------------------------------------------------------------------------
+#   - Call list of Audio Sessions volume_by_process.py
+#   - Create dropdown list with a 'clicked' action
+#   - Display dropdown list in frame
+#   - Send chosen value to saveSlider()
+#----------------------------------------------------------------------------
+
 # Get list of audio sessions
 sessionOptions = []
 sessionOptions.extend(volume_by_process.main())
@@ -94,16 +120,13 @@ sessionsVar_slider2.set("Slider 2")
 # Create dropdown for audio sessions list for slider 1
 def show_audio_sessions_slider1():
     sessionLabel_slider1.config( textvariable = sessionsVar_slider1.get() )
-
-# Create session dropdown menu
-sessionsDrop_slider1 = OptionMenu(frm, sessionsVar_slider1, *sessionOptions).place(x=355, y=60)
-
-# Create session dropdown label
+sessionsDrop_slider1 = OptionMenu(frm, sessionsVar_slider1, *sessionOptions, command=saveSlider1).place(x=355, y=60)
 sessionLabel_slider1 = Label( frm , textvariable = " " )
 
+# Create session dropdown label for slider2
 def show_audio_sessions_slider2():
     sessionLabel_slider2.config( textvariable = sessionsVar_slider2.get())
-sessionsDrop_slider2 = OptionMenu(frm, sessionsVar_slider2, *sessionOptions).place(x=460, y=60)
+sessionsDrop_slider2 = OptionMenu(frm, sessionsVar_slider2, *sessionOptions, command=saveSlider2).place(x=460, y=60)
 sessionLabel_slider2 = Label( frm, textvariable = " ")
 
 #------------------------------------------------------------------
