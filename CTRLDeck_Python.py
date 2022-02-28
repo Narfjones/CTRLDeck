@@ -5,12 +5,13 @@ import time
 import re
 from tkinter import *
 from tkinter import ttk
-
 from serial.serialwin32 import Serial
 from getCOM import serial_ports
 import volume_by_process
-import strstr # serial data to string functions
 from pycaw.pycaw import AudioUtilities
+import os
+import serialValuetoVolume
+import subprocess
 
 #------------------------------------------------------------------
 #       Create Functions for getting user chosen port and
@@ -18,14 +19,12 @@ from pycaw.pycaw import AudioUtilities
 #------------------------------------------------------------------
 
 chosenPort = str() # global variable to store port choice from drop down
-ser = None # Create global ser variable
 
 # Get chosen COM port from drop down menu and open serial port
 def saveChoice(event):
     chosenPort = str(portsVar.get()[2:-3])
-    connectSerial(chosenPort)
+    serialValuetoVolume.connectSerial(chosenPort) 
     #print(chosenPort)
-
 
 #------------------------------------------------------------------
 #       Create Functions for getting user chosen AudioSession and
@@ -43,20 +42,7 @@ def saveSlider2(event):
     #volume_by_process.set_volume(process_Name)
     print(process_Name)
 
-# Create serial connect with chosen COM port and store in global serial variable
-def connectSerial(chosenPort1):
-    global ser 
-    ser = serial.Serial(
-        port = chosenPort1,\
-        baudrate=9600,\
-        parity=serial.PARITY_NONE,\
-        stopbits=serial.STOPBITS_ONE,\
-        bytesize=serial.EIGHTBITS,\
-            timeout=0)
-    sleep(.01)
-    print("connected to: " + chosenPort1)
     
-
 #------------------------------------------------------------------
 #                          Create GUI
 # -----------------------------------------------------------------   
@@ -110,7 +96,6 @@ portLabel = Label( frm , textvariable = " " )
 # Get list of audio sessions
 sessionOptions = (volume_by_process.main())
 
-
 # Store audio sessions for slider 1
 sessionsVar_slider1 = StringVar()
 sessionsVar_slider1.set("Slider 1")
@@ -131,40 +116,10 @@ def show_audio_sessions_slider2():
 sessionsDrop_slider2 = OptionMenu(frm, sessionsVar_slider2, *sessionOptions, command=saveSlider2).place(x=460, y=60)
 sessionLabel_slider2 = Label( frm, textvariable = " ")
 
-#------------------------------------------------------------------
-#       Create function to retrieve variables and 
-#               store them as integers
-#------------------------------------------------------------------
+def clicked():
+    p1 = subprocess.Popen(['python', './serialValuetoVolume.py', "ls", "-l"])
 
-def getValues():
-                # create string, convert serial input data to a string a store it
-                line =  str(ser.readline())
-
-                # Get numbers out of serial data
-                slider1str = ''.join(x for x in strstr.serial_conversion_1(line) if x.isdigit())
-                slider2str = ''.join(i for i in strstr.serial_conversion_2(line) if i.isdigit())
-
-                # Convert digit strings to integers
-                slider1 = int(slider1str)
-                slider2 = int(slider2str)
-
-                # sleep for .02 seconds because arduino is outputting every 10 milliseconds
-                sleep(.001)
-
-                print(slider1, slider2)
-
-                # clear input buffer to dump and gathered data during our downtime
-                ser.reset_input_buffer() 
-                # without this the buffer is empty even after pulling serial data
-                sleep(.001)  
-
-                print(slider1, slider2)      
-
-print(ser)
-
-#if connectSerial.ser.in_waiting > 0:
-        #while True:
-                #getValues()
+startButton = Button(frm, text="Start CTRLdeck", command=clicked).place(x=720, y=450)
 
 # Loops the window processes
 root.mainloop()
