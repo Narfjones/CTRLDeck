@@ -10,21 +10,25 @@ from getCOM import serial_ports
 import volume_by_process
 from pycaw.pycaw import AudioUtilities
 import os
-import serialValuetoVolume
 import subprocess
+
+chosenPort = str()
 
 #------------------------------------------------------------------
 #       Create Functions for getting user chosen port and
 #             using it to open the serial port  
 #------------------------------------------------------------------
 
-chosenPort = str() # global variable to store port choice from drop down
-
 # Get chosen COM port from drop down menu and open serial port
 def saveChoice(event):
+    global chosenPort
     chosenPort = str(portsVar.get()[2:-3])
-    serialValuetoVolume.connectSerial(chosenPort) 
-    #print(chosenPort)
+    portFile = open("COMport.py", "w")
+    portFile.truncate(0)
+    portFile.write(chosenPort)
+    portFile.close()
+    # serialValuetoVolume.connectSerial(chosenPort) 
+    # print(chosenPort)
 
 #------------------------------------------------------------------
 #       Create Functions for getting user chosen AudioSession and
@@ -117,7 +121,7 @@ sessionsDrop_slider2 = OptionMenu(frm, sessionsVar_slider2, *sessionOptions, com
 sessionLabel_slider2 = Label( frm, textvariable = " ")
 
 def clicked():
-    p1 = subprocess.Popen(['python', './serialValuetoVolume.py', "ls", "-l"])
+    subprocess.Popen("serialValuetoVolume.py", shell=True)
 
 startButton = Button(frm, text="Start CTRLdeck", command=clicked).place(x=720, y=450)
 
