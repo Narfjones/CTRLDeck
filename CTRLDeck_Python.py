@@ -13,6 +13,8 @@ import os
 import subprocess
 
 chosenPort = str()
+global lineList
+lineList = ["1", "\n2", "\n3"]
 
 #------------------------------------------------------------------
 #       Create Functions for getting user chosen port and
@@ -23,9 +25,9 @@ chosenPort = str()
 def saveChoice(event):
     global chosenPort
     chosenPort = str(portsVar.get()[2:-3])
+    lineList[0] = ( chosenPort )
     portFile = open("COMport.py", "w")
-    portFile.truncate(0)
-    portFile.write(chosenPort)
+    portFile.writelines(lineList)
     portFile.close()
     # serialValuetoVolume.connectSerial(chosenPort) 
     # print(chosenPort)
@@ -36,16 +38,20 @@ def saveChoice(event):
 #------------------------------------------------------------------
 # get chosen sessionID from drop down menu and set session volume to slider 1 value
 def saveSlider1(event):
-    process_Name = str(sessionsVar_slider1.get()[0:-4])
-    #globals()[process_Name +"_controller"] = (sessionsVar_slider1.get())
-    print(process_Name)
+    process_Name = str(sessionsVar_slider1.get())
+    portFile = open("COMport.py", "w")
+    lineList[1] = ("\n" + process_Name)
+    portFile.writelines(lineList)
+    portFile.close()
+    # print(process_Name)
 
 # get chosen sessionID from drop down menu and set session volume to slider 2 value
 def saveSlider2(event):
     process_Name = str(sessionsVar_slider2.get())
-    #volume_by_process.set_volume(process_Name)
-    print(process_Name)
-
+    portFile = open("COMport.py", "w")
+    lineList[2] = ("\n" + process_Name)
+    portFile.writelines(lineList)
+    portFile.close()
     
 #------------------------------------------------------------------
 #                          Create GUI
@@ -125,5 +131,14 @@ def clicked():
 
 startButton = Button(frm, text="Start CTRLdeck", command=clicked).place(x=720, y=450)
 
+def on_closing():
+        portFile = open("COMport.py", "w")
+        lineList = ["1", "\n2", "\n3"]
+        portFile.writelines(lineList)
+        portFile.close()
+        root.destroy()
+
+
 # Loops the window processes
+root.protocol("WM_DELETE_WINDOW", on_closing)
 root.mainloop()
