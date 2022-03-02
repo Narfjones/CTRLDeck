@@ -1,7 +1,10 @@
 import serial
 from time import sleep
 import strstr
-from pycaw.pycaw import AudioUtilities, ISimpleAudioVolume
+from pycaw.pycaw import AudioUtilities, ISimpleAudioVolume, IAudioEndpointVolume
+from __future__ import print_function
+from ctypes import POINTER, cast
+from comtypes import CLSCTX_ALL
 
 chosenPort = str()
 ser = None
@@ -29,8 +32,15 @@ def connectSerial():
     sleep(.01)
     print("connected to: " + chosenPort)
 
-def volumeSlider1(volume1):
+def volumeSlider1(volume1):    
     if sliderProcess1 != None:
+        if sliderProcess1 == "master":
+            devices = AudioUtilities.GetSpeakers()
+            interface = devices.Activate(
+            IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
+            volume = cast(interface, POINTER(IAudioEndpointVolume))
+            volume.SetMasterVolumeLevel
+
         sessions = AudioUtilities.GetAllSessions()
         for session in sessions:
             volume = session._ctl.QueryInterface(ISimpleAudioVolume)
