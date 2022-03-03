@@ -1,8 +1,8 @@
+from __future__ import print_function
 import serial
 from time import sleep
 import strstr
 from pycaw.pycaw import AudioUtilities, ISimpleAudioVolume, IAudioEndpointVolume
-from __future__ import print_function
 from ctypes import POINTER, cast
 from comtypes import CLSCTX_ALL
 
@@ -39,22 +39,30 @@ def volumeSlider1(volume1):
             interface = devices.Activate(
             IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
             volume = cast(interface, POINTER(IAudioEndpointVolume))
-            volume.SetMasterVolumeLevel
+            volume.SetMasterVolumeLevel(volume1, None)
+        else:
+            sessions = AudioUtilities.GetAllSessions()
+            for session in sessions:
+                volume = session._ctl.QueryInterface(ISimpleAudioVolume)
+                if session.Process and session.Process.name() == sliderProcess1:
+                    volume.SetMasterVolume(volume1, None)
 
-        sessions = AudioUtilities.GetAllSessions()
-        for session in sessions:
-            volume = session._ctl.QueryInterface(ISimpleAudioVolume)
-            if session.Process and session.Process.name() == sliderProcess1:
-                volume.SetMasterVolume(volume1, None)
                 
 
 def volumeSlider2(volume2):
-    if sliderProcess1 != None:
-        sessions = AudioUtilities.GetAllSessions()
-        for session in sessions:
-            volume = session._ctl.QueryInterface(ISimpleAudioVolume)
-            if session.Process and session.Process.name() == sliderProcess2:
-                volume.SetMasterVolume(volume2, None)
+    if sliderProcess1 == "master":
+        devices = AudioUtilities.GetSpeakers()
+        interface = devices.Activate(
+        IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
+        volume = cast(interface, POINTER(IAudioEndpointVolume))
+        volume.SetMasterVolumeLevel(volume2, None)
+
+        if sliderProcess1 != None:
+            sessions = AudioUtilities.GetAllSessions()
+            for session in sessions:
+                volume = session._ctl.QueryInterface(ISimpleAudioVolume)
+                if session.Process and session.Process.name() == sliderProcess2:
+                    volume.SetMasterVolume(volume2, None)
                 
 
 
@@ -108,9 +116,9 @@ def getValues():
                 
 
 
-        else:
-           print("The Serial port is no longer connected")
-           break
+        #else:
+           #print("The Serial port is no longer connected")
+           #break
 
 connectSerial()
 sleep(.01)
