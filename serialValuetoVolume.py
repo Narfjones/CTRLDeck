@@ -34,12 +34,25 @@ def connectSerial():
 
 def volumeSlider1(volume1):    
     if sliderProcess1 != None:
+        
+        # 'master' uses EndpointVolume while processes are done with SimpleAudioVolume
         if sliderProcess1 == "master":
+            
+            # Take input of (0, 1) and map values to (-20, 0). Similar to arduino map() function
+            volume2 = float( (volume2 - 0)*(0 - -20) / (1 - 0) + -20)
+            volume2 = round(volume2, 1)
+            
+            # Get the devices for the system. Always returns active speaker device
             devices = AudioUtilities.GetSpeakers()
+            
+            # Activate the interface with the speaker device so you can get and set volume.
             interface = devices.Activate(
             IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
             volume = cast(interface, POINTER(IAudioEndpointVolume))
+            
+            # Send volume value to device. Must be float or int(min = -20, max = 0)
             volume.SetMasterVolumeLevel(volume1, None)
+            
         else:
             sessions = AudioUtilities.GetAllSessions()
             for session in sessions:
@@ -50,14 +63,17 @@ def volumeSlider1(volume1):
                 
 
 def volumeSlider2(volume2):
-    if sliderProcess1 == "master":
-        devices = AudioUtilities.GetSpeakers()
-        interface = devices.Activate(
-        IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
-        volume = cast(interface, POINTER(IAudioEndpointVolume))
-        volume.SetMasterVolumeLevel(volume2, None)
-
-        if sliderProcess1 != None:
+    if sliderProcess1 != None:
+        # 'master' uses EndpointVolume while processes are done with SimpleAudioVolume
+        if sliderProcess2 == "master":
+            volume2 = float( (volume2 - 0)*(0 - -20) / (1 - 0) + -20)
+            volume2 = round(volume2, 1)
+            devices = AudioUtilities.GetSpeakers()
+            interface = devices.Activate(
+            IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
+            volume = cast(interface, POINTER(IAudioEndpointVolume))
+            volume.SetMasterVolumeLevel(volume2, None)
+        else:
             sessions = AudioUtilities.GetAllSessions()
             for session in sessions:
                 volume = session._ctl.QueryInterface(ISimpleAudioVolume)
@@ -101,7 +117,7 @@ def getValues():
 
                 # sleep for .02 seconds because arduino is outputting every 10 milliseconds
                 sleep(.01)
-                print(slider1, slider2)
+                # print(slider1, slider2)
 
                 if slider1 != slider1previous or slider2 != slider2previous:
                     slider1previous = slider1

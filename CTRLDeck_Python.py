@@ -24,13 +24,12 @@ lineList = ["1", "\n2", "\n3"]
 # Get chosen COM port from drop down menu and open serial port
 def saveChoice(event):
     global chosenPort
-    chosenPort = str(portsVar.get()[2:-3])
-    lineList[0] = ( chosenPort )
+    chosenPort = str(portsVar.get())
     portFile = open("COMport.py", "w")
+    lineList[0] = (chosenPort)
     portFile.writelines(lineList)
     portFile.close()
-    # serialValuetoVolume.connectSerial(chosenPort) 
-    # print(chosenPort)
+    # print(process_Name)
 
 #------------------------------------------------------------------
 #       Create Functions for getting user chosen AudioSession and
@@ -82,7 +81,7 @@ labelbg.grid(column = 0, row = 0)
 #----------------------------------------------------------------------------
 
 # Call COM ports and put in a list
-portOptions = [serial_ports()]
+portOptions = (serial_ports())
 portsVar = StringVar()
 portsVar.set("Choose your port:")
 
@@ -117,12 +116,14 @@ sessionsVar_slider2.set("Slider 2")
 # Create dropdown for audio sessions list for slider 1
 def show_audio_sessions_slider1():
     sessionLabel_slider1.config( textvariable = sessionsVar_slider1.get() )
+    
 sessionsDrop_slider1 = OptionMenu(frm, sessionsVar_slider1, *sessionOptions, command=saveSlider1).place(x=355, y=60)
 sessionLabel_slider1 = Label( frm , textvariable = " " )
 
 # Create session dropdown label for slider2
 def show_audio_sessions_slider2():
     sessionLabel_slider2.config( textvariable = sessionsVar_slider2.get())
+    
 sessionsDrop_slider2 = OptionMenu(frm, sessionsVar_slider2, *sessionOptions, command=saveSlider2).place(x=460, y=60)
 sessionLabel_slider2 = Label( frm, textvariable = " ")
 
