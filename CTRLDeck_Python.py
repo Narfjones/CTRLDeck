@@ -21,7 +21,7 @@ lineList = ["1", "\n2", "\n3", "\n4", "\n5"]
 def saveChoice(event):
     global chosenPort
     chosenPort = str(portsVar.get())
-    portFile = open("COMport.py", "w")
+    portFile = open("COMport", "w")
     lineList[0] = (chosenPort)
     portFile.writelines(lineList)
     portFile.close()
@@ -39,7 +39,7 @@ def saveSlider1(event):
         sessionOptions[3] = process_Name
     else:
         pass
-    portFile = open("COMport.py", "w")
+    portFile = open("COMport", "w")
     lineList[1] = ("\n" + process_Name)
     portFile.writelines(lineList)
     portFile.close()
@@ -52,7 +52,7 @@ def saveSlider2(event):
         sessionOptions[3] = process_Name
     else:
         pass
-    portFile = open("COMport.py", "w")
+    portFile = open("COMport", "w")
     lineList[2] = ("\n" + process_Name)
     portFile.writelines(lineList)
     portFile.close()
@@ -64,7 +64,7 @@ def saveSlider3(event):
         sessionOptions[3] = process_Name
     else:
         pass
-    portFile = open("COMport.py", "w")
+    portFile = open("COMport", "w")
     lineList[3] = ("\n" + process_Name)
     portFile.writelines(lineList)
     portFile.close()
@@ -76,7 +76,7 @@ def saveSlider4(event):
         sessionOptions[4] = process_Name
     else:
         pass
-    portFile = open("COMport.py", "w")
+    portFile = open("COMport", "w")
     lineList[4] = ("\n" + process_Name)
     portFile.writelines(lineList)
     portFile.close()
@@ -120,7 +120,7 @@ labelbg = Label(frm, image = bg, width = bg.width(), height = bg.height())
 labelbg.grid(column = 0, row = 0)
 
 #----------------------------------------------------------------------------
-#   - Call list of COM ports from getCOM.py
+#   - Call list of COM ports from getCOM
 #   - Create dropdown list with a 'clicked' action
 #   - Display dropdown list in frame
 #   - Send chosen value to saveChoice()
@@ -215,7 +215,7 @@ def clicked():
 startButton = Button(frm, text="Start CTRLdeck", command=clicked).place(x=720, y=450)
 
 def on_closing():
-        portFile = open("COMport.py", "w")
+        portFile = open("COMport", "w")
         lineList = ["1", "\n2", "\n3", "\n4", "\n5"]
         portFile.writelines(lineList)
         portFile.close()

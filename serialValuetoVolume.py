@@ -5,10 +5,11 @@ import strstr
 from pycaw.pycaw import AudioUtilities, ISimpleAudioVolume, IAudioEndpointVolume
 from ctypes import POINTER, cast
 from comtypes import CLSCTX_ALL
-
+    
+    
 chosenPort = str()
 ser = None
-portFile = open("COMport.py", "r")
+portFile = open("COMport", "r")
 fileLines = portFile.readlines()
 chosenPort = str(fileLines[0])
 chosenPort = chosenPort.rstrip("\n")
@@ -75,8 +76,7 @@ def volumeSlider1(volume1):
                 volume = session._ctl.QueryInterface(ISimpleAudioVolume)
                 if session.Process and session.Process.name() == sliderProcess1:
                     volume.SetMasterVolume(volume1, None)
-
-                
+      
 
 def volumeSlider2(volume2):
     if sliderProcess2 != None:
@@ -151,10 +151,16 @@ def getValues():
                     slider1 = round(slider1, 2)
                     slider2 = float(float(slider2str) * .01)
                     slider2 = round(slider2, 2)
-                    slider3 = float(float(slider3str) * .01)
-                    slider3 = round(slider3, 2)
-                    slider4 = float(float(slider4str) * .01)
-                    slider4 = round(slider4, 2)
+                    try:
+                        slider3 = float(float(slider3str) * .01)
+                        slider3 = round(slider3, 2)
+                    except ValueError:
+                        slider3 = 'null'
+                    try:
+                        slider4 = float(float(slider4str) * .01)
+                        slider4 = round(slider4, 2)
+                    except ValueError:
+                        slider4 = 'null'
                 else:
                     pass
 
@@ -185,12 +191,6 @@ def getValues():
                 print(slider1, slider2, slider3, slider4)
                        
                 
-
-
-        #else:
-           #print("The Serial port is no longer connected")
-           #break
-
 connectSerial()
-sleep(.002)
+sleep(.01)
 getValues()
