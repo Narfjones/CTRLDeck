@@ -4,6 +4,9 @@ from tkinter import filedialog
 from getCOM import serial_ports
 # import volume_by_process
 import subprocess
+from pystray import MenuItem as item
+import pystray
+from PIL import Image, ImageTk
 
 # Create variable for arduino port
 chosenPort = str()
@@ -216,12 +219,22 @@ startButton = Button(frm, text="Start CTRLdeck", command=clicked).place(x=720, y
 
 def on_closing():
         portFile = open("COMport", "w")
-        lineList = ["1", "\n2", "\n3", "\n4", "\n5"]
+        lineList = [chosenPort, "\n", "\n3", "\n4", "\n5"]
         portFile.writelines(lineList)
         portFile.close()
         root.destroy()
 
+def open_window():
+    root.after( 0 , root.deiconify())
+
+# Hide the window and show on the system taskbar
+def hide_window():
+   root.withdraw()
+   image=Image.open("fader.ico")
+   menu=(item('Quit', on_closing) , item('Show', open_window))
+   icon=pystray.Icon("name", image, "CTRLDeck", menu)
+   icon.run()
 
 # Loops the window processes
-root.protocol("WM_DELETE_WINDOW", on_closing)
+root.protocol("WM_DELETE_WINDOW", hide_window)
 root.mainloop()

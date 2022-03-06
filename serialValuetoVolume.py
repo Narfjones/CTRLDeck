@@ -1,11 +1,15 @@
 from __future__ import print_function
+import subprocess
 import serial
 from time import sleep
 import strstr
 from pycaw.pycaw import AudioUtilities, ISimpleAudioVolume, IAudioEndpointVolume
 from ctypes import POINTER, cast
 from comtypes import CLSCTX_ALL
-    
+from pystray import MenuItem as item
+import pystray
+from PIL import Image, ImageTk
+import subprocess    
     
 chosenPort = str()
 ser = None
@@ -189,8 +193,7 @@ def getValues():
                     pass
                 
                 print(slider1, slider2, slider3, slider4)
-                       
-                
+              
 connectSerial()
 sleep(.01)
 getValues()
