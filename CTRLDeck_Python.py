@@ -9,6 +9,7 @@ from PIL import Image, ImageTk
 import serialValuetoVolume
 import threading
 import pythoncom
+from time import sleep
 
 # Create variable for arduino port
 chosenPort = str()
@@ -236,7 +237,7 @@ def clicked():
     threads.append(t)
     t.start()
     global startButton
-    startButton = Button(frm, text="Restart CTRLdeck", command=clicked).place(x=720, y=450)
+    startButton = Button(frm, text="Restart CTRLdeck", command=sliderRun).place(x=720, y=450)
 
 startButton = Button(frm, text="Start CTRLdeck", command=clicked).place(x=720, y=450)
 
