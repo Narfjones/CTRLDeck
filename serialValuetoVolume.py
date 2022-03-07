@@ -39,15 +39,19 @@ substring = ".exe"
 # Create serial connect with chosen COM port and store in global serial variable
 def connectSerial():
     global ser
-    ser = serial.Serial(
-    port = chosenPort,\
-    baudrate=9600,\
-    parity=serial.PARITY_NONE,\
-    stopbits=serial.STOPBITS_ONE,\
-    bytesize=serial.EIGHTBITS,\
-        timeout=0)
-    sleep(.001)
-    print("connected to: " + chosenPort)
+    try:
+        ser = serial.Serial(
+        port = chosenPort,\
+        baudrate=9600,\
+        parity=serial.PARITY_NONE,\
+        stopbits=serial.STOPBITS_ONE,\
+        bytesize=serial.EIGHTBITS,\
+            timeout=0)
+        sleep(.001)
+        print("connected to: " + chosenPort)
+        return(1)
+    except:
+        pass
 
 def masterVolume(volume5):
     # Take input of (0, 1) and map values to (-20, 0). Similar to arduino map() function
@@ -193,7 +197,3 @@ def getValues():
                     pass
                 
                 print(slider1, slider2, slider3, slider4)
-              
-connectSerial()
-sleep(.01)
-getValues()

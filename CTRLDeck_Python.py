@@ -1,12 +1,14 @@
+from operator import iconcat
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
 from getCOM import serial_ports
-# import volume_by_process
-import subprocess
 from pystray import MenuItem as item
 import pystray
 from PIL import Image, ImageTk
+import serialValuetoVolume
+import threading
+import pythoncom
 
 # Create variable for arduino port
 chosenPort = str()
@@ -14,6 +16,7 @@ chosenPort = str()
 # Create list variable to hold information in buffer file. It must hold these variables so that we don't reference empty indices
 global lineList
 lineList = ["1", "\n2", "\n3", "\n4", "\n5"]
+global icon
 
 #------------------------------------------------------------------
 #       Create Functions for getting user chosen port and
@@ -212,19 +215,40 @@ sessionLabel_slider4 = Label( frm, textvariable = " ")
 # sessionsDrop_slider1 = OptionMenu(frm, sessionsVar_slider1, *sessionOptions, command=saveSlider4).place(x=355, y=60)
 # sessionLabel_slider1 = Label( frm , textvariable = " " )
 
+def sliderRun():
+    # subprocess.Popen("serialValuetoVolume.exe", shell=True)
+    pythoncom.CoInitialize()
+    serialValuetoVolume.connectSerial()
+    serialValuetoVolume.getValues()
+
+th = threading.Thread(target=sliderRun)
+
+
 def clicked():
-    subprocess.Popen("serialValuetoVolume.py", shell=True)
+    global th
+    try:
+        th.join()
+    except:
+        pass
+    th.start()
 
 startButton = Button(frm, text="Start CTRLdeck", command=clicked).place(x=720, y=450)
 
 def on_closing():
+        global icon
+        icon.stop()
+        try:
+            th.join()
+        except:
+            pass
         portFile = open("COMport", "w")
-        lineList = [chosenPort, "\n", "\n3", "\n4", "\n5"]
+        lineList = ["1", "\n2", "\n3", "\n4", "\n5"]
         portFile.writelines(lineList)
         portFile.close()
         root.destroy()
 
-def open_window():
+def open_window(icon, item):
+    icon.stop()
     root.after( 0 , root.deiconify())
 
 # Hide the window and show on the system taskbar
@@ -232,6 +256,7 @@ def hide_window():
    root.withdraw()
    image=Image.open("fader.ico")
    menu=(item('Quit', on_closing) , item('Show', open_window))
+   global icon
    icon=pystray.Icon("name", image, "CTRLDeck", menu)
    icon.run()
 
