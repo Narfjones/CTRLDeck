@@ -17,6 +17,10 @@ chosenPort = str()
 global lineList
 lineList = ["1", "\n2", "\n3", "\n4", "\n5"]
 global icon
+threads=[]
+pythoncom.CoInitialize()
+
+
 
 #------------------------------------------------------------------
 #       Create Functions for getting user chosen port and
@@ -216,47 +220,46 @@ sessionLabel_slider4 = Label( frm, textvariable = " ")
 # sessionLabel_slider1 = Label( frm , textvariable = " " )
 
 def sliderRun():
-    # subprocess.Popen("serialValuetoVolume.exe", shell=True)
+    try:
+        serialValuetoVolume.stop_program()
+    except:
+        pass
+    serialValuetoVolume.init()
     pythoncom.CoInitialize()
+    # subprocess.Popen("serialValuetoVolume.exe", shell=True)
     serialValuetoVolume.connectSerial()
     serialValuetoVolume.getValues()
 
-th = threading.Thread(target=sliderRun)
-
-
 def clicked():
-    global th
-    try:
-        th.join()
-    except:
-        pass
-    th.start()
+    global t
+    t = threading.Thread(target=sliderRun)
+    threads.append(t)
+    t.start()
+    global startButton
+    startButton = Button(frm, text="Restart CTRLdeck", command=clicked).place(x=720, y=450)
 
 startButton = Button(frm, text="Start CTRLdeck", command=clicked).place(x=720, y=450)
 
-def on_closing():
-        global icon
-        icon.stop()
-        try:
-            th.join()
-        except:
-            pass
-        portFile = open("COMport", "w")
-        lineList = ["1", "\n2", "\n3", "\n4", "\n5"]
-        portFile.writelines(lineList)
-        portFile.close()
-        root.destroy()
+def on_closing(icon, item):
+    serialValuetoVolume.stop_program()
+    portFile = open("COMport", "w")
+    lineList = ["1", "\n2", "\n3", "\n4", "\n5"]
+    portFile.writelines(lineList)
+    portFile.close()
+    t.join()
+    icon.stop()
+    root.destroy()
 
 def open_window(icon, item):
-    icon.stop()
     root.after( 0 , root.deiconify())
+    icon.stop()
 
 # Hide the window and show on the system taskbar
 def hide_window():
+   global icon
    root.withdraw()
    image=Image.open("fader.ico")
-   menu=(item('Quit', on_closing) , item('Show', open_window))
-   global icon
+   menu=(item('Show', open_window), item('Quit', on_closing))
    icon=pystray.Icon("name", image, "CTRLDeck", menu)
    icon.run()
 

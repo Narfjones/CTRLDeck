@@ -5,34 +5,60 @@ from time import sleep
 import strstr
 from pycaw.pycaw import AudioUtilities, ISimpleAudioVolume, IAudioEndpointVolume
 from ctypes import POINTER, cast
-from comtypes import CLSCTX_ALL
-from pystray import MenuItem as item
-import pystray
-from PIL import Image, ImageTk
-import subprocess    
+from comtypes import CLSCTX_ALL 
     
 chosenPort = str()
 ser = None
-portFile = open("COMport", "r")
-fileLines = portFile.readlines()
-chosenPort = str(fileLines[0])
-chosenPort = chosenPort.rstrip("\n")
-sliderProcess1 = str(fileLines[1])
-sliderProcess1 = sliderProcess1.rstrip("\n")
-sliderProcess2 = str(fileLines[2])
-sliderProcess2 = sliderProcess2.rstrip("\n")
-sliderProcess3 = str(fileLines[3])
-sliderProcess3 = sliderProcess3.rstrip("\n")
-sliderProcess4 = str(fileLines[4])
-sliderProcess4 = sliderProcess4.rstrip("\n")
-slider1 = 0
-slider2 = 0
-slider3 = 0
-slider4 = 0
-volume1 = 0
-volume2 = 0
-volume3 = 0
-volume4 = 0
+portFile = None
+fileLines = None
+chosenPort = None
+sliderProcess1 = None
+sliderProcess2 = None
+sliderProcess3 = None
+sliderProcess4 = None
+slider1 = None
+slider2 = None
+slider3 = None
+slider4 = None
+volume1 = None
+volume2 = None
+volume3 = None
+volume4 = None
+running = None
+
+def init():    
+    global chosenPort
+    global ser
+    global portFile
+    global fileLines
+    global chosenPort
+    global sliderProcess1
+    global sliderProcess2
+    global sliderProcess3
+    global sliderProcess4
+    global slider1
+    global slider2
+    global slider3
+    global slider4
+    global volume1
+    global volume2
+    global volume3
+    global volume4
+    global running
+    
+    portFile = open("COMport", "r")
+    fileLines = portFile.readlines()
+    chosenPort = str(fileLines[0])
+    chosenPort = chosenPort.rstrip("\n")
+    sliderProcess1 = str(fileLines[1])
+    sliderProcess1 = sliderProcess1.rstrip("\n")
+    sliderProcess2 = str(fileLines[2])
+    sliderProcess2 = sliderProcess2.rstrip("\n")
+    sliderProcess3 = str(fileLines[3])
+    sliderProcess3 = sliderProcess3.rstrip("\n")
+    sliderProcess4 = str(fileLines[4])
+    sliderProcess4 = sliderProcess4.rstrip("\n")
+    running = True
 
 substring = ".exe"
 
@@ -49,7 +75,6 @@ def connectSerial():
             timeout=0)
         sleep(.001)
         print("connected to: " + chosenPort)
-        return(1)
     except:
         pass
 
@@ -197,3 +222,15 @@ def getValues():
                     pass
                 
                 print(slider1, slider2, slider3, slider4)
+
+                if running == False:
+                    break
+                else:
+                    pass
+
+
+def stop_program():
+    global ser
+    global running
+    running = False
+    ser.close()
