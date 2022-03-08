@@ -5,7 +5,7 @@ CTRLDeck software in python using pyserial and tkinter
 
 **Recent Features Added**
 - Runs in background on exit
-- Works with any number sliders up to 4
+- Works with any number of sliders up to 4
 - Portable Executable in \dist folder
 
 **Current Issues**
