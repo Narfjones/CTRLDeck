@@ -81,8 +81,8 @@ def connectSerial():
 # Think of it as turning your speakers down instead of sliding the volume mixer fader down.
 # Accepts a float or int value respresenting decibels from Max=0 to Min=-60
 def masterVolume(volume5):
-    # Take input of (0, 1) and map values to (-40, 0). Similar to arduino map() function
-            volume5 = float( (volume5 - 0)*(0 - -40) / (1 - 0) + -40)
+    # Take input of (0, 1) and map values to (-65.25, 0). Similar to arduino map() function
+            volume5 = float( (volume5 - 0)*(0 - -65.25) / (1 - 0) + -65.25)
             volume5 = round(volume5, 1)
             
             # Get the devices for the system. Always returns active speaker device
@@ -93,23 +93,52 @@ def masterVolume(volume5):
             IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
             volume = cast(interface, POINTER(IAudioEndpointVolume))
             
-            # Send volume value to device. Must be float or int(min = -40, max = 0)
+            # Send volume value to device. Must be float or int(min = -65.25, max = 0)
+            volume.SetMasterVolumeLevel(0, None)
+
+def micVolume(volume5):
+    # Take input of (0, 1) and map values to (-65.25, 0). Similar to arduino map() function
+            volume5 = float( (volume5 - 0)*(0 - -65.25) / (1 - 0) + -65.25)
+            volume5 = round(volume5, 1)
+            
+            # Get the devices for the system. Always returns active speaker device
+            devices = AudioUtilities.GetMicrophone()
+            
+            # Activate the interface with the speaker device so you can get and set volume.
+            interface = devices.Activate(
+            IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
+            volume = cast(interface, POINTER(IAudioEndpointVolume))
+            
+            # Send volume value to device. Must be float or int(min = -65.25, max = 0)
             volume.SetMasterVolumeLevel(volume5, None)
 
 # Takes assigned process from slider variable and sends the value to the audio endpoint to update volume
 def volumeSlider1(volume1):    
     if sliderProcess1 != None: # Only runs if the sliderProcess was chosen
-        
+        global sliderProcess2
+        global sliderProcess3
+        global sliderProcess4
+    
         # 'master' uses EndpointVolume while processes are done with ISimpleAudioVolume
         if sliderProcess1 == "master":
             masterVolume(volume1)
 
-        else: # If not master, use ISimpleAudioVolume
+        elif sliderProcess2 == 'microphone':
+            micVolume(volume1)
+
+        elif sliderProcess1 == 'unmapped': # If not master, use ISimpleAudioVolume
+            sessions = AudioUtilities.GetAllSessions() # Scans sessions and locates the one with a name matching the sliderProcess
+            for session in sessions:
+                volume = session._ctl.QueryInterface(ISimpleAudioVolume)
+                if session.Process and session.Process.name() not in [sliderProcess1, sliderProcess2, sliderProcess3, sliderProcess4]:
+                    volume.SetMasterVolume(volume1, None) # Send updated volume value
+        else:
             sessions = AudioUtilities.GetAllSessions() # Scans sessions and locates the one with a name matching the sliderProcess
             for session in sessions:
                 volume = session._ctl.QueryInterface(ISimpleAudioVolume)
                 if session.Process and session.Process.name() == sliderProcess1:
                     volume.SetMasterVolume(volume1, None) # Send updated volume value
+
       
 # Takes assigned process from slider variable and sends the value to the audio endpoint to update volume
 def volumeSlider2(volume2):
@@ -117,6 +146,13 @@ def volumeSlider2(volume2):
         # 'master' uses EndpointVolume while processes are done with SimpleAudioVolume
         if sliderProcess2 == "master":
             masterVolume(volume2)
+
+        elif sliderProcess2 == 'unmapped': # If not master, use ISimpleAudioVolume
+            sessions = AudioUtilities.GetAllSessions() # Scans sessions and locates the one with a name matching the sliderProcess
+            for session in sessions:
+                volume = session._ctl.QueryInterface(ISimpleAudioVolume)
+                if session.Process and session.Process.name() not in [sliderProcess1, sliderProcess2, sliderProcess3, sliderProcess4]:
+                    volume.SetMasterVolume(volume2, None) # Send updated volume value
 
         else: # If not master, use ISimpleAudioVolume
             sessions = AudioUtilities.GetAllSessions()
@@ -132,6 +168,13 @@ def volumeSlider3(volume3):
         if sliderProcess3 == "master":
             masterVolume(volume3)
 
+        elif sliderProcess3 == 'unmapped': # If not master, use ISimpleAudioVolume
+            sessions = AudioUtilities.GetAllSessions() # Scans sessions and locates the one with a name matching the sliderProcess
+            for session in sessions:
+                volume = session._ctl.QueryInterface(ISimpleAudioVolume)
+                if session.Process and session.Process.name() not in [sliderProcess1, sliderProcess2, sliderProcess3, sliderProcess4]:
+                    volume.SetMasterVolume(volume3, None) # Send updated volume value
+
         else: # If not master, use ISimpleAudioVolume
             sessions = AudioUtilities.GetAllSessions()
             for session in sessions: # Scans sessions and locates the one with a name matching the sliderProcess
@@ -145,6 +188,14 @@ def volumeSlider4(volume4):
         # 'master' uses EndpointVolume while processes are done with SimpleAudioVolume
         if sliderProcess4 == "master":
             masterVolume(volume4)  
+
+        elif sliderProcess1 == 'unmapped': # If not master, use ISimpleAudioVolume
+           sessions = AudioUtilities.GetAllSessions() # Scans sessions and locates the one with a name matching the sliderProcess
+           for session in sessions:
+               volume = session._ctl.QueryInterface(ISimpleAudioVolume)
+               if session.Process and session.Process.name() not in [sliderProcess1, sliderProcess2, sliderProcess3, sliderProcess4]:
+                   volume.SetMasterVolume(volume4, None) # Send updated volume value
+
         else:
             sessions = AudioUtilities.GetAllSessions()
             for session in sessions: # Scans sessions and locates the one with a name matching the sliderProcess

@@ -2,6 +2,8 @@ from operator import iconcat
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
+
+from comtypes import NullHandler
 from getCOM import serial_ports
 from pystray import MenuItem as item
 import pystray
@@ -161,7 +163,7 @@ portLabel = Label( frm , textvariable = " " )
 #----------------------------------------------------------------------------
 
 # Create list of common audio sessions
-sessionOptions = ["master", "chrome.exe", "firefox.exe", "discord.exe", "Choose a file:" ]
+sessionOptions = ["master", "chrome.exe", "firefox.exe", "discord.exe", "microphone", "unmapped", "Choose a file:" ]
 
 # Store audio sessions for slider 1
 sessionsVar_slider1 = StringVar()
@@ -255,10 +257,16 @@ def open_window(icon, item):
 
 # Hide the window and show on the system taskbar
 def hide_window():
+    # Store proccesses assigned to sliders to display in icon menu
+    sliderProcess1 = serialValuetoVolume.sliderProcess1
+    sliderProcess2 = serialValuetoVolume.sliderProcess2
+    sliderProcess3 = serialValuetoVolume.sliderProcess3
+    sliderProcess4 = serialValuetoVolume.sliderProcess4
     global icon
     root.withdraw() # Hides GUI Window
     image=Image.open("fader.ico") 
-    menu=(item('Show', open_window) , item('Quit', on_closing)) # Creates right click menu and it's options in the system tray icon
+    menu=(item('Slider 1: ' + sliderProcess1, 0), item('Slider 2: ' + sliderProcess2, 0), item('Slider 3: ' + sliderProcess3, 0),
+    item('Slider 4: ' + sliderProcess4, 0), item('Show', open_window) , item('Quit', on_closing)) # Creates right click menu and it's options in the system tray icon
     icon=pystray.Icon("name", image, "CTRLDeck", menu) # Creates click options on system tray icon
     icon.run() # Start system tray icon
 
