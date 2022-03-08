@@ -9,7 +9,6 @@ from PIL import Image, ImageTk
 import serialValuetoVolume
 import threading
 import pythoncom
-from time import sleep
 
 # Create variable for arduino port
 chosenPort = str()
@@ -18,10 +17,7 @@ chosenPort = str()
 global lineList
 lineList = ["1", "\n2", "\n3", "\n4", "\n5"]
 global icon
-threads=[]
-pythoncom.CoInitialize()
-
-
+threads = []
 
 #------------------------------------------------------------------
 #       Create Functions for getting user chosen port and
@@ -231,13 +227,16 @@ def sliderRun():
     serialValuetoVolume.connectSerial()
     serialValuetoVolume.getValues()
 
+t = threading.Thread(target=sliderRun)
+
+
 def clicked():
     global t
     t = threading.Thread(target=sliderRun)
     threads.append(t)
     t.start()
     global startButton
-    startButton = Button(frm, text="Restart CTRLdeck", command=sliderRun).place(x=720, y=450)
+    startButton = Button(frm, text="Restart CTRLdeck", command=clicked).place(x=720, y=450)
 
 startButton = Button(frm, text="Start CTRLdeck", command=clicked).place(x=720, y=450)
 
@@ -257,12 +256,12 @@ def open_window(icon, item):
 
 # Hide the window and show on the system taskbar
 def hide_window():
-   global icon
-   root.withdraw()
-   image=Image.open("fader.ico")
-   menu=(item('Show', open_window), item('Quit', on_closing))
-   icon=pystray.Icon("name", image, "CTRLDeck", menu)
-   icon.run()
+    global icon
+    root.withdraw()
+    image=Image.open("fader.ico")
+    menu=(item('Show', open_window) , item('Quit', on_closing))
+    icon=pystray.Icon("name", image, "CTRLDeck", menu)
+    icon.run()
 
 # Loops the window processes
 root.protocol("WM_DELETE_WINDOW", hide_window)

@@ -221,7 +221,7 @@ def getValues():
                 else:
                     pass
                 
-                print(slider1, slider2, slider3, slider4)
+                # print(slider1, slider2, slider3, slider4)
 
                 if running == False:
                     break
