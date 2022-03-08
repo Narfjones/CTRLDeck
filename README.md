@@ -18,6 +18,7 @@ CTRLDeck software in python using pyserial and tkinter
 - Add support for multiple processes on one slider
 - Clean up GUI( UX/UI )
 - Show slider assignment in systray
+- Create modular circuit board for sliders and keys
 
 
 This project is inspired by the **Deej** software written in **Go** by @omriharel. 
