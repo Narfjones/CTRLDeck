@@ -1,9 +1,11 @@
+#####################################################################################################################################
+# This is deprecated as we are now listing the common executable processes and providing an optoin for the user to choose their own #
+# executable from a filedialog window                                                                                               #
+#####################################################################################################################################
+
 from __future__ import print_function
-
 from ctypes import POINTER, cast
-
 from comtypes import CLSCTX_ALL
-
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 
 # Create list and string variables to store and transport processes
