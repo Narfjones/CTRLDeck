@@ -6,19 +6,21 @@ CTRLDeck software in python using pyserial and tkinter
 **Recent Features Added**
 - Runs in background on exit
 - Works with any number of sliders up to 4
-- Portable Executable in \dist folder
+- Compatible with pyinstaller .exe maker
 
 **Current Issues**
-- The keystrokes only get noticed if you hold them down for an extended time( Issue in the .ino files I'm sure)
+- The keystrokes only get noticed if you hold them down for an extended time(Possibly an issue in the .ino sketches)
 
 **To-do List**
 - Add support for microphone input level
 - Adjust GUI to match number of sliders in device(will require two-way serial communication)
+- Add auto device(COMport) finder(will require two-way serial communication)
 - Add support for multiple processes on one slider
 - Clean up GUI( UX/UI )
 - Show slider assignment in systray
-- Deal with access violation on hide_window
 
 
-This project is based on the **Deej** software written in **Go** by @omriharel. 
+This project is inspired by the **Deej** software written in **Go** by @omriharel. 
 The attached STLs were modified from designs of a macro and slider combo device by **MisterDeck**
+
+**License:** MIT and GPL-3.0
