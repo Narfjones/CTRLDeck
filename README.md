@@ -9,7 +9,7 @@ CTRLDeck software in python using pyserial and tkinter
 - Portable Executable in \dist folder
 
 **Current Issues**
-- Lots I'm sure
+- The keystrokes only get noticed if you hold them down for an extended time( Issue in the .ino files I'm sure)
 
 **To-do List**
 - Add support for microphone input level
