@@ -81,8 +81,8 @@ def connectSerial():
 # Think of it as turning your speakers down instead of sliding the volume mixer fader down.
 # Accepts a float or int value respresenting decibels from Max=0 to Min=-60
 def masterVolume(volume5):
-    # Take input of (0, 1) and map values to (-60, 0). Similar to arduino map() function
-            volume5 = float( (volume5 - 0)*(0 - -60) / (1 - 0) + -60)
+    # Take input of (0, 1) and map values to (-40, 0). Similar to arduino map() function
+            volume5 = float( (volume5 - 0)*(0 - -40) / (1 - 0) + -40)
             volume5 = round(volume5, 1)
             
             # Get the devices for the system. Always returns active speaker device
@@ -93,7 +93,7 @@ def masterVolume(volume5):
             IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
             volume = cast(interface, POINTER(IAudioEndpointVolume))
             
-            # Send volume value to device. Must be float or int(min = -60, max = 0)
+            # Send volume value to device. Must be float or int(min = -40, max = 0)
             volume.SetMasterVolumeLevel(volume5, None)
 
 # Takes assigned process from slider variable and sends the value to the audio endpoint to update volume
