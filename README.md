@@ -12,12 +12,10 @@ CTRLDeck software in python using pyserial and tkinter
 - The keystrokes only get noticed if you hold them down for an extended time(Possibly an issue in the .ino sketches)
 
 **To-do List**
-- Add support for microphone input level
 - Adjust GUI to match number of sliders in device(will require two-way serial communication)
 - Add auto device(COMport) finder(will require two-way serial communication)
 - Add support for multiple processes on one slider
 - Clean up GUI( UX/UI )
-- Show slider assignment in systray
 - Create modular circuit board for sliders and keys
 
 
