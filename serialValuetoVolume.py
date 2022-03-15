@@ -1,4 +1,5 @@
 from __future__ import print_function
+from tkinter.constants import X
 import serial
 from time import sleep
 import strstr
@@ -25,6 +26,7 @@ volume2 = None
 volume3 = None
 volume4 = None
 running = None
+unmappedList = []
 
 # Initializes variables and stores values from temp data file in proper places. Should not run before 'Start CTRLdeck' button is clicked.
 def init():    
@@ -53,12 +55,18 @@ def init():
     chosenPort = chosenPort.rstrip("\n")
     sliderProcess1 = str(fileLines[1]) # Line 2 is the first slider process assignment
     sliderProcess1 = sliderProcess1.rstrip("\n")
+    sliderProcess1 = sliderProcess1.split(',')
     sliderProcess2 = str(fileLines[2])# Line 3 is the second slider process assignment
     sliderProcess2 = sliderProcess2.rstrip("\n")
+    sliderProcess2 = sliderProcess2.split(',')
     sliderProcess3 = str(fileLines[3])# Line 4 is the third slider process assignment
     sliderProcess3 = sliderProcess3.rstrip("\n")
+    sliderProcess3 = sliderProcess3.split(',')
     sliderProcess4 = str(fileLines[4]) # line 5 is the fourth slider process assignment
     sliderProcess4 = sliderProcess4.rstrip("\n")
+    sliderProcess4 = sliderProcess4.split(',')
+    global unmappedList
+    unmappedList = sliderProcess1 + sliderProcess2 + sliderProcess3 + sliderProcess4
     running = True
 
 # Create serial connect with chosen COM port(from COMport data file) and store in global serial variable
@@ -114,104 +122,109 @@ def micVolume(volume5):
             volume.SetMasterVolumeLevel(volume5, None)
 
 # Takes assigned process from slider variable and sends the value to the audio endpoint to update volume
-def volumeSlider1(volume1):    
-    if sliderProcess1 != None: # Only runs if the sliderProcess was chosen
-        global sliderProcess2
-        global sliderProcess3
-        global sliderProcess4
-    
-        # 'master' uses EndpointVolume while processes are done with ISimpleAudioVolume
-        if sliderProcess1 == "master":
-            masterVolume(volume1)
+def volumeSlider1(volume1):
+    # print(sliderProcess1)
+    for sliderProcess in sliderProcess1:
+        if sliderProcess != None: # Only runs if the sliderProcess was chosen
 
-        elif sliderProcess1 == "microphone":
-            micVolume(volume1)
+            # 'master' uses EndpointVolume while processes are done with ISimpleAudioVolume
+            if sliderProcess == "master":
+                masterVolume(volume1)
 
-        elif sliderProcess1 == 'unmapped': # If not master, use ISimpleAudioVolume
-            sessions = AudioUtilities.GetAllSessions() # Scans sessions and locates the one with a name matching the sliderProcess
-            for session in sessions:
-                volume = session._ctl.QueryInterface(ISimpleAudioVolume)
-                if session.Process and session.Process.name() not in [sliderProcess1, sliderProcess2, sliderProcess3, sliderProcess4]:
-                    volume.SetMasterVolume(volume1, None) # Send updated volume value
-        else:
-            sessions = AudioUtilities.GetAllSessions() # Scans sessions and locates the one with a name matching the sliderProcess
-            for session in sessions:
-                volume = session._ctl.QueryInterface(ISimpleAudioVolume)
-                if session.Process and session.Process.name() == sliderProcess1:
-                    volume.SetMasterVolume(volume1, None) # Send updated volume value
+            elif sliderProcess == "microphone":
+                micVolume(volume1)
+
+            elif sliderProcess == 'unmapped': # If not master, use ISimpleAudioVolume
+                global unmappedList
+                sessions = AudioUtilities.GetAllSessions() # Scans sessions and locates the one with a name matching the sliderProcess
+                for session in sessions:
+                    volume = session._ctl.QueryInterface(ISimpleAudioVolume)
+                    # If an audio session is not assigned, change it's volume
+                    if session.Process and session.Process.name() not in unmappedList:
+                        volume.SetMasterVolume(volume1, None) # Send updated volume value
+
+            else:
+                sessions = AudioUtilities.GetAllSessions() # Scans sessions and locates the one with a name matching the sliderProcess
+                for session in sessions:
+                    volume = session._ctl.QueryInterface(ISimpleAudioVolume)
+                    if session.Process and session.Process.name() == sliderProcess:
+                        volume.SetMasterVolume(volume1, None) # Send updated volume value
 
       
 # Takes assigned process from slider variable and sends the value to the audio endpoint to update volume
 def volumeSlider2(volume2):
-    if sliderProcess2 != None:
-        # 'master' uses EndpointVolume while processes are done with SimpleAudioVolume
-        if sliderProcess2 == "master":
-            masterVolume(volume2)
-        
-        elif sliderProcess2 == "microphone":
-            micVolume(volume2)
+    for sliderProcess in sliderProcess2:
+        if sliderProcess != None:
+            # 'master' uses EndpointVolume while processes are done with SimpleAudioVolume
+            if sliderProcess == "master":
+                masterVolume(volume2)
+            
+            elif sliderProcess == "microphone":
+                micVolume(volume2)
 
-        elif sliderProcess2 == 'unmapped': # If not master, use ISimpleAudioVolume
-            sessions = AudioUtilities.GetAllSessions() # Scans sessions and locates the one with a name matching the sliderProcess
-            for session in sessions:
-                volume = session._ctl.QueryInterface(ISimpleAudioVolume)
-                if session.Process and session.Process.name() not in [sliderProcess1, sliderProcess2, sliderProcess3, sliderProcess4]:
-                    volume.SetMasterVolume(volume2, None) # Send updated volume value
+            elif sliderProcess == 'unmapped': # If not master, use ISimpleAudioVolume
+                sessions = AudioUtilities.GetAllSessions() # Scans sessions and locates the one with a name matching the sliderProcess
+                for session in sessions:
+                    volume = session._ctl.QueryInterface(ISimpleAudioVolume)
+                    if session.Process and session.Process.name() not in [sliderProcess1, sliderProcess2, sliderProcess3, sliderProcess4]:
+                        volume.SetMasterVolume(volume2, None) # Send updated volume value
 
-        else: # If not master, use ISimpleAudioVolume
-            sessions = AudioUtilities.GetAllSessions()
-            for session in sessions: # Scans sessions and locates the one with a name matching the sliderProcess
-                volume = session._ctl.QueryInterface(ISimpleAudioVolume)
-                if session.Process and session.Process.name() == sliderProcess2:
-                    volume.SetMasterVolume(volume2, None) # Send updated volume value
+            else: # If not master, use ISimpleAudioVolume
+                sessions = AudioUtilities.GetAllSessions()
+                for session in sessions: # Scans sessions and locates the one with a name matching the sliderProcess
+                    volume = session._ctl.QueryInterface(ISimpleAudioVolume)
+                    if session.Process and session.Process.name() == sliderProcess:
+                        volume.SetMasterVolume(volume2, None) # Send updated volume value
 
 # Takes assigned process from slider variable and sends the value to the audio endpoint to update volume
 def volumeSlider3(volume3):
-    if sliderProcess3 != None:
-        # 'master' uses EndpointVolume while processes are done with SimpleAudioVolume
-        if sliderProcess3 == "master":
-            masterVolume(volume3)
-            
-        elif sliderProcess3 == "microphone":
-            micVolume(volume3)
+    for sliderProcess in sliderProcess3:
+        if sliderProcess != None:
+            # 'master' uses EndpointVolume while processes are done with SimpleAudioVolume
+            if sliderProcess == "master":
+                masterVolume(volume3)
+                
+            elif sliderProcess == "microphone":
+                micVolume(volume3)
 
-        elif sliderProcess3 == 'unmapped': # If not master, use ISimpleAudioVolume
-            sessions = AudioUtilities.GetAllSessions() # Scans sessions and locates the one with a name matching the sliderProcess
-            for session in sessions:
-                volume = session._ctl.QueryInterface(ISimpleAudioVolume)
-                if session.Process and session.Process.name() not in [sliderProcess1, sliderProcess2, sliderProcess3, sliderProcess4]:
-                    volume.SetMasterVolume(volume3, None) # Send updated volume value
+            elif sliderProcess == 'unmapped': # If not master, use ISimpleAudioVolume
+                sessions = AudioUtilities.GetAllSessions() # Scans sessions and locates the one with a name matching the sliderProcess
+                for session in sessions:
+                    volume = session._ctl.QueryInterface(ISimpleAudioVolume)
+                    if session.Process and session.Process.name() not in [sliderProcess1, sliderProcess2, sliderProcess3, sliderProcess4]:
+                        volume.SetMasterVolume(volume3, None) # Send updated volume value
 
-        else: # If not master, use ISimpleAudioVolume
-            sessions = AudioUtilities.GetAllSessions()
-            for session in sessions: # Scans sessions and locates the one with a name matching the sliderProcess
-                volume = session._ctl.QueryInterface(ISimpleAudioVolume)
-                if session.Process and session.Process.name() == sliderProcess3:
-                    volume.SetMasterVolume(volume3, None) # Send updated volume value
+            else: # If not master, use ISimpleAudioVolume
+                sessions = AudioUtilities.GetAllSessions()
+                for session in sessions: # Scans sessions and locates the one with a name matching the sliderProcess
+                    volume = session._ctl.QueryInterface(ISimpleAudioVolume)
+                    if session.Process and session.Process.name() == sliderProcess:
+                        volume.SetMasterVolume(volume3, None) # Send updated volume value
 
 # Takes assigned process from slider variable and sends the value to the audio endpoint to update volume               
 def volumeSlider4(volume4):
-    if sliderProcess4 != None:
-        # 'master' uses EndpointVolume while processes are done with SimpleAudioVolume
-        if sliderProcess4 == "master":
-            masterVolume(volume4)  
-        
-        elif sliderProcess4 == "microphone":
-            micVolume(volume4)
+    for sliderProcess in sliderProcess4:
+        if sliderProcess != None:
+            # 'master' uses EndpointVolume while processes are done with SimpleAudioVolume
+            if sliderProcess == "master":
+                masterVolume(volume4)  
+            
+            elif sliderProcess4 == "microphone":
+                micVolume(volume4)
 
-        elif sliderProcess1 == 'unmapped': # If not master, use ISimpleAudioVolume
-           sessions = AudioUtilities.GetAllSessions() # Scans sessions and locates the one with a name matching the sliderProcess
-           for session in sessions:
-               volume = session._ctl.QueryInterface(ISimpleAudioVolume)
-               if session.Process and session.Process.name() not in [sliderProcess1, sliderProcess2, sliderProcess3, sliderProcess4]:
-                   volume.SetMasterVolume(volume4, None) # Send updated volume value
+            elif sliderProcess == 'unmapped': # If not master, use ISimpleAudioVolume
+                sessions = AudioUtilities.GetAllSessions() # Scans sessions and locates the one with a name matching the sliderProcess
+                for session in sessions:
+                    volume = session._ctl.QueryInterface(ISimpleAudioVolume)
+                    if session.Process and session.Process.name() not in [sliderProcess1, sliderProcess2, sliderProcess3, sliderProcess4]:
+                        volume.SetMasterVolume(volume4, None) # Send updated volume value
 
-        else:
-            sessions = AudioUtilities.GetAllSessions()
-            for session in sessions: # Scans sessions and locates the one with a name matching the sliderProcess
-                volume = session._ctl.QueryInterface(ISimpleAudioVolume)
-                if session.Process and session.Process.name() == sliderProcess4:
-                    volume.SetMasterVolume(4, None)
+            else:
+                sessions = AudioUtilities.GetAllSessions()
+                for session in sessions: # Scans sessions and locates the one with a name matching the sliderProcess
+                    volume = session._ctl.QueryInterface(ISimpleAudioVolume)
+                    if session.Process and session.Process.name() == sliderProcess:
+                        volume.SetMasterVolume(4, None)
 
 
 #------------------------------------------------------------------
@@ -233,7 +246,7 @@ def getValues():
                 # create string, convert serial input data to a string a store it
                 line =  str(ser.readline())
                 ser.reset_input_buffer()
-                sleep(.005) # Necessary or the function will throw exception
+                sleep(.002) # Necessary or the function will throw exception
 
                 # Get numbers out of serial data. This will be empty if slider has no assignment
                 slider1str = ''.join(x for x in strstr.serial_conversion_1(line) if x.isdigit())
@@ -246,7 +259,7 @@ def getValues():
                     global slider2
                     global slider3
                     global slider4
-
+                    sleep(.002)
                     # Convert digit strings to integer, maps (0,100) input to (0,1) output and rounds to two decimal places
                     slider1 = float(float(slider1str) * .01) # The smallest number of sliders is 2 so this will always run. 
                     slider1 = round(slider1, 2)

@@ -50,26 +50,42 @@ def saveSlider1(event):
     process_Name = str(sessionsVar_slider1.get())
     if process_Name == "Choose a file:":
         process_Name = chooseFile()
-        sessionOptions[3] = process_Name
+        sessionOptions[1] = process_Name
     else:
         pass
     # Opens the temp file and stores the chosen process name
+    sessionLabel_1.insert(END, process_Name) 
+    #for i in sessionLabel_1.get(0):
+    global lineList
+    listSize = sessionLabel_1.size()
+    sliderStr = ''
+    sliderList = list(sessionLabel_1.get(0, listSize))
+    for item in sliderList:
+        sliderStr += str(item) + ","
+    lineList[1] = ("\n" + sliderStr)
     portFile = open("COMport", "w")
-    lineList[1] = ("\n" + process_Name)
     portFile.writelines(lineList)
-    portFile.close()
+    portFile.close()  
+
 
 def saveSlider2(event):
     process_Name = str(sessionsVar_slider2.get())
     if process_Name == "Choose a file:":
         process_Name = chooseFile()
-        sessionOptions[3] = process_Name
+        sessionOptions[2] = process_Name
     else:
         pass
+    sessionLabel_2.insert(END, process_Name)
+    listSize = sessionLabel_2.size()
+    sliderStr = ''
+    sliderList = list(sessionLabel_2.get(0, listSize))
+    for item in sliderList:
+        sliderStr += str(item) + ","
+    lineList[2] = ("\n" + sliderStr)
     portFile = open("COMport", "w")
-    lineList[2] = ("\n" + process_Name)
     portFile.writelines(lineList)
     portFile.close()
+
 
 def saveSlider3(event):
     process_Name = str(sessionsVar_slider3.get())
@@ -78,8 +94,14 @@ def saveSlider3(event):
         sessionOptions[3] = process_Name
     else:
         pass
+    sessionLabel_3.insert(END, process_Name)
+    listSize = sessionLabel_3.size()
+    sliderStr = ''
+    sliderList = list(sessionLabel_3.get(0, listSize))
+    for item in sliderList:
+        sliderStr += str(item) + ","
+    lineList[3] = ("\n" + sliderStr)
     portFile = open("COMport", "w")
-    lineList[3] = ("\n" + process_Name)
     portFile.writelines(lineList)
     portFile.close()
 
@@ -90,8 +112,14 @@ def saveSlider4(event):
         sessionOptions[4] = process_Name
     else:
         pass
+    sessionLabel_4.insert(END, process_Name)
+    listSize = sessionLabel_4.size()
+    sliderStr = ''
+    sliderList = list(sessionLabel_4.get(0, listSize))
+    for item in sliderList:
+        sliderStr += str(item) + ","
+    lineList[4] = ("\n" + sliderStr)
     portFile = open("COMport", "w")
-    lineList[4] = ("\n" + process_Name)
     portFile.writelines(lineList)
     portFile.close()
 
@@ -132,6 +160,7 @@ frm.grid()
 labelbg = Label(frm, image = bg, width = bg.width(), height = bg.height())
 labelbg.grid(column = 0, row = 0)
 
+
 #----------------------------------------------------------------------------
 #   - Call list of COM ports from getCOM
 #   - Create dropdown list with a 'clicked' action
@@ -152,8 +181,51 @@ def show():
 # Create port dropdown menu
 portDrop = OptionMenu(frm, portsVar, *portOptions, command=saveChoice).place(x = 375, y = 5)
 
-# Create port dropdown label
+# Create labels
 portLabel = Label( frm , textvariable = " " )
+
+def onselect_1(evt):
+    global lineList
+    w = evt.widget
+    index = int(w.curselection()[0])
+    value = w.get(index)
+    print(value)
+    start = int(lineList[1].find(value))
+    length= int(len(value))
+    stop = int(length + start)
+    value1 = (value[:start] + value[stop:-1])
+    print(value1)
+    portFile = open("COMport", "w")
+    portFile.writelines(lineList)
+    portFile.close()
+
+def onselect_2(evt):
+    w = evt.widget
+    index = int(w.curselection())
+    value = w.get(index)
+    for item in lineList:
+        if item == value:
+            lineList.remove(item)
+        else:
+            pass
+    portFile = open("COMport", "w")
+    portFile.writelines(lineList)
+    portFile.close()
+
+sessionLabel_1 = Listbox( frm, width=14, bd=0, height=3, selectmode="single" )
+sessionLabel_1.place(x=350, y=360)
+sessionLabel_1.bind('<<ListboxSelect>>', onselect_1)
+sessionLabel_2 = Listbox( frm, width=14, bd=0, height=3 )
+sessionLabel_2.place(x=445, y=360)
+sessionLabel_2.bind('<<ListboxSelect>>', onselect_2)
+sessionLabel_3 = Listbox( frm, width=14, bd=0, height=3 )
+sessionLabel_3.place(x=540, y=360)
+sessionLabel_3.bind('<<ListboxSelect>>')
+sessionLabel_4 = Listbox( frm, width=14, bd=0, height=3 )
+sessionLabel_4.place(x=640, y=360)
+sessionLabel_4.bind('<<ListboxSelect>>')
+
+
 
 #----------------------------------------------------------------------------
 #   - Call list of Audio Sessions volume_by_process.py
@@ -258,10 +330,10 @@ def open_window(icon, item):
 # Hide the window and show on the system taskbar
 def hide_window():
     # Store proccesses assigned to sliders to display in icon menu
-    sliderProcess1 = serialValuetoVolume.sliderProcess1
-    sliderProcess2 = serialValuetoVolume.sliderProcess2
-    sliderProcess3 = serialValuetoVolume.sliderProcess3
-    sliderProcess4 = serialValuetoVolume.sliderProcess4
+    sliderProcess1 = str(serialValuetoVolume.sliderProcess1)
+    sliderProcess2 = str(serialValuetoVolume.sliderProcess2)
+    sliderProcess3 = str(serialValuetoVolume.sliderProcess3)
+    sliderProcess4 = str(serialValuetoVolume.sliderProcess4)
     global icon
     root.withdraw() # Hides GUI Window
     image=Image.open("fader.ico") 
