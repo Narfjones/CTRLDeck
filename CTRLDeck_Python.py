@@ -199,6 +199,10 @@ def onselect_1(evt):
     stop = int(length + start + 1)
     value1 = (lineList[1][:start] + lineList[1][stop:-1])
     lineList[1] = value1
+    if len(lineList[1]) == 1:
+        lineList[1] += "1"
+    else:
+        pass
     sessionLabel_1.delete(index)
     print(value1)
     portFile = open("COMport", "w")
@@ -216,6 +220,10 @@ def onselect_2(evt):
     stop = int(length + start + 1)
     value1 = (lineList[2][:start] + lineList[2][stop:-1])
     lineList[2] = value1
+    if len(lineList[2]) == 1:
+        lineList[2] += "2"
+    else:
+        pass
     sessionLabel_2.delete(index)
     print(value1)
     portFile = open("COMport", "w")
@@ -233,7 +241,9 @@ def onselect_3(evt):
     value1 = (lineList[3][:start] + lineList[3][stop:-1])
     lineList[3] = value1
     if len(lineList[3]) == 1:
-    
+        lineList[3] += "4"
+    else:
+        pass
     sessionLabel_3.delete(index)
     portFile = open("COMport", "w")
     portFile.writelines(lineList)
@@ -249,6 +259,10 @@ def onselect_4(evt):
     stop = int(length + start + 1)
     value1 = (lineList[4][:start] + lineList[4][stop:-1])
     lineList[4] = value1
+    if len(lineList[4]) == 1:
+        lineList[3] += "5"
+    else:
+        pass
     sessionLabel_4.delete(index)
     print(value1)
     portFile = open("COMport", "w")
