@@ -2,7 +2,7 @@ from operator import iconcat
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
-
+from collections import Counter
 from comtypes import NullHandler
 from getCOM import serial_ports
 from pystray import MenuItem as item
@@ -188,23 +188,28 @@ portDrop = OptionMenu(frm, portsVar, *portOptions, command=saveChoice).place(x =
 # Create labels
 portLabel = Label( frm , textvariable = " " )
 
+# Function to delete items from the ListBox and remove the processes from the sliders
 def onselect_1(evt):
     global lineList
+    print(len(lineList[1]))
+
+    # Access storage of processes and create widget that triggers on select event in ListBox
     w = evt.widget
-    index = int(w.curselection()[0])
-    value = w.get(index)
-    print(value)
-    start = int(lineList[1].find(value))
-    length= int(len(value))
-    stop = int(length + start + 1)
-    value1 = (lineList[1][:start] + lineList[1][stop:-1])
-    lineList[1] = value1
-    if len(lineList[1]) == 1:
-        lineList[1] += "1"
-    else:
+    index = int(w.curselection()[0]) # Get index of currently selected process in Listbox
+    value = w.get(index) # Get the name of the process to remove
+    start = int(lineList[1].find(value)) # Get index of the first letter of the process name
+    length= int(len(value)) # Get length of the process name
+    stop = int(length + start + 1) # Create ending index of process name
+    value1 = (lineList[1][:start] + lineList[1][stop:-1]) # Take linList and create new string with currently selected process removed
+    lineList[1] = value1 # Substitute new string into lineList
+    sessionLabel_1.delete(index) # Remove the process from the label
+    print(len(lineList[1]))
+    # Prevent remove command from emptying the indices of lineList. If the number of indices changes the whole program will oh I don't know decide to rob a liquor store.
+    if len(lineList[1]) < 3:
+        lineList[1] += "2" # Stick in default value for lineList to keep the right number of indices
+    else: 
         pass
-    sessionLabel_1.delete(index)
-    print(value1)
+    # Open file and write new lineList
     portFile = open("COMport", "w")
     portFile.writelines(lineList)
     portFile.close()
@@ -214,18 +219,16 @@ def onselect_2(evt):
     w = evt.widget
     index = int(w.curselection()[0])
     value = w.get(index)
-    print(value)
     start = int(lineList[2].find(value))
     length= int(len(value))
     stop = int(length + start + 1)
     value1 = (lineList[2][:start] + lineList[2][stop:-1])
     lineList[2] = value1
-    if len(lineList[2]) == 1:
-        lineList[2] += "2"
-    else:
-        pass
     sessionLabel_2.delete(index)
-    print(value1)
+    if len(lineList[2]) < 3:
+        lineList[2] += "3" # Stick in default value for lineList to keep the right number of indices
+    else: 
+        pass
     portFile = open("COMport", "w")
     portFile.writelines(lineList)
     portFile.close()
@@ -235,16 +238,20 @@ def onselect_3(evt):
     w = evt.widget
     index = int(w.curselection()[0])
     value = w.get(index)
+    if len(lineList[3]) == 1:
+        lineList[3] += "4"
+    else:
+        pass
     start = int(lineList[3].find(value))
     length= int(len(value))
     stop = int(length + start + 1)
     value1 = (lineList[3][:start] + lineList[3][stop:-1])
     lineList[3] = value1
-    if len(lineList[3]) == 1:
-        lineList[3] += "4"
-    else:
-        pass
     sessionLabel_3.delete(index)
+    if len(lineList[3]) < 3:
+        lineList[3] += "4" # Stick in default value for lineList to keep the right number of indices
+    else: 
+        pass
     portFile = open("COMport", "w")
     portFile.writelines(lineList)
     portFile.close()
@@ -253,25 +260,23 @@ def onselect_4(evt):
     w = evt.widget
     index = int(w.curselection()[0])
     value = w.get(index)
-    print(value)
+    if len(lineList[4]) == 1:
+        lineList[3] += "5"
+    else:
+        pass
     start = int(lineList[4].find(value))
     length= int(len(value))
     stop = int(length + start + 1)
     value1 = (lineList[4][:start] + lineList[4][stop:-1])
     lineList[4] = value1
-    if len(lineList[4]) == 1:
-        lineList[3] += "5"
-    else:
-        pass
     sessionLabel_4.delete(index)
-    print(value1)
+    if len(lineList[4]) < 3:
+        lineList[4] += "5" # Stick in default value for lineList to keep the right number of indices
+    else: 
+        pass
     portFile = open("COMport", "w")
     portFile.writelines(lineList)
     portFile.close()
-    try:
-        stri = lineList[4]
-    except IndexError:
-        lineList.append = "\n5"
 
 sessionLabel_1 = Listbox( frm, width=14, bd=0, height=3, selectmode="single" )
 sessionLabel_1.place(x=350, y=360)
