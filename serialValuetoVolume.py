@@ -68,7 +68,7 @@ def init():
     global unmappedList
     unmappedList = sliderProcess1 + sliderProcess2 + sliderProcess3 + sliderProcess4
     running = True
-
+    
 # Create serial connect with chosen COM port(from COMport data file) and store in global serial variable
 def connectSerial():
     global ser
@@ -163,10 +163,12 @@ def volumeSlider2(volume2):
                 micVolume(volume2)
 
             elif sliderProcess == 'unmapped': # If not master, use ISimpleAudioVolume
+                global unmappedList
                 sessions = AudioUtilities.GetAllSessions() # Scans sessions and locates the one with a name matching the sliderProcess
                 for session in sessions:
                     volume = session._ctl.QueryInterface(ISimpleAudioVolume)
-                    if session.Process and session.Process.name() not in [sliderProcess1, sliderProcess2, sliderProcess3, sliderProcess4]:
+                    # If an audio session is not assigned, change it's volume
+                    if session.Process and session.Process.name() not in unmappedList:
                         volume.SetMasterVolume(volume2, None) # Send updated volume value
 
             else: # If not master, use ISimpleAudioVolume
@@ -188,10 +190,12 @@ def volumeSlider3(volume3):
                 micVolume(volume3)
 
             elif sliderProcess == 'unmapped': # If not master, use ISimpleAudioVolume
+                global unmappedList
                 sessions = AudioUtilities.GetAllSessions() # Scans sessions and locates the one with a name matching the sliderProcess
                 for session in sessions:
                     volume = session._ctl.QueryInterface(ISimpleAudioVolume)
-                    if session.Process and session.Process.name() not in [sliderProcess1, sliderProcess2, sliderProcess3, sliderProcess4]:
+                    # If an audio session is not assigned, change it's volume
+                    if session.Process and session.Process.name() not in unmappedList:
                         volume.SetMasterVolume(volume3, None) # Send updated volume value
 
             else: # If not master, use ISimpleAudioVolume
@@ -213,10 +217,12 @@ def volumeSlider4(volume4):
                 micVolume(volume4)
 
             elif sliderProcess == 'unmapped': # If not master, use ISimpleAudioVolume
+                global unmappedList
                 sessions = AudioUtilities.GetAllSessions() # Scans sessions and locates the one with a name matching the sliderProcess
                 for session in sessions:
                     volume = session._ctl.QueryInterface(ISimpleAudioVolume)
-                    if session.Process and session.Process.name() not in [sliderProcess1, sliderProcess2, sliderProcess3, sliderProcess4]:
+                    # If an audio session is not assigned, change it's volume
+                    if session.Process and session.Process.name() not in unmappedList:
                         volume.SetMasterVolume(volume4, None) # Send updated volume value
 
             else:
@@ -224,7 +230,7 @@ def volumeSlider4(volume4):
                 for session in sessions: # Scans sessions and locates the one with a name matching the sliderProcess
                     volume = session._ctl.QueryInterface(ISimpleAudioVolume)
                     if session.Process and session.Process.name() == sliderProcess:
-                        volume.SetMasterVolume(4, None)
+                        volume.SetMasterVolume(volume4, None)
 
 
 #------------------------------------------------------------------

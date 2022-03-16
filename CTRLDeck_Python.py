@@ -65,7 +65,8 @@ def saveSlider1(event):
     lineList[1] = ("\n" + sliderStr)
     portFile = open("COMport", "w")
     portFile.writelines(lineList)
-    portFile.close()  
+    portFile.close()
+    serialValuetoVolume.init()
 
 
 def saveSlider2(event):
@@ -85,6 +86,7 @@ def saveSlider2(event):
     portFile = open("COMport", "w")
     portFile.writelines(lineList)
     portFile.close()
+    serialValuetoVolume.init()
 
 
 def saveSlider3(event):
@@ -104,6 +106,7 @@ def saveSlider3(event):
     portFile = open("COMport", "w")
     portFile.writelines(lineList)
     portFile.close()
+    serialValuetoVolume.init()
 
 def saveSlider4(event):
     process_Name = str(sessionsVar_slider4.get())
@@ -122,6 +125,7 @@ def saveSlider4(event):
     portFile = open("COMport", "w")
     portFile.writelines(lineList)
     portFile.close()
+    serialValuetoVolume.init()
 
 # Opens filedialog and allows user to choose .exe file to which they wish to assign slider
 def chooseFile():
@@ -192,25 +196,68 @@ def onselect_1(evt):
     print(value)
     start = int(lineList[1].find(value))
     length= int(len(value))
-    stop = int(length + start)
-    value1 = (value[:start] + value[stop:-1])
+    stop = int(length + start + 1)
+    value1 = (lineList[1][:start] + lineList[1][stop:-1])
+    lineList[1] = value1
+    sessionLabel_1.delete(index)
     print(value1)
     portFile = open("COMport", "w")
     portFile.writelines(lineList)
     portFile.close()
 
 def onselect_2(evt):
+    global lineList
     w = evt.widget
-    index = int(w.curselection())
+    index = int(w.curselection()[0])
     value = w.get(index)
-    for item in lineList:
-        if item == value:
-            lineList.remove(item)
-        else:
-            pass
+    print(value)
+    start = int(lineList[2].find(value))
+    length= int(len(value))
+    stop = int(length + start + 1)
+    value1 = (lineList[2][:start] + lineList[2][stop:-1])
+    lineList[2] = value1
+    sessionLabel_2.delete(index)
+    print(value1)
     portFile = open("COMport", "w")
     portFile.writelines(lineList)
     portFile.close()
+
+def onselect_3(evt):
+    global lineList
+    w = evt.widget
+    index = int(w.curselection()[0])
+    value = w.get(index)
+    start = int(lineList[3].find(value))
+    length= int(len(value))
+    stop = int(length + start + 1)
+    value1 = (lineList[3][:start] + lineList[3][stop:-1])
+    lineList[3] = value1
+    if len(lineList[3]) == 1:
+    
+    sessionLabel_3.delete(index)
+    portFile = open("COMport", "w")
+    portFile.writelines(lineList)
+    portFile.close()
+    
+def onselect_4(evt):
+    w = evt.widget
+    index = int(w.curselection()[0])
+    value = w.get(index)
+    print(value)
+    start = int(lineList[4].find(value))
+    length= int(len(value))
+    stop = int(length + start + 1)
+    value1 = (lineList[4][:start] + lineList[4][stop:-1])
+    lineList[4] = value1
+    sessionLabel_4.delete(index)
+    print(value1)
+    portFile = open("COMport", "w")
+    portFile.writelines(lineList)
+    portFile.close()
+    try:
+        stri = lineList[4]
+    except IndexError:
+        lineList.append = "\n5"
 
 sessionLabel_1 = Listbox( frm, width=14, bd=0, height=3, selectmode="single" )
 sessionLabel_1.place(x=350, y=360)
@@ -220,10 +267,10 @@ sessionLabel_2.place(x=445, y=360)
 sessionLabel_2.bind('<<ListboxSelect>>', onselect_2)
 sessionLabel_3 = Listbox( frm, width=14, bd=0, height=3 )
 sessionLabel_3.place(x=540, y=360)
-sessionLabel_3.bind('<<ListboxSelect>>')
+sessionLabel_3.bind('<<ListboxSelect>>', onselect_3)
 sessionLabel_4 = Listbox( frm, width=14, bd=0, height=3 )
 sessionLabel_4.place(x=640, y=360)
-sessionLabel_4.bind('<<ListboxSelect>>')
+sessionLabel_4.bind('<<ListboxSelect>>', onselect_4)
 
 
 
@@ -287,6 +334,7 @@ def sliderRun():
 
     try: # Attempt to close the program first to make sure it isn't already running
         serialValuetoVolume.stop_program()
+        print("program stopped")
     except: # If the program throws an exception we assume it's because it's not currently running
         pass 
     serialValuetoVolume.init()
@@ -294,6 +342,10 @@ def sliderRun():
     serialValuetoVolume.getValues()
 
 def clicked():
+    try:
+        serialValuetoVolume.stop_program()
+    except:
+        pass
     # Creates thread and appends it to thread list
     global t
     t = threading.Thread(target=sliderRun) # Sets target function that should run in this thread
