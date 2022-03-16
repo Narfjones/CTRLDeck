@@ -9,8 +9,11 @@ CTRLDeck software in python using pyserial and tkinter
 - Compatible with pyinstaller .exe maker
 
 **Current Issues**
-- The keystrokes only get noticed if you hold them down for an extended time(Possibly an issue in the .ino sketches)(Only happens on some decks)
+- The keystrokes only get noticed if you hold them down for an extended time
+  -  Possibly an issue in the .ino sketches
+  -  Only happens on some decks
 - Added support for multiple processes on one slider
+  - Clicking on a process in the ListBox removes the process
 
 **To-do List**
 - Adjust GUI to match number of sliders in device(will require two-way serial communication)
