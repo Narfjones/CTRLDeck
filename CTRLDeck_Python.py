@@ -401,7 +401,7 @@ def hide_window():
     root.withdraw() # Hides GUI Window
     image=Image.open("fader.ico") 
     menu=(item('Slider 1: ' + sliderProcess1, 0), item('Slider 2: ' + sliderProcess2, 0), item('Slider 3: ' + sliderProcess3, 0),
-    item('Slider 4: ' + sliderProcess4, 0), item('Show', open_window) , item('Quit', on_closing)) # Creates right click menu and it's options in the system tray icon
+    item('Slider 4: ' + sliderProcess4, 0), item('Restart', clicked), item('Show', open_window) , item('Quit', on_closing)) # Creates right click menu and it's options in the system tray icon
     icon=pystray.Icon("name", image, "CTRLDeck", menu) # Creates click options on system tray icon
     icon.run() # Start system tray icon
 

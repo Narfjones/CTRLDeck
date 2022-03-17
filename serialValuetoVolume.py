@@ -286,7 +286,7 @@ def getValues():
                 else: # Skip if no sliders or no process assignments
                     pass
 
-                print(slider1, "|", slider2, "|", slider3, "|", slider4)
+                # print(slider1, "|", slider2, "|", slider3, "|", slider4)
 
                 # Wait for buffer to fill
                 sleep(.005)
