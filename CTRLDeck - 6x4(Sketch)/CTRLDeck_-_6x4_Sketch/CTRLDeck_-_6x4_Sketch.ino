@@ -21,9 +21,9 @@ int analogSliderValues[NUM_SLIDERS];
 float analogOutputValues[NUM_SLIDERS];
 
 char keys[ROWS][COLS] = {
-  {'6', '5'},
-  {'4', '3'},
-  {'2', '1'}
+  {'5', '6'},
+  {'3', '4'},
+  {'1', '2'}
 };
 
 byte rowPins[ROWS] = {6, 7, 8};
@@ -61,10 +61,10 @@ void loop() {
       Serial.println(key);
       switch (key) {
         case '1':
-          sendMacroCommand(KEY_F1);
+          sendMacroCommand(KEY_F13);
           break;
         case '2':
-          sendMacroCommand(KEY_F2);
+          sendMacroCommand(KEY_F14);
           break;
         case '3':
           sendMacroCommand(KEY_F15);

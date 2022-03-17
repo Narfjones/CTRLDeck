@@ -90,8 +90,8 @@ def connectSerial():
 # Accepts a float or int value respresenting decibels from Max=0 to Min=-60
 def masterVolume(volume5):
     # Take input of (0, 1) and map values to (-65.25, 0). Similar to arduino map() function
-            volume5 = float( (volume5 - 0)*(0 - -65.25) / (1 - 0) + -65.25)
-            volume5 = round(volume5, 1)
+            #volume5 = float( (volume5 - 0)*(0 - -65.25) / (1 - 0) + -65.25)
+            #volume5 = round(volume5, 1)
             
             # Get the devices for the system. Always returns active speaker device
             devices = AudioUtilities.GetSpeakers()
@@ -102,12 +102,12 @@ def masterVolume(volume5):
             volume = cast(interface, POINTER(IAudioEndpointVolume))
             
             # Send volume value to device. Must be float or int(min = -65.25, max = 0)
-            volume.SetMasterVolumeLevel(volume5, None)
+            volume.SetMasterVolumeLevelScalar(volume5, None)
 
 def micVolume(volume5):
     # Take input of (0, 1) and map values to (-65.25, 0). Similar to arduino map() function
-            volume5 = float( (volume5 - 0)*(6.0 - -64.0) / (1 - 0) + -64.00)
-            volume5 = round(volume5, 1)
+            #volume5 = float( (volume5 - 0)*(6.0 - 0) / (1 - 0) + 0)
+            #volume5 = round(volume5, 1)
             sleep(.005)
             
             # Get the devices for the system. Always returns active speaker device
@@ -117,9 +117,8 @@ def micVolume(volume5):
             interface = devices.Activate(
             IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
             volume = cast(interface, POINTER(IAudioEndpointVolume))
-            
-            # Send volume value to device. Must be float or int(min = -65.25, max = 0)
-            volume.SetMasterVolumeLevel(volume5, None)
+        
+            volume.SetMasterVolumeLevelScalar(volume5, None)
 
 # Takes assigned process from slider variable and sends the value to the audio endpoint to update volume
 def volumeSlider1(volume1):
@@ -286,6 +285,8 @@ def getValues():
                         slider4 = 'null'
                 else: # Skip if no sliders or no process assignments
                     pass
+
+                print(slider1, "|", slider2, "|", slider3, "|", slider4)
 
                 # Wait for buffer to fill
                 sleep(.005)

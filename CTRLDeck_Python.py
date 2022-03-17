@@ -238,10 +238,6 @@ def onselect_3(evt):
     w = evt.widget
     index = int(w.curselection()[0])
     value = w.get(index)
-    if len(lineList[3]) == 1:
-        lineList[3] += "4"
-    else:
-        pass
     start = int(lineList[3].find(value))
     length= int(len(value))
     stop = int(length + start + 1)
@@ -260,10 +256,6 @@ def onselect_4(evt):
     w = evt.widget
     index = int(w.curselection()[0])
     value = w.get(index)
-    if len(lineList[4]) == 1:
-        lineList[3] += "5"
-    else:
-        pass
     start = int(lineList[4].find(value))
     length= int(len(value))
     stop = int(length + start + 1)
