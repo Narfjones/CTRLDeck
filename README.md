@@ -17,9 +17,13 @@ CTRLDeck software in python using pyserial and tkinter
 ~- Added support for multiple processes on one slider
 ~  - Clicking on a process in the ListBox removes the process
 - No warning for 'COM port not chosen' exception
+- Currently limited to 4 faders
 
 **To-do List**
-- Adjust GUI to match number of sliders in device(will require two-way serial communication)
+- Make it extensible to control any number of sliders(most functions are written for each slider instead of a single iterable function per task)
+- Add two way serial communication
+- Add ability to assign the keystroke assignment to macro keys
+- Adjust GUI to match number of sliders in device automatically(will require two-way serial communication)
 - Add auto device(COMport) finder(will require two-way serial communication)
 - Clean up GUI( UX/UI )
 - Create modular circuit board for sliders and keys
@@ -29,5 +33,11 @@ CTRLDeck software in python using pyserial and tkinter
 
 This project is inspired by the **Deej** software written in **Go** by @omriharel. 
 The attached STLs were modified from designs of a macro and slider combo device by **MisterDeck**
+
+## Use CTRLdeck with your own macro keyboard
+  - The CTRLdeck software only controls the slider input. The other inputs are sent using the arduino Keyboard and Midi libraries.
+  - To use your own sliders with CTRLdeck they must output the potentiometer value as a number between 0 and 100 using the following format:
+          slider1 | slider2 | slider3 | slider4 
+  - CTRLdeck takes exclusive control of the serial device but if you are using an HID compatible controller(ATMega32u4), the macro commands will still pass to Windows
 
 **License:** MIT and GPL-3.0
