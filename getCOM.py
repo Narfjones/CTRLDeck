@@ -1,12 +1,17 @@
 import sys
 import glob
 import serial
+from time import sleep
 
 #------------------------------------------------------------------------#
 # Create list and populate it with available COM ports by checking all   #
 #           ports and appending them to list if they return              #
 #                   a response to the open command                       #
 #------------------------------------------------------------------------#
+
+chosenPort = None
+lineList = ["1", "\n2", "\n3", "\n4", "\n5"]
+ser = serial.Serial
 
 def serial_ports():
     """ 
@@ -38,6 +43,41 @@ def serial_ports():
             pass
     return result
 
+def findDeck():
+    global chosenPort
+    global ser
+    for i in serial_ports():
+        try:
+            ser = serial.Serial(
+            port = i,\
+            baudrate=9600,\
+            parity=serial.PARITY_NONE,\
+            stopbits=serial.STOPBITS_ONE,\
+            bytesize=serial.EIGHTBITS,\
+                timeout=0)
+            sleep(.001) # Short sleep is necessary apparently
+            print("Trying to connect to: " + i)
+            sleep(.01)
+            ser.write(b'1\r\n')
+            sleep(.010)
+            data = str(ser.readline())
+            sleep(.01)
+            print(data)
+            if data == "b'1'":
+                global lineList
+                chosenPort = str(i)
+                lineList[0] = chosenPort
+                portFile = open("COMport", "w")
+                portFile.writelines(lineList)
+                portFile.close()
+                print("Device found")
+                ser.write(b'2\r\n')
+                ser.close()
+            else:
+                pass
+                   #print(ser.readline())
+        except: # If an exception is thrown we assume it is already connected. This needs to be more specific.
+            pass
 
 if __name__ == '__main__':
-    print(serial_ports())
+    print(chosenPort)

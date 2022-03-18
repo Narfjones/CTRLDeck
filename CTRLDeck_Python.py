@@ -5,6 +5,7 @@ from tkinter import filedialog
 from collections import Counter
 from comtypes import NullHandler
 from getCOM import serial_ports
+from getCOM import findDeck
 from pystray import MenuItem as item
 import pystray
 from PIL import Image, ImageTk
@@ -183,7 +184,9 @@ def show():
     portLabel.config( textvariable = portsVar.get() )
 
 # Create port dropdown menu
-portDrop = OptionMenu(frm, portsVar, *portOptions, command=saveChoice).place(x = 375, y = 5)
+# portDrop = OptionMenu(frm, portsVar, *portOptions, command=saveChoice).place(x = 375, y = 5)
+if findDeck() != None:
+    portConnected = Label(frm, text = "Connected", height = 1, width = 10).place(x = 375, y = 5)
 
 # Create labels
 portLabel = Label( frm , textvariable = " " )
@@ -342,12 +345,7 @@ sessionLabel_slider4 = Label( frm, textvariable = " ")
 # This runs the functions that get serial data, convert to windows accepted values, and assign volumes
 def sliderRun():
     pythoncom.CoInitialize() # Necessary to run this function in another thread
-
-    try: # Attempt to close the program first to make sure it isn't already running
-        serialValuetoVolume.stop_program()
-        print("program stopped")
-    except: # If the program throws an exception we assume it's because it's not currently running
-        pass 
+    
     serialValuetoVolume.init()
     serialValuetoVolume.connectSerial()
     serialValuetoVolume.getValues()
@@ -371,7 +369,6 @@ startButton = Button(frm, text="Start CTRLdeck", command=clicked).place(x=720, y
 # This is the actual closing function which ends the program and it's associated threads. Only accessed by 'Quit' in the taskbar
 def on_closing(icon, item):
     serialValuetoVolume.stop_program() # serialValuetoVolume loop must be stopped before thread can be exited
-
     # Reset temp file so that the number of entries in list stays the same for next execute. Might be redundant.
     portFile = open("COMport", "w")
     lineList = ["1", "\n2", "\n3", "\n4", "\n5"]
@@ -389,6 +386,7 @@ def open_window(icon, item):
     root.lift() # Brings window to the front
     root.after( 0 , root.deiconify) # Destroys the system tray icon after the window is opened
     icon.stop() # Necessary to destroy system tray icon but I don't know why
+    findDeck()
 
 # Hide the window and show on the system taskbar
 def hide_window():

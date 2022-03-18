@@ -81,7 +81,10 @@ def connectSerial():
         bytesize=serial.EIGHTBITS,\
             timeout=0)
         sleep(.001) # Short sleep is necessary apparently
-        print("connected to: " + chosenPort)
+        print("connected to: " + chosenPort),
+        sleep(.01)
+        ser.write(b'1\r\n')
+        return (ser.in_waiting)
     except: # If an exception is thrown we assume it is already connected. Needs to be more specific.
         pass
 
@@ -240,6 +243,7 @@ def volumeSlider4(volume4):
 def getValues():
     while True: # Infinite loop unless trigger variable is changed by stop_program()
         sleep(.002)
+        print("getvalues")
         if (ser.in_waiting > 0): # Checks if there is data in the serial buffer. Always true if connected
 
                 # Create variables to store value to check against for change
@@ -290,7 +294,7 @@ def getValues():
 
                 # Wait for buffer to fill
                 sleep(.005)
-
+                print(slider1)
                 # Check new value against previous value and send new volume if it has changed
                 if slider1 != slider1previous:
                     slider1previous = slider1
@@ -328,6 +332,7 @@ def stop_program():
     global running
     running = False #Set trigger variable to false and loop will end on next iteration
     try: # Try to close the open port. If an exception is thrown we assume the port is already closed. Could be more specific.
+        ser.write(b'2\r\n')
         ser.close()
     except:
         pass
