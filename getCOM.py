@@ -57,27 +57,38 @@ def findDeck():
                 timeout=0)
             sleep(.001) # Short sleep is necessary apparently
             print("Trying to connect to: " + i)
+            #ser.write(b'2\r\n')
+            #sleep(.01)
+            ser.flush()
             sleep(.01)
             ser.write(b'1\r\n')
-            sleep(.010)
-            data = str(ser.readline())
             sleep(.01)
+            data = str(ser.readline())
             print(data)
             if data == "b'1'":
                 global lineList
                 chosenPort = str(i)
                 lineList[0] = chosenPort
                 portFile = open("COMport", "w")
-                portFile.writelines(lineList)
-                portFile.close()
-                print("Device found")
+                portFile.writelines(lineList)                
+                portFile.close()                
+                print("Device found and recorded")
+                sleep(.01)
                 ser.write(b'2\r\n')
                 ser.close()
+                print("connection closed")
+                break
             else:
-                pass
+                print("cannot store connection port")
+                break
                    #print(ser.readline())
         except: # If an exception is thrown we assume it is already connected. This needs to be more specific.
-            pass
+            try:
+                ser.flush()
+                ser.close()
+            except:
+                pass
+            print("reached exception")
 
 if __name__ == '__main__':
     print(chosenPort)

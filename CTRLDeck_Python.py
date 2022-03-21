@@ -2,16 +2,15 @@ from operator import iconcat
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
-from collections import Counter
-from comtypes import NullHandler
 from getCOM import serial_ports
 from getCOM import findDeck
 from pystray import MenuItem as item
 import pystray
-from PIL import Image, ImageTk
+from PIL import Image
 import serialValuetoVolume
 import threading
 import pythoncom
+from time import sleep
 
 # Create global variable for arduino port. Can't remember if it is still needed
 chosenPort = str()
@@ -58,12 +57,15 @@ def saveSlider1(event):
     sessionLabel_1.insert(END, process_Name) 
     #for i in sessionLabel_1.get(0):
     global lineList
+    portFile = open("COMport", "r")
+    lineList = portFile.readlines()
+    portFile.close()
     listSize = sessionLabel_1.size()
     sliderStr = ''
     sliderList = list(sessionLabel_1.get(0, listSize))
     for item in sliderList:
         sliderStr += str(item) + ","
-    lineList[1] = ("\n" + sliderStr)
+    lineList[1] = (sliderStr + "\n")
     portFile = open("COMport", "w")
     portFile.writelines(lineList)
     portFile.close()
@@ -78,12 +80,15 @@ def saveSlider2(event):
     else:
         pass
     sessionLabel_2.insert(END, process_Name)
+    portFile = open("COMport", "r")
+    lineList = portFile.readlines()
+    portFile.close()
     listSize = sessionLabel_2.size()
     sliderStr = ''
     sliderList = list(sessionLabel_2.get(0, listSize))
     for item in sliderList:
         sliderStr += str(item) + ","
-    lineList[2] = ("\n" + sliderStr)
+    lineList[2] = (sliderStr + "\n")
     portFile = open("COMport", "w")
     portFile.writelines(lineList)
     portFile.close()
@@ -98,12 +103,15 @@ def saveSlider3(event):
     else:
         pass
     sessionLabel_3.insert(END, process_Name)
+    portFile = open("COMport", "r")
+    lineList = portFile.readlines()
+    portFile.close()
     listSize = sessionLabel_3.size()
     sliderStr = ''
     sliderList = list(sessionLabel_3.get(0, listSize))
     for item in sliderList:
         sliderStr += str(item) + ","
-    lineList[3] = ("\n" + sliderStr)
+    lineList[3] = (sliderStr + "\n")
     portFile = open("COMport", "w")
     portFile.writelines(lineList)
     portFile.close()
@@ -117,12 +125,15 @@ def saveSlider4(event):
     else:
         pass
     sessionLabel_4.insert(END, process_Name)
+    portFile = open("COMport", "r")
+    lineList = portFile.readlines()
+    portFile.close()
     listSize = sessionLabel_4.size()
     sliderStr = ''
     sliderList = list(sessionLabel_4.get(0, listSize))
     for item in sliderList:
         sliderStr += str(item) + ","
-    lineList[4] = ("\n" + sliderStr)
+    lineList[4] = (sliderStr + "\n")
     portFile = open("COMport", "w")
     portFile.writelines(lineList)
     portFile.close()
@@ -185,8 +196,6 @@ def show():
 
 # Create port dropdown menu
 # portDrop = OptionMenu(frm, portsVar, *portOptions, command=saveChoice).place(x = 375, y = 5)
-if findDeck() != None:
-    portConnected = Label(frm, text = "Connected", height = 1, width = 10).place(x = 375, y = 5)
 
 # Create labels
 portLabel = Label( frm , textvariable = " " )
@@ -209,7 +218,7 @@ def onselect_1(evt):
     print(len(lineList[1]))
     # Prevent remove command from emptying the indices of lineList. If the number of indices changes the whole program will oh I don't know decide to rob a liquor store.
     if len(lineList[1]) < 3:
-        lineList[1] += "2" # Stick in default value for lineList to keep the right number of indices
+        lineList[1] += "2\n" # Stick in default value for lineList to keep the right number of indices
     else: 
         pass
     # Open file and write new lineList
@@ -229,7 +238,7 @@ def onselect_2(evt):
     lineList[2] = value1
     sessionLabel_2.delete(index)
     if len(lineList[2]) < 3:
-        lineList[2] += "3" # Stick in default value for lineList to keep the right number of indices
+        lineList[2] += "3\n" # Stick in default value for lineList to keep the right number of indices
     else: 
         pass
     portFile = open("COMport", "w")
@@ -248,7 +257,7 @@ def onselect_3(evt):
     lineList[3] = value1
     sessionLabel_3.delete(index)
     if len(lineList[3]) < 3:
-        lineList[3] += "4" # Stick in default value for lineList to keep the right number of indices
+        lineList[3] += "4\n" # Stick in default value for lineList to keep the right number of indices
     else: 
         pass
     portFile = open("COMport", "w")
@@ -266,7 +275,7 @@ def onselect_4(evt):
     lineList[4] = value1
     sessionLabel_4.delete(index)
     if len(lineList[4]) < 3:
-        lineList[4] += "5" # Stick in default value for lineList to keep the right number of indices
+        lineList[4] += "5\n" # Stick in default value for lineList to keep the right number of indices
     else: 
         pass
     portFile = open("COMport", "w")
@@ -345,18 +354,19 @@ sessionLabel_slider4 = Label( frm, textvariable = " ")
 # This runs the functions that get serial data, convert to windows accepted values, and assign volumes
 def sliderRun():
     pythoncom.CoInitialize() # Necessary to run this function in another thread
-    
     serialValuetoVolume.init()
     serialValuetoVolume.connectSerial()
     serialValuetoVolume.getValues()
 
+
 def clicked():
+    global t
     try:
         serialValuetoVolume.stop_program()
+        t.join()
     except:
         pass
     # Creates thread and appends it to thread list
-    global t
     t = threading.Thread(target=sliderRun) # Sets target function that should run in this thread
     threads.append(t)
     t.start() # Starting thread runs the target function
@@ -386,7 +396,6 @@ def open_window(icon, item):
     root.lift() # Brings window to the front
     root.after( 0 , root.deiconify) # Destroys the system tray icon after the window is opened
     icon.stop() # Necessary to destroy system tray icon but I don't know why
-    findDeck()
 
 # Hide the window and show on the system taskbar
 def hide_window():
@@ -403,6 +412,8 @@ def hide_window():
     icon=pystray.Icon("name", image, "CTRLDeck", menu) # Creates click options on system tray icon
     icon.run() # Start system tray icon
 
+
 # Loops the window processes
 root.protocol("WM_DELETE_WINDOW", hide_window)
+findDeck()
 root.mainloop()

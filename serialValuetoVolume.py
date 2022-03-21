@@ -72,6 +72,11 @@ def init():
 # Create serial connect with chosen COM port(from COMport data file) and store in global serial variable
 def connectSerial():
     global ser
+    global chosenPort
+    try:
+        ser.close()
+    except:
+        pass
     try:
         ser = serial.Serial(
         port = chosenPort,\
@@ -79,13 +84,14 @@ def connectSerial():
         parity=serial.PARITY_NONE,\
         stopbits=serial.STOPBITS_ONE,\
         bytesize=serial.EIGHTBITS,\
-            timeout=0)
+           timeout=0)
         sleep(.001) # Short sleep is necessary apparently
-        print("connected to: " + chosenPort),
-        sleep(.01)
-        ser.write(b'1\r\n')
-        return (ser.in_waiting)
+        ser.flush()
+        ser.write(b'3\r\n')
+        print("Connected to:" + chosenPort)
+        return (ser.in_waiting())
     except: # If an exception is thrown we assume it is already connected. Needs to be more specific.
+        print("already Connected")
         pass
 
 # Master volume communicates with Windows through IAudioEndPointVolume instead of ISimpleAudioVolume.
@@ -243,9 +249,9 @@ def volumeSlider4(volume4):
 def getValues():
     while True: # Infinite loop unless trigger variable is changed by stop_program()
         sleep(.002)
-        print("getvalues")
         if (ser.in_waiting > 0): # Checks if there is data in the serial buffer. Always true if connected
-
+                ser.reset_input_buffer()
+                sleep(.005)
                 # Create variables to store value to check against for change
                 slider1previous = float()
                 slider2previous = float()
@@ -269,12 +275,18 @@ def getValues():
                     global slider3
                     global slider4
                     sleep(.002)
-                    # Convert digit strings to integer, maps (0,100) input to (0,1) output and rounds to two decimal places
-                    slider1 = float(float(slider1str) * .01) # The smallest number of sliders is 2 so this will always run. 
-                    slider1 = round(slider1, 2)
+                    try:
+                        # Convert digit strings to integer, maps (0,100) input to (0,1) output and rounds to two decimal places
+                        slider1 = float(float(slider1str) * .01) # The smallest number of sliders is 2 so this will always run. 
+                        slider1 = round(slider1, 2)
+                    except:
+                        print("no value")
 
-                    slider2 = float(float(slider2str) * .01) # The smallest number of sliders is 2 so this will always run
-                    slider2 = round(slider2, 2)
+                    try:
+                        slider2 = float(float(slider2str) * .01) # The smallest number of sliders is 2 so this will always run
+                        slider2 = round(slider2, 2)
+                    except:
+                        print("no value")
 
                     try: # Runs if there is a slider 3 with an assignment
                         slider3 = float(float(slider3str) * .01) 
@@ -290,11 +302,11 @@ def getValues():
                 else: # Skip if no sliders or no process assignments
                     pass
 
-                # print(slider1, "|", slider2, "|", slider3, "|", slider4)
+                print(slider1, "|", slider2, "|", slider3, "|", slider4)
 
                 # Wait for buffer to fill
                 sleep(.005)
-                print(slider1)
+
                 # Check new value against previous value and send new volume if it has changed
                 if slider1 != slider1previous:
                     slider1previous = slider1
@@ -333,6 +345,7 @@ def stop_program():
     running = False #Set trigger variable to false and loop will end on next iteration
     try: # Try to close the open port. If an exception is thrown we assume the port is already closed. Could be more specific.
         ser.write(b'2\r\n')
+        ser.flush()
         ser.close()
     except:
         pass
