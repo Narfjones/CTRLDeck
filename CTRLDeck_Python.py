@@ -14,6 +14,7 @@ from time import sleep
 
 # Create global variable for arduino port. Can't remember if it is still needed
 chosenPort = str()
+comconnected = False
 
 # Create list variable to hold information in buffer file. It must hold these variables so that we don't reference empty indices
 global lineList
@@ -361,6 +362,7 @@ def sliderRun():
 
 def clicked():
     global t
+    global comconnected
     try:
         serialValuetoVolume.stop_program()
         t.join()
@@ -372,6 +374,7 @@ def clicked():
     t.start() # Starting thread runs the target function
     global startButton
     startButton = Button(frm, text="Restart CTRLdeck", command=clicked).place(x=720, y=450) # Rename the 'start' button to 'restart'
+    comconnected = True
 
 # Creates start button that runs the clicked which kicks off the actual program
 startButton = Button(frm, text="Start CTRLdeck", command=clicked).place(x=720, y=450)
