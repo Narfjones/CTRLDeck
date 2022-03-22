@@ -2,8 +2,8 @@ from __future__ import print_function
 from tkinter.constants import X
 import serial
 from time import sleep
-import strstr
-from pycaw.pycaw import AudioUtilities, ISimpleAudioVolume, IAudioEndpointVolume
+import time
+from pycaw.pycaw import DEVICE_STATE, AudioUtilities, ISimpleAudioVolume, IAudioEndpointVolume
 from ctypes import POINTER, cast
 from comtypes import CLSCTX_ALL 
 
@@ -48,7 +48,11 @@ def init():
     global volume3
     global volume4
     global running
+    global devices
+    global sessions
     
+    devices = AudioUtilities.GetSpeakers() # Gets Audio End Point Devices (Speakers, Headphones, Microphones, etc.)
+    sessions = AudioUtilities.GetAllSessions() # Scans sessions and locates the one with a name matching the sliderProcess
     portFile = open("COMport", "r")
     fileLines = portFile.readlines()
     chosenPort = str(fileLines[0]) # Line 1 is the chosen COMport
@@ -85,31 +89,80 @@ def connectSerial():
     except: # If an exception is thrown we assume it is already connected. Needs to be more specific.
         pass
 
+
+#---------------------------------------------------------------------------------
+#   Receive Serial data, extract slider values, and store them as strings
+#---------------------------------------------------------------------------------
+def serial_conversion_1(line):
+
+    sliderlst1 = line.split("|")
+    try:
+        slider1str = str(sliderlst1[0])
+    except IndexError:     
+        slider1str = 'null'   
+    return slider1str
+
+def serial_conversion_2(line):
+
+    sliderlst2 = line.split("|")
+    try:
+        slider2str = str(sliderlst2[1])
+    except IndexError:
+        slider2str = 'null'
+    return slider2str
+
+def serial_conversion_3(line):
+
+    sliderlst3 = line.split("|")
+    try:
+        slider3str = str(sliderlst3[2])
+    except IndexError:
+        slider3str = 'null'
+    return slider3str
+
+def serial_conversion_4(line):
+
+    sliderlst4 = line.split("|")
+    try:
+        slider4str = str(sliderlst4[3])
+    except IndexError:
+        slider4str = 'null'
+    return slider4str
+
+#---------------------------------------------------------------------------------
+#   Get Devices and store them for use. Doing this in the loop slows down slider.
+#   I would like to add an event to update this when a new device is detected.
+#---------------------------------------------------------------------------------
+
+def getSessionsSpeakers():
+    global devices
+    global sessions
+    devices = AudioUtilities.GetSpeakers()
+    sessions = AudioUtilities.GetAllSessions() # Scans sessions and locates the one with a name matching the sliderProcess
+
+
 # Master volume communicates with Windows through IAudioEndPointVolume instead of ISimpleAudioVolume.
 # Think of it as turning your speakers down instead of sliding the volume mixer fader down.
 # Accepts a float or int value respresenting decibels from Max=0 to Min=-60
 def masterVolume(volume5):
-    # Take input of (0, 1) and map values to (-65.25, 0). Similar to arduino map() function
-            #volume5 = float( (volume5 - 0)*(0 - -65.25) / (1 - 0) + -65.25)
-            #volume5 = round(volume5, 1)
-            
+            global devices
+            global sessions
+
             # Get the devices for the system. Always returns active speaker device
-            devices = AudioUtilities.GetSpeakers()
+            #devices = AudioUtilities.GetSpeakers()
+            #print(type(devices))
             
             # Activate the interface with the speaker device so you can get and set volume.
             interface = devices.Activate(
             IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
             volume = cast(interface, POINTER(IAudioEndpointVolume))
+            #print("Time to setup interface: " + str(time.perf_counter()))
             
             # Send volume value to device. Must be float or int(min = -65.25, max = 0)
             volume.SetMasterVolumeLevelScalar(volume5, None)
+            #print("Time to set volume: " + str(time.perf_counter()))
 
-def micVolume(volume5):
-    # Take input of (0, 1) and map values to (-65.25, 0). Similar to arduino map() function
-            #volume5 = float( (volume5 - 0)*(6.0 - 0) / (1 - 0) + 0)
-            #volume5 = round(volume5, 1)
-            sleep(.005)
-            
+def micVolume(volume5):          
             # Get the devices for the system. Always returns active speaker device
             devices = AudioUtilities.GetMicrophone()
                         
@@ -122,6 +175,8 @@ def micVolume(volume5):
 
 # Takes assigned process from slider variable and sends the value to the audio endpoint to update volume
 def volumeSlider1(volume1):
+    global devices
+    global sessions
     # print(sliderProcess1)
     for sliderProcess in sliderProcess1:
         if sliderProcess != None: # Only runs if the sliderProcess was chosen
@@ -129,13 +184,14 @@ def volumeSlider1(volume1):
             # 'master' uses EndpointVolume while processes are done with ISimpleAudioVolume
             if sliderProcess == "master":
                 masterVolume(volume1)
+                #print("Time to assign sliderProcess: " + str(time.perf_counter()))
 
             elif sliderProcess == "microphone":
                 micVolume(volume1)
 
             elif sliderProcess == 'unmapped': # If not master, use ISimpleAudioVolume
                 global unmappedList
-                sessions = AudioUtilities.GetAllSessions() # Scans sessions and locates the one with a name matching the sliderProcess
+                # sessions = AudioUtilities.GetAllSessions() # Scans sessions and locates the one with a name matching the sliderProcess
                 for session in sessions:
                     volume = session._ctl.QueryInterface(ISimpleAudioVolume)
                     # If an audio session is not assigned, change it's volume
@@ -143,7 +199,7 @@ def volumeSlider1(volume1):
                         volume.SetMasterVolume(volume1, None) # Send updated volume value
 
             else:
-                sessions = AudioUtilities.GetAllSessions() # Scans sessions and locates the one with a name matching the sliderProcess
+                #sessions = AudioUtilities.GetAllSessions() # Scans sessions and locates the one with a name matching the sliderProcess
                 for session in sessions:
                     volume = session._ctl.QueryInterface(ISimpleAudioVolume)
                     if session.Process and session.Process.name() == sliderProcess:
@@ -152,6 +208,8 @@ def volumeSlider1(volume1):
       
 # Takes assigned process from slider variable and sends the value to the audio endpoint to update volume
 def volumeSlider2(volume2):
+    global devices
+    global sessions
     for sliderProcess in sliderProcess2:
         if sliderProcess != None:
             # 'master' uses EndpointVolume while processes are done with SimpleAudioVolume
@@ -163,7 +221,7 @@ def volumeSlider2(volume2):
 
             elif sliderProcess == 'unmapped': # If not master, use ISimpleAudioVolume
                 global unmappedList
-                sessions = AudioUtilities.GetAllSessions() # Scans sessions and locates the one with a name matching the sliderProcess
+                # sessions = AudioUtilities.GetAllSessions() # Scans sessions and locates the one with a name matching the sliderProcess
                 for session in sessions:
                     volume = session._ctl.QueryInterface(ISimpleAudioVolume)
                     # If an audio session is not assigned, change it's volume
@@ -171,7 +229,7 @@ def volumeSlider2(volume2):
                         volume.SetMasterVolume(volume2, None) # Send updated volume value
 
             else: # If not master, use ISimpleAudioVolume
-                sessions = AudioUtilities.GetAllSessions()
+                # sessions = AudioUtilities.GetAllSessions()
                 for session in sessions: # Scans sessions and locates the one with a name matching the sliderProcess
                     volume = session._ctl.QueryInterface(ISimpleAudioVolume)
                     if session.Process and session.Process.name() == sliderProcess:
@@ -179,6 +237,8 @@ def volumeSlider2(volume2):
 
 # Takes assigned process from slider variable and sends the value to the audio endpoint to update volume
 def volumeSlider3(volume3):
+    global devices
+    global sessions
     for sliderProcess in sliderProcess3:
         if sliderProcess != None:
             # 'master' uses EndpointVolume while processes are done with SimpleAudioVolume
@@ -190,7 +250,7 @@ def volumeSlider3(volume3):
 
             elif sliderProcess == 'unmapped': # If not master, use ISimpleAudioVolume
                 global unmappedList
-                sessions = AudioUtilities.GetAllSessions() # Scans sessions and locates the one with a name matching the sliderProcess
+                # sessions = AudioUtilities.GetAllSessions() # Scans sessions and locates the one with a name matching the sliderProcess
                 for session in sessions:
                     volume = session._ctl.QueryInterface(ISimpleAudioVolume)
                     # If an audio session is not assigned, change it's volume
@@ -198,7 +258,7 @@ def volumeSlider3(volume3):
                         volume.SetMasterVolume(volume3, None) # Send updated volume value
 
             else: # If not master, use ISimpleAudioVolume
-                sessions = AudioUtilities.GetAllSessions()
+                # sessions = AudioUtilities.GetAllSessions()
                 for session in sessions: # Scans sessions and locates the one with a name matching the sliderProcess
                     volume = session._ctl.QueryInterface(ISimpleAudioVolume)
                     if session.Process and session.Process.name() == sliderProcess:
@@ -206,6 +266,8 @@ def volumeSlider3(volume3):
 
 # Takes assigned process from slider variable and sends the value to the audio endpoint to update volume               
 def volumeSlider4(volume4):
+    global devices
+    global sessions
     for sliderProcess in sliderProcess4:
         if sliderProcess != None:
             # 'master' uses EndpointVolume while processes are done with SimpleAudioVolume
@@ -217,7 +279,7 @@ def volumeSlider4(volume4):
 
             elif sliderProcess == 'unmapped': # If not master, use ISimpleAudioVolume
                 global unmappedList
-                sessions = AudioUtilities.GetAllSessions() # Scans sessions and locates the one with a name matching the sliderProcess
+                # sessions = AudioUtilities.GetAllSessions() # Scans sessions and locates the one with a name matching the sliderProcess
                 for session in sessions:
                     volume = session._ctl.QueryInterface(ISimpleAudioVolume)
                     # If an audio session is not assigned, change it's volume
@@ -225,7 +287,7 @@ def volumeSlider4(volume4):
                         volume.SetMasterVolume(volume4, None) # Send updated volume value
 
             else:
-                sessions = AudioUtilities.GetAllSessions()
+                # sessions = AudioUtilities.GetAllSessions()
                 for session in sessions: # Scans sessions and locates the one with a name matching the sliderProcess
                     volume = session._ctl.QueryInterface(ISimpleAudioVolume)
                     if session.Process and session.Process.name() == sliderProcess:
@@ -239,7 +301,12 @@ def volumeSlider4(volume4):
 
 def getValues():
     while True: # Infinite loop unless trigger variable is changed by stop_program()
-        sleep(.002)
+        #timeStart = float( time.perf_counter())
+        getSessionsSpeakers()
+        #timeEnd = float( time.perf_counter())
+        #timeTaken = str(timeEnd - timeStart)
+        #print("Got Sessions and Speakers: " + timeTaken )
+
         if (ser.in_waiting > 0): # Checks if there is data in the serial buffer. Always true if connected
 
                 # Create variables to store value to check against for change
@@ -248,23 +315,31 @@ def getValues():
                 slider3previous = float()
                 slider4previous = float()
 
+                #timeStart = float( time.perf_counter())
                 # create string, convert serial input data to a string a store it
                 line =  str(ser.readline())
                 ser.reset_input_buffer()
-                sleep(.002) # Necessary or the function will throw exception
+                #timeEnd = float( time.perf_counter())
+                #timeTaken = str(timeEnd - timeStart)
+                #print("Got Serial Data: " + timeTaken )
 
+                # timeStart = float( time.perf_counter())
                 # Get numbers out of serial data. This will be empty if slider has no assignment
-                slider1str = ''.join(x for x in strstr.serial_conversion_1(line) if x.isdigit())
-                slider2str = ''.join(i for i in strstr.serial_conversion_2(line) if i.isdigit())
-                slider3str = ''.join(j for j in strstr.serial_conversion_3(line) if j.isdigit())
-                slider4str = ''.join(k for k in strstr.serial_conversion_4(line) if k.isdigit())
+                slider1str = ''.join(x for x in serial_conversion_1(line) if x.isdigit())
+                slider2str = ''.join(i for i in serial_conversion_2(line) if i.isdigit())
+                slider3str = ''.join(j for j in serial_conversion_3(line) if j.isdigit())
+                slider4str = ''.join(k for k in serial_conversion_4(line) if k.isdigit())
+                # timeEnd = float( time.perf_counter())
+                # timeTaken = str(timeEnd - timeStart)
+                # print("String Convserion: " + timeTaken )
 
                 if (slider1str != '' or slider2str !='' or slider3str != '' or slider4str != ''): # Runs if any slider has process assignment
                     global slider1
                     global slider2
                     global slider3
                     global slider4
-                    sleep(.002)
+
+                    # timeStart = float( time.perf_counter())
                     # Convert digit strings to integer, maps (0,100) input to (0,1) output and rounds to two decimal places
                     slider1 = float(float(slider1str) * .01) # The smallest number of sliders is 2 so this will always run. 
                     slider1 = round(slider1, 2)
@@ -285,12 +360,37 @@ def getValues():
                         slider4 = 'null'
                 else: # Skip if no sliders or no process assignments
                     pass
+                # timeEnd = float( time.perf_counter())
+                # timeTaken = str(timeEnd - timeStart)
+                # print("Store Values: " + timeTaken )
+            
+                # timeStart = float( time.perf_counter())
+                # These are currently acting as a deadband. There is probably a better way.
+                if slider1 <= .02:
+                        slider1 = 0.00
+                        volumeSlider1(slider1)
+                else:
+                    pass
+                if slider2 <= .02:
+                        slider2 = 0.00
+                        volumeSlider2(slider2)
+                else:
+                    pass
+                if slider3 <= .02:
+                        slider3 = 0.00
+                        volumeSlider3(slider3)
+                else:
+                    pass
+                if slider4 <= .02:
+                        slider4 = 0.00
+                        volumeSlider4(slider4)
+                else:
+                    pass
+                # timeEnd = float( time.perf_counter())
+                # timeTaken = str(timeEnd - timeStart)
+                # print("Dead Band: " + timeTaken )
 
-                # print(slider1, "|", slider2, "|", slider3, "|", slider4)
-
-                # Wait for buffer to fill
-                sleep(.005)
-
+                # timeStart = float( time.perf_counter())
                 # Check new value against previous value and send new volume if it has changed
                 if slider1 != slider1previous:
                     slider1previous = slider1
@@ -312,14 +412,16 @@ def getValues():
                     volumeSlider4(slider4)
                 else: # If volume is the same as last iteration do nothing
                     pass
-                
-                # print(slider1, slider2, slider3, slider4)
+                # timeEnd = float( time.perf_counter())
+                # timeTaken = str(timeEnd - timeStart)
+                # print("Check values and send: " + timeTaken )
 
                 # Check variable to see if main program has requested termination. Loop must stop for thread to be ended.
                 if running == False:
                     break
                 else:
                     pass
+
 
 
 # Used to end while loop in getValues(). Must be used before thread can terminate.

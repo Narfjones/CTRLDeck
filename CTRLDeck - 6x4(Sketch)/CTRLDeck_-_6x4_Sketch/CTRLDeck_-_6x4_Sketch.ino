@@ -17,7 +17,7 @@ const int NUM_SLIDERS = 4;
 
 const int analogInputs[NUM_SLIDERS] = {A0, A1, A2, A3};
 
-int analogSliderValues[NUM_SLIDERS];
+float  analogSliderValues[NUM_SLIDERS];
 float analogOutputValues[NUM_SLIDERS];
 
 char keys[ROWS][COLS] = {
@@ -87,14 +87,14 @@ void loop() {
    updateSliderValues();
    sendSliderValues();
    Serial.flush();
-    delay(10);
+    delay(5);
 
 }
 
 
 void updateSliderValues() {
   for (int i = 0; i < NUM_SLIDERS; i++) {
-     analogSliderValues[i] = map(analogRead(analogInputs[i]), 0, 1023, 0, 100);
+     analogSliderValues[i] = map(analogRead(analogInputs[i]), 0, 1022, 0,100);
   }
   
 }
