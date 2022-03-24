@@ -2,7 +2,6 @@ from __future__ import print_function
 from tkinter.constants import X
 import serial
 from time import sleep
-import time
 from pycaw.pycaw import DEVICE_STATE, AudioUtilities, ISimpleAudioVolume, IAudioEndpointVolume
 from ctypes import POINTER, cast
 from comtypes import CLSCTX_ALL 
