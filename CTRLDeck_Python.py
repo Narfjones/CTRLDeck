@@ -17,7 +17,8 @@ chosenPort = str()
 
 # Create list variable to hold information in buffer file. It must hold these variables so that we don't reference empty indices
 global lineList
-lineList = ["1", "\n2", "\n3", "\n4", "\n5"] # Default value to maintain the correct number of indicies. 
+lineList = ["1", "\n2", "\n3", "\n4", "\n5"] # Default value to maintain the correct number of indicies.
+macroList = ["1", "\n2", "\n3", "\n4", "\n5", "\n6", "\n7", "\n8", "\n9", "\n10", "\n11", "\n12"] 
 
 # Variable for systray icon
 global icon
@@ -151,7 +152,7 @@ def chooseFile():
 # Create Window
 root = Tk()
 root.title("CTRLdeck")
-root.geometry('827x508')
+root.geometry('1240x720')
 
 # Create background image
 bg = PhotoImage(file = "6x4deck-bkgrd.png")
@@ -163,6 +164,26 @@ frm = ttk.Frame(root, padding = 0)
 frm.grid()
 labelbg = Label(frm, image = bg, width = bg.width(), height = bg.height())
 labelbg.grid(column = 0, row = 0)
+
+
+#----------------------------------------------------------------------
+## canvas = Canvas(root, width=1240, height=762)
+## canvas.pack(fill=BOTH, expand=True)
+
+## canvas.create_image(0, 0, image=bg, anchor='nw')
+#
+#def resize_image(e):
+#   global image, resized, image2
+#   # open image to resize it
+#   image = Image.open("6x4deck-bkgrd.png")
+#   # resize the image with width and height of root
+#   resized = image.resize((e.width, e.height), Image.ANTIALIAS)
+#
+#   image2 = ImageTk.PhotoImage(resized)
+#   canvas.create_image(0, 0, image=image2, anchor='nw')
+
+# root.bind("<Configure>", resize_image)
+#----------------------------------------------------------------------
 
 
 #----------------------------------------------------------------------------
@@ -183,7 +204,7 @@ def show():
     portLabel.config( textvariable = portsVar.get() )
 
 # Create port dropdown menu
-portDrop = OptionMenu(frm, portsVar, *portOptions, command=saveChoice).place(x = 375, y = 5)
+portDrop = OptionMenu(frm, portsVar, *portOptions, command=saveChoice).place(x = 30, y = 25)
 
 # Create labels
 portLabel = Label( frm , textvariable = " " )
@@ -271,16 +292,16 @@ def onselect_4(evt):
     portFile.close()
 
 sessionLabel_1 = Listbox( frm, width=14, bd=0, height=3, selectmode="single" )
-sessionLabel_1.place(x=350, y=360)
+sessionLabel_1.place(x=1075, y=135)
 sessionLabel_1.bind('<<ListboxSelect>>', onselect_1)
 sessionLabel_2 = Listbox( frm, width=14, bd=0, height=3 )
-sessionLabel_2.place(x=445, y=360)
+sessionLabel_2.place(x=1075, y=230)
 sessionLabel_2.bind('<<ListboxSelect>>', onselect_2)
 sessionLabel_3 = Listbox( frm, width=14, bd=0, height=3 )
-sessionLabel_3.place(x=540, y=360)
+sessionLabel_3.place(x=1075, y=327)
 sessionLabel_3.bind('<<ListboxSelect>>', onselect_3)
 sessionLabel_4 = Listbox( frm, width=14, bd=0, height=3 )
-sessionLabel_4.place(x=640, y=360)
+sessionLabel_4.place(x=1075, y=440)
 sessionLabel_4.bind('<<ListboxSelect>>', onselect_4)
 
 
@@ -315,28 +336,28 @@ sessionsVar_slider4.set("Slider 4")
 def show_audio_sessions_slider1():
     sessionLabel_slider1.config( textvariable = sessionsVar_slider1.get() )
 
-sessionsDrop_slider1 = OptionMenu(frm, sessionsVar_slider1, *sessionOptions, command=saveSlider1).place(x=345, y=60)
+sessionsDrop_slider1 = OptionMenu(frm, sessionsVar_slider1, *sessionOptions, command=saveSlider1).place(x=455, y=60)
 sessionLabel_slider1 = Label( frm , textvariable = " " )
 
 # Create session dropdown label for slider2
 def show_audio_sessions_slider2():
     sessionLabel_slider2.config( textvariable = sessionsVar_slider2.get())
 
-sessionsDrop_slider2 = OptionMenu(frm, sessionsVar_slider2, *sessionOptions, command=saveSlider2).place(x=440, y=60)
+sessionsDrop_slider2 = OptionMenu(frm, sessionsVar_slider2, *sessionOptions, command=saveSlider2).place(x=590, y=60)
 sessionLabel_slider2 = Label( frm, textvariable = " ")
 
 # Create session dropdown label for slider3
 def show_audio_sessions_slider3():
     sessionLabel_slider3.config( textvariable = sessionsVar_slider3.get())
 
-sessionsDrop_slider3 = OptionMenu(frm, sessionsVar_slider3, *sessionOptions, command=saveSlider3).place(x=535, y=60)
+sessionsDrop_slider3 = OptionMenu(frm, sessionsVar_slider3, *sessionOptions, command=saveSlider3).place(x=720, y=60)
 sessionLabel_slider3 = Label( frm, textvariable = " ")
 
 # Create session dropdown label for slider4
 def show_audio_sessions_slider4():
     sessionLabel_slider4.config( textvariable = sessionsVar_slider4.get())
 
-sessionsDrop_slider4 = OptionMenu(frm, sessionsVar_slider4, *sessionOptions, command=saveSlider4).place(x=630, y=60)
+sessionsDrop_slider4 = OptionMenu(frm, sessionsVar_slider4, *sessionOptions, command=saveSlider4).place(x=850, y=60)
 sessionLabel_slider4 = Label( frm, textvariable = " ")
 
 # This runs the functions that get serial data, convert to windows accepted values, and assign volumes
@@ -363,10 +384,10 @@ def clicked():
     threads.append(t)
     t.start() # Starting thread runs the target function
     global startButton
-    startButton = Button(frm, text="Restart CTRLdeck", command=clicked).place(x=720, y=450) # Rename the 'start' button to 'restart'
+    startButton = Button(frm, text="Restart CTRLdeck", command=clicked).place(x=1110, y=670) # Rename the 'start' button to 'restart'
 
 # Creates start button that runs the clicked which kicks off the actual program
-startButton = Button(frm, text="Start CTRLdeck", command=clicked).place(x=720, y=450)
+startButton = Button(frm, text="Start CTRLdeck", command=clicked).place(x=1110, y=670)
 
 # This is the actual closing function which ends the program and it's associated threads. Only accessed by 'Quit' in the taskbar
 def on_closing(icon, item):
