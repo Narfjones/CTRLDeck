@@ -291,7 +291,7 @@ def onselect_4(evt):
     portFile.writelines(lineList)
     portFile.close()
 
-sessionLabel_1 = Listbox( frm, width=14, bd=0, height=3, selectmode="single" )
+sessionLabel_1 = Listbox( frm, width=14, bd=0, height=3, selectmode="single", borderwidth=0,  )
 sessionLabel_1.place(x=1075, y=135)
 sessionLabel_1.bind('<<ListboxSelect>>', onselect_1)
 sessionLabel_2 = Listbox( frm, width=14, bd=0, height=3 )
@@ -384,10 +384,10 @@ def clicked():
     threads.append(t)
     t.start() # Starting thread runs the target function
     global startButton
-    startButton = Button(frm, text="Restart CTRLdeck", command=clicked).place(x=1110, y=670) # Rename the 'start' button to 'restart'
+    startButton = ttk.Button(frm, text="Restart CTRLdeck", command=clicked).place(x=1110, y=670) # Rename the 'start' button to 'restart'
 
 # Creates start button that runs the clicked which kicks off the actual program
-startButton = Button(frm, text="Start CTRLdeck", command=clicked).place(x=1110, y=670)
+startButton = ttk.Button(frm, text="Start CTRLdeck", command=clicked).place(x=1110, y=670)
 
 # This is the actual closing function which ends the program and it's associated threads. Only accessed by 'Quit' in the taskbar
 def on_closing(icon, item):

@@ -49,6 +49,8 @@ void setup() {
 void sendMacroCommand(uint8_t key) {
   Keyboard.press(KEY_LEFT_CTRL);
   Keyboard.press(key);
+  delay(20);
+  Keyboard.releaseAll();
 }
 
 
@@ -80,14 +82,11 @@ void loop() {
           break;
       }
 
-      delay(30);
-      Keyboard.releaseAll();
-
     }
    updateSliderValues();
    sendSliderValues();
    Serial.flush();
-    delay(5);
+    delay(10);
 
 }
 
