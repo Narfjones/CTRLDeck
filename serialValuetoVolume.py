@@ -78,7 +78,7 @@ def connectSerial():
     try:
         ser = serial.Serial(
         port = chosenPort,\
-        baudrate=9600,\
+        baudrate=115200,\
         parity=serial.PARITY_NONE,\
         stopbits=serial.STOPBITS_ONE,\
         bytesize=serial.EIGHTBITS,\
