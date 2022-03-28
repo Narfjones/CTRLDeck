@@ -29,7 +29,7 @@ CTRLDeck software in python using pyserial and tkinter
 - Create modular circuit board for sliders and keys
 - Cross-Platform Support(Probably not going to bother with this one myself)
 - Instructions for use on first launch
-- Add slider assignment options and restart to system tray icon
+- Add Logging
 
 This project is inspired by the **Deej** software written in **Go** by @omriharel. 
 The attached STLs were modified from designs of a macro and slider combo device by **MisterDeck**
