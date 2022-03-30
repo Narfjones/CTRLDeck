@@ -48,6 +48,8 @@ void setup() {
 
 void sendMacroCommand(uint8_t key) {
   Keyboard.press(KEY_LEFT_CTRL);
+  Keyboard.press(KEY_LEFT_SHIFT);
+  Keyboard.press(KEY_LEFT_ALT);
   Keyboard.press(key);
   delay(10);
   Keyboard.releaseAll();

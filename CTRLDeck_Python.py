@@ -11,6 +11,7 @@ from PIL import Image, ImageTk
 import serialValuetoVolume
 import threading
 import pythoncom
+import logging
 
 # Create global variable for arduino port. Can't remember if it is still needed
 chosenPort = str()
@@ -25,6 +26,8 @@ global icon
 
 # List to which we append threads
 threads = []
+# Create log file
+logging.basicConfig(filename='ctrldeck.log', filemode= 'w', encoding='utf-8', level=logging.DEBUG)
 
 #------------------------------------------------------------------
 #       Create Functions for getting user chosen port and
@@ -39,6 +42,7 @@ def saveChoice(event):
     lineList[0] = (chosenPort)
     portFile.writelines(lineList)
     portFile.close()
+    
 
 #------------------------------------------------------------------
 #       Create Functions for getting user chosen AudioSession and
@@ -52,11 +56,11 @@ def saveSlider1(event):
     if process_Name == "Choose a file:":
         process_Name = chooseFile()
         sessionOptions[1] = process_Name
+        logging.info('Process ' + process_Name + 'successfully added to Slider 1')
     else:
         pass
     # Opens the temp file and stores the chosen process name
     sessionLabel_1.insert(END, process_Name) 
-    #for i in sessionLabel_1.get(0):
     global lineList
     listSize = sessionLabel_1.size()
     sliderStr = ''
@@ -64,10 +68,14 @@ def saveSlider1(event):
     for item in sliderList:
         sliderStr += str(item) + ","
     lineList[1] = ("\n" + sliderStr)
-    portFile = open("COMport", "w")
-    portFile.writelines(lineList)
-    portFile.close()
-    serialValuetoVolume.init()
+    try:
+        portFile = open("COMport", "w")
+        portFile.writelines(lineList)
+        portFile.close()
+        logging.info(lineList[1] + 'added to Slider 1')
+        serialValuetoVolume.init()
+    except:
+        logging.debug('Process not added to Slider1')
 
 
 def saveSlider2(event):
@@ -84,10 +92,15 @@ def saveSlider2(event):
     for item in sliderList:
         sliderStr += str(item) + ","
     lineList[2] = ("\n" + sliderStr)
-    portFile = open("COMport", "w")
-    portFile.writelines(lineList)
-    portFile.close()
-    serialValuetoVolume.init()
+    try:
+        portFile = open("COMport", "w")
+        portFile.writelines(lineList)
+        portFile.close()
+        logging.info(lineList[2] + 'added to Slider 2')
+        serialValuetoVolume.init()
+    except:
+        logging.debug('Process not added to Slider 2')
+        pass
 
 
 def saveSlider3(event):

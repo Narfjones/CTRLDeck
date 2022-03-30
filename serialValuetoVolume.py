@@ -365,25 +365,37 @@ def getValues():
             
                 # timeStart = float( time.perf_counter())
                 # These are currently acting as a deadband. There is probably a better way.
-                if slider1 <= .02:
-                        slider1 = 0.00
-                        volumeSlider1(slider1)
-                else:
+                try:
+                    if slider1 <= .02:
+                            slider1 = 0.00
+                            volumeSlider1(slider1)
+                    else:
+                        pass
+                except TypeError:
                     pass
-                if slider2 <= .02:
-                        slider2 = 0.00
-                        volumeSlider2(slider2)
-                else:
+                try:
+                    if slider2 <= .02:
+                            slider2 = 0.00
+                            volumeSlider2(slider2)
+                    else:
+                        pass
+                except TypeError:
                     pass
-                if slider3 <= .02:
-                        slider3 = 0.00
-                        volumeSlider3(slider3)
-                else:
+                try:
+                    if slider3 <= .02:
+                            slider3 = 0.00
+                            volumeSlider3(slider3)
+                    else:
+                        pass
+                except TypeError:
                     pass
-                if slider4 <= .02:
-                        slider4 = 0.00
-                        volumeSlider4(slider4)
-                else:
+                try:
+                    if slider4 <= .02:
+                            slider4 = 0.00
+                            volumeSlider4(slider4)
+                    else:
+                        pass
+                except TypeError:
                     pass
                 # timeEnd = float( time.perf_counter())
                 # timeTaken = str(timeEnd - timeStart)
