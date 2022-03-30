@@ -1,13 +1,10 @@
-from operator import iconcat
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
-from collections import Counter
-from comtypes import NullHandler
 from getCOM import serial_ports
 from pystray import MenuItem as item
 import pystray
-from PIL import Image, ImageTk
+from PIL import Image
 import serialValuetoVolume
 import threading
 import pythoncom
@@ -117,10 +114,15 @@ def saveSlider3(event):
     for item in sliderList:
         sliderStr += str(item) + ","
     lineList[3] = ("\n" + sliderStr)
-    portFile = open("COMport", "w")
-    portFile.writelines(lineList)
-    portFile.close()
-    serialValuetoVolume.init()
+    try:
+        portFile = open("COMport", "w")
+        portFile.writelines(lineList)
+        portFile.close()
+        serialValuetoVolume.init()
+        logging.info(lineList[3] + 'added to Slider 3')
+    except:
+        logging.debug('Process not added to Slider 3')
+        pass
 
 def saveSlider4(event):
     process_Name = str(sessionsVar_slider4.get())
@@ -136,10 +138,15 @@ def saveSlider4(event):
     for item in sliderList:
         sliderStr += str(item) + ","
     lineList[4] = ("\n" + sliderStr)
-    portFile = open("COMport", "w")
-    portFile.writelines(lineList)
-    portFile.close()
-    serialValuetoVolume.init()
+    try:
+        portFile = open("COMport", "w")
+        portFile.writelines(lineList)
+        portFile.close()
+        logging.info(lineList[4] + 'added to Slider 4')
+        serialValuetoVolume.init()
+    except:
+        logging.debug('Process not added to Slider 4')
+        pass
 
 # Opens filedialog and allows user to choose .exe file to which they wish to assign slider
 def chooseFile():
@@ -380,6 +387,7 @@ def sliderRun():
     try: # Attempt to close the program first to make sure it isn't already running
         serialValuetoVolume.stop_program()
         print("program stopped")
+        logging.info('Program was stopped before starting again')
     except: # If the program throws an exception we assume it's because it's not currently running
         pass 
     serialValuetoVolume.init()
@@ -389,7 +397,9 @@ def sliderRun():
 def clicked():
     try:
         serialValuetoVolume.stop_program()
+        logging.info('SerialtoVolume stopped before running')
     except:
+        logging.debug('SerialtoVolume could not stop')
         pass
     # Creates thread and appends it to thread list
     global t
@@ -405,23 +415,30 @@ startButton = ttk.Button(frm, text="Start CTRLdeck", command=clicked).place(x=11
 # This is the actual closing function which ends the program and it's associated threads. Only accessed by 'Quit' in the taskbar
 def on_closing(icon, item):
     serialValuetoVolume.stop_program() # serialValuetoVolume loop must be stopped before thread can be exited
+    logging.debug('Serial to Volume stopped')
 
     # Reset temp file so that the number of entries in list stays the same for next execute. Might be redundant.
     portFile = open("COMport", "w")
     lineList = ["1", "\n2", "\n3", "\n4", "\n5"]
     portFile.writelines(lineList)
     portFile.close()
+    logging.debug('File reset')
     try: # Attempt to close thread. This only works if getValues() loop has stopped.
         t.join()
-    except: # If this throws an exception we assume it's because it is not running. Could be more specific
+        logging.debug('Thread for volume control ended')
+    except: # If this throws an exception we assume it's because it is not running. Could be more 
+        logging.debug('Could not end thread')
         pass
     icon.stop() # Destroys the system tray icon
+    logging.debug('Icon destroyed')
     root.destroy() # Destroys the window
+    logging.debug('Window destroyed')
 
 # Recreates the window from the system tray icon
 def open_window(icon, item):
     root.lift() # Brings window to the front
     root.after( 0 , root.deiconify) # Destroys the system tray icon after the window is opened
+    logging.debug('System tray con was destroyed for window to open')
     icon.stop() # Necessary to destroy system tray icon but I don't know why
 
 # Hide the window and show on the system taskbar
@@ -433,11 +450,14 @@ def hide_window():
     sliderProcess4 = str(serialValuetoVolume.sliderProcess4)
     global icon
     root.withdraw() # Hides GUI Window
-    image=Image.open("fader.ico") 
+    logging.debug('Window hidden')
+    image=Image.open("fader.ico")
+    logging.debug('Icon created')
     menu=(item('Slider 1: ' + sliderProcess1, 0), item('Slider 2: ' + sliderProcess2, 0), item('Slider 3: ' + sliderProcess3, 0),
     item('Slider 4: ' + sliderProcess4, 0), item('Restart', clicked), item('Show', open_window) , item('Quit', on_closing)) # Creates right click menu and it's options in the system tray icon
     icon=pystray.Icon("name", image, "CTRLDeck", menu) # Creates click options on system tray icon
     icon.run() # Start system tray icon
+    logging.debug('System tray icon running')
 
 # Loops the window processes
 root.protocol("WM_DELETE_WINDOW", hide_window)

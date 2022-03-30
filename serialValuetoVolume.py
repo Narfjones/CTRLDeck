@@ -5,6 +5,7 @@ from time import sleep
 from pycaw.pycaw import DEVICE_STATE, AudioUtilities, ISimpleAudioVolume, IAudioEndpointVolume
 from ctypes import POINTER, cast
 from comtypes import CLSCTX_ALL 
+import logging
 
 # Create global variables. I'm sure there's a more efficient way to handle all of this.   
 chosenPort = str()
@@ -71,6 +72,7 @@ def init():
     global unmappedList
     unmappedList = sliderProcess1 + sliderProcess2 + sliderProcess3 + sliderProcess4
     running = True
+    logging.debug('Program Initiated')
     
 # Create serial connect with chosen COM port(from COMport data file) and store in global serial variable
 def connectSerial():
@@ -85,7 +87,9 @@ def connectSerial():
             timeout=0)
         sleep(.001) # Short sleep is necessary apparently
         print("connected to: " + chosenPort)
+        logging.debug('Serial Port connected')
     except: # If an exception is thrown we assume it is already connected. Needs to be more specific.
+        logging.debug('Serial Port was unable to connect')
         pass
 
 
@@ -305,133 +309,145 @@ def getValues():
         #timeEnd = float( time.perf_counter())
         #timeTaken = str(timeEnd - timeStart)
         #print("Got Sessions and Speakers: " + timeTaken )
+        try:
+            if (ser.in_waiting > 0): # Checks if there is data in the serial buffer. Always true if connected
 
-        if (ser.in_waiting > 0): # Checks if there is data in the serial buffer. Always true if connected
+                    # Create variables to store value to check against for change
+                    slider1previous = float()
+                    slider2previous = float()
+                    slider3previous = float()
+                    slider4previous = float()
 
-                # Create variables to store value to check against for change
-                slider1previous = float()
-                slider2previous = float()
-                slider3previous = float()
-                slider4previous = float()
-
-                #timeStart = float( time.perf_counter())
-                # create string, convert serial input data to a string a store it
-                line =  str(ser.readline())
-                ser.reset_input_buffer()
-                #timeEnd = float( time.perf_counter())
-                #timeTaken = str(timeEnd - timeStart)
-                #print("Got Serial Data: " + timeTaken )
-
-                # timeStart = float( time.perf_counter())
-                # Get numbers out of serial data. This will be empty if slider has no assignment
-                slider1str = ''.join(x for x in serial_conversion_1(line) if x.isdigit())
-                slider2str = ''.join(i for i in serial_conversion_2(line) if i.isdigit())
-                slider3str = ''.join(j for j in serial_conversion_3(line) if j.isdigit())
-                slider4str = ''.join(k for k in serial_conversion_4(line) if k.isdigit())
-                # timeEnd = float( time.perf_counter())
-                # timeTaken = str(timeEnd - timeStart)
-                # print("String Convserion: " + timeTaken )
-
-                if (slider1str != '' or slider2str !='' or slider3str != '' or slider4str != ''): # Runs if any slider has process assignment
-                    global slider1
-                    global slider2
-                    global slider3
-                    global slider4
+                    #timeStart = float( time.perf_counter())
+                    # create string, convert serial input data to a string a store it
+                    line =  str(ser.readline())
+                    ser.reset_input_buffer()
+                    #timeEnd = float( time.perf_counter())
+                    #timeTaken = str(timeEnd - timeStart)
+                    #print("Got Serial Data: " + timeTaken )
 
                     # timeStart = float( time.perf_counter())
-                    # Convert digit strings to integer, maps (0,100) input to (0,1) output and rounds to two decimal places
-                    slider1 = float(float(slider1str) * .01) # The smallest number of sliders is 2 so this will always run. 
-                    slider1 = round(slider1, 2)
+                    # Get numbers out of serial data. This will be empty if slider has no assignment
+                    slider1str = ''.join(x for x in serial_conversion_1(line) if x.isdigit())
+                    slider2str = ''.join(i for i in serial_conversion_2(line) if i.isdigit())
+                    slider3str = ''.join(j for j in serial_conversion_3(line) if j.isdigit())
+                    slider4str = ''.join(k for k in serial_conversion_4(line) if k.isdigit())
+                    # timeEnd = float( time.perf_counter())
+                    # timeTaken = str(timeEnd - timeStart)
+                    # print("String Convserion: " + timeTaken )
 
-                    slider2 = float(float(slider2str) * .01) # The smallest number of sliders is 2 so this will always run
-                    slider2 = round(slider2, 2)
+                    if (slider1str != '' or slider2str !='' or slider3str != '' or slider4str != ''): # Runs if any slider has process assignment
+                        global slider1
+                        global slider2
+                        global slider3
+                        global slider4
 
-                    try: # Runs if there is a slider 3 with an assignment
-                        slider3 = float(float(slider3str) * .01) 
-                        slider3 = round(slider3, 2)
-                    except ValueError: # If no slider or process assignment return 'null'
-                        slider3 = 'null'
+                        # timeStart = float( time.perf_counter())
+                        # Convert digit strings to integer, maps (0,100) input to (0,1) output and rounds to two decimal places
+                        try:   
+                            slider1 = float(float(slider1str) * .01) # The smallest number of sliders is 2 so this will always run. 
+                            slider1 = round(slider1, 2)
+                        except:
+                            slider1 = 'null'
 
-                    try: # Runs if there is a slider 4 with an assignment
-                        slider4 = float(float(slider4str) * .01)
-                        slider4 = round(slider4, 2)
-                    except ValueError: # If no slider or process assignment return 'null'
-                        slider4 = 'null'
-                else: # Skip if no sliders or no process assignments
-                    pass
-                # timeEnd = float( time.perf_counter())
-                # timeTaken = str(timeEnd - timeStart)
-                # print("Store Values: " + timeTaken )
-            
-                # timeStart = float( time.perf_counter())
-                # These are currently acting as a deadband. There is probably a better way.
-                try:
-                    if slider1 <= .02:
-                            slider1 = 0.00
-                            volumeSlider1(slider1)
+                        try:
+                            slider2 = float(float(slider2str) * .01) # The smallest number of sliders is 2 so this will always run
+                            slider2 = round(slider2, 2)
+                        except:
+                            slider2 = 'null'
+
+                        try: # Runs if there is a slider 3 with an assignment
+                            slider3 = float(float(slider3str) * .01) 
+                            slider3 = round(slider3, 2)
+                        except ValueError: # If no slider or process assignment return 'null'
+                            slider3 = 'null'
+
+                        try: # Runs if there is a slider 4 with an assignment
+                            slider4 = float(float(slider4str) * .01)
+                            slider4 = round(slider4, 2)
+                        except ValueError: # If no slider or process assignment return 'null'
+                            slider4 = 'null'
+                    else: # Skip if no sliders or no process assignments
+                        pass
+                    # timeEnd = float( time.perf_counter())
+                    # timeTaken = str(timeEnd - timeStart)
+                    # print("Store Values: " + timeTaken )
+                
+                    # timeStart = float( time.perf_counter())
+                    # These are currently acting as a deadband. There is probably a better way.
+                    try:
+                        if slider1 <= .02:
+                                slider1 = 0.00
+                                volumeSlider1(slider1)
+                        else:
+                            pass
+                    except TypeError:
+                        pass
+                    try:
+                        if slider2 <= .02:
+                                slider2 = 0.00
+                                volumeSlider2(slider2)
+                        else:
+                            pass
+                    except TypeError:
+                        pass
+                    try:
+                        if slider3 <= .02:
+                                slider3 = 0.00
+                                volumeSlider3(slider3)
+                        else:
+                            pass
+                    except TypeError:
+                        pass
+                    try:
+                        if slider4 <= .02:
+                                slider4 = 0.00
+                                volumeSlider4(slider4)
+                        else:
+                            pass
+                    except TypeError:
+                        pass
+                    # timeEnd = float( time.perf_counter())
+                    # timeTaken = str(timeEnd - timeStart)
+                    # print("Dead Band: " + timeTaken )
+
+                    # timeStart = float( time.perf_counter())
+                    # Check new value against previous value and send new volume if it has changed
+                    if slider1 != slider1previous:
+                        slider1previous = slider1
+                        volumeSlider1(slider1)
                     else:
                         pass
-                except TypeError:
-                    pass
-                try:
-                    if slider2 <= .02:
-                            slider2 = 0.00
-                            volumeSlider2(slider2)
+                    if slider2 != slider2previous:
+                        slider2previous = slider2
+                        volumeSlider2(slider2)
                     else:
                         pass
-                except TypeError:
-                    pass
-                try:
-                    if slider3 <= .02:
-                            slider3 = 0.00
-                            volumeSlider3(slider3)
+                    if slider3 != slider3previous:
+                        slider3previous = slider3
+                        volumeSlider3(slider3)
                     else:
                         pass
-                except TypeError:
-                    pass
-                try:
-                    if slider4 <= .02:
-                            slider4 = 0.00
-                            volumeSlider4(slider4)
-                    else:
+                    if slider4!= slider4previous:
+                        slider4previous = slider4
+                        volumeSlider4(slider4)
+                    else: # If volume is the same as last iteration do nothing
                         pass
-                except TypeError:
-                    pass
-                # timeEnd = float( time.perf_counter())
-                # timeTaken = str(timeEnd - timeStart)
-                # print("Dead Band: " + timeTaken )
+                    # timeEnd = float( time.perf_counter())
+                    # timeTaken = str(timeEnd - timeStart)
+                    # print("Check values and send: " + timeTaken )
 
-                # timeStart = float( time.perf_counter())
-                # Check new value against previous value and send new volume if it has changed
-                if slider1 != slider1previous:
-                    slider1previous = slider1
-                    volumeSlider1(slider1)
-                else:
-                    pass
-                if slider2 != slider2previous:
-                    slider2previous = slider2
-                    volumeSlider2(slider2)
-                else:
-                    pass
-                if slider3 != slider3previous:
-                    slider3previous = slider3
-                    volumeSlider3(slider3)
-                else:
-                    pass
-                if slider4!= slider4previous:
-                    slider4previous = slider4
-                    volumeSlider4(slider4)
-                else: # If volume is the same as last iteration do nothing
-                    pass
-                # timeEnd = float( time.perf_counter())
-                # timeTaken = str(timeEnd - timeStart)
-                # print("Check values and send: " + timeTaken )
-
-                # Check variable to see if main program has requested termination. Loop must stop for thread to be ended.
-                if running == False:
-                    break
-                else:
-                    pass
+                    # Check variable to see if main program has requested termination. Loop must stop for thread to be ended.
+                    if running == False:
+                        break
+                    else:
+                        pass
+        except serial.serialutil.SerialException:
+            if running == False:
+                break
+            else:
+                pass
+            print('SerialException: Cannot check in_waiting')
 
 
 
@@ -442,5 +458,7 @@ def stop_program():
     running = False #Set trigger variable to false and loop will end on next iteration
     try: # Try to close the open port. If an exception is thrown we assume the port is already closed. Could be more specific.
         ser.close()
+        logging.debug('Serial Port closed')
     except:
+        logging.debug('Not able to close Serial Port')
         pass
