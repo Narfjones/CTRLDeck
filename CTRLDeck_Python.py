@@ -194,17 +194,17 @@ def open_window(icon, item):
 # Hide the window and show on the system taskbar
 def hide_window():
     # Store proccesses assigned to sliders to display in icon menu
-    sliderProcess1 = str(serialValuetoVolume.sliderProcess1)
-    sliderProcess2 = str(serialValuetoVolume.sliderProcess2)
-    sliderProcess3 = str(serialValuetoVolume.sliderProcess3)
-    sliderProcess4 = str(serialValuetoVolume.sliderProcess4)
+    sliderProcesses = []
+    for i in range(numSliders):
+        sliderProcesses.append(str(serialValuetoVolume.sliderProcesses[i]))
+
     global icon
     root.withdraw() # Hides GUI Window
     logging.debug('Window hidden')
     image=Image.open("fader.ico")
     logging.debug('Icon created')
-    menu=(item('Slider 1: ' + sliderProcess1, 0), item('Slider 2: ' + sliderProcess2, 0), item('Slider 3: ' + sliderProcess3, 0),
-    item('Slider 4: ' + sliderProcess4, 0), item('Restart', start_clicked), item('Show', open_window) , item('Quit', on_closing)) # Creates right click menu and it's options in the system tray icon
+    menu=(item('Slider 1: ' + sliderProcesses[0], 0), item('Slider 2: ' + sliderProcesses[1], 0), item('Slider 3: ' + sliderProcesses[2], 0),
+    item('Slider 4: ' + sliderProcesses[3], 0), item('Restart', start_clicked), item('Show', open_window) , item('Quit', on_closing)) # Creates right click menu and it's options in the system tray icon
     icon=pystray.Icon("name", image, "CTRLDeck", menu) # Creates click options on system tray icon
     icon.run() # Start system tray icon
     logging.debug('System tray icon running')
