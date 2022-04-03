@@ -101,86 +101,29 @@ def show():
 
 
 # Function to delete items from the ListBox and remove the processes from the sliders
-def onselect_1(evt):
+def onselect(evt, labelNum):
     global lineList
-    print(len(lineList[1]))
+    label = labels[labelNum - 1]
+
+    print(len(lineList[labelNum]))
 
     # Access storage of processes and create widget that triggers on select event in ListBox
     w = evt.widget
     index = int(w.curselection()[0]) # Get index of currently selected process in Listbox
     value = w.get(index) # Get the name of the process to remove
-    start = int(lineList[1].find(value)) # Get index of the first letter of the process name
+    start = int(lineList[labelNum].find(value)) # Get index of the first letter of the process name
     length= int(len(value)) # Get length of the process name
     stop = int(length + start + 1) # Create ending index of process name
-    value1 = (lineList[1][:start] + lineList[1][stop:-1]) # Take linList and create new string with currently selected process removed
-    lineList[1] = value1 # Substitute new string into lineList
-    sessionLabel_1.delete(index) # Remove the process from the label
-    print(len(lineList[1]))
+    value1 = (lineList[labelNum][:start] + lineList[labelNum][stop:-1]) # Take linList and create new string with currently selected process removed
+    lineList[labelNum] = value1 # Substitute new string into lineList
+    label.delete(index) # Remove the process from the label
+    print(len(lineList[labelNum]))
     # Prevent remove command from emptying the indices of lineList. If the number of indices changes the whole program will oh I don't know decide to rob a liquor store.
-    if len(lineList[1]) < 3:
-        lineList[1] += "2" # Stick in default value for lineList to keep the right number of indices
+    if len(lineList[labelNum]) < 3:
+        lineList[labelNum] += str(labelNum + 1) # Stick in default value for lineList to keep the right number of indices
     else: 
         pass
     # Open file and write new lineList
-    portFile = open("COMport", "w")
-    portFile.writelines(lineList)
-    portFile.close()
-
-
-def onselect_2(evt):
-    global lineList
-    w = evt.widget
-    index = int(w.curselection()[0])
-    value = w.get(index)
-    start = int(lineList[2].find(value))
-    length= int(len(value))
-    stop = int(length + start + 1)
-    value1 = (lineList[2][:start] + lineList[2][stop:-1])
-    lineList[2] = value1
-    sessionLabel_2.delete(index)
-    if len(lineList[2]) < 3:
-        lineList[2] += "3" # Stick in default value for lineList to keep the right number of indices
-    else: 
-        pass
-    portFile = open("COMport", "w")
-    portFile.writelines(lineList)
-    portFile.close()
-
-
-def onselect_3(evt):
-    global lineList
-    w = evt.widget
-    index = int(w.curselection()[0])
-    value = w.get(index)
-    start = int(lineList[3].find(value))
-    length= int(len(value))
-    stop = int(length + start + 1)
-    value1 = (lineList[3][:start] + lineList[3][stop:-1])
-    lineList[3] = value1
-    sessionLabel_3.delete(index)
-    if len(lineList[3]) < 3:
-        lineList[3] += "4" # Stick in default value for lineList to keep the right number of indices
-    else: 
-        pass
-    portFile = open("COMport", "w")
-    portFile.writelines(lineList)
-    portFile.close()
-
-
-def onselect_4(evt):
-    w = evt.widget
-    index = int(w.curselection()[0])
-    value = w.get(index)
-    start = int(lineList[4].find(value))
-    length= int(len(value))
-    stop = int(length + start + 1)
-    value1 = (lineList[4][:start] + lineList[4][stop:-1])
-    lineList[4] = value1
-    sessionLabel_4.delete(index)
-    if len(lineList[4]) < 3:
-        lineList[4] += "5" # Stick in default value for lineList to keep the right number of indices
-    else: 
-        pass
     portFile = open("COMport", "w")
     portFile.writelines(lineList)
     portFile.close()
@@ -349,19 +292,19 @@ portLabel = Label( frm , textvariable = " " )
 
 sessionLabel_1 = Listbox( frm, width=14, bd=0, height=3, selectmode="single", borderwidth=0,  )
 sessionLabel_1.place(x=1075, y=135)
-sessionLabel_1.bind('<<ListboxSelect>>', onselect_1)
+sessionLabel_1.bind('<<ListboxSelect>>', lambda evt, labelNum=1 : onselect(evt, labelNum))
 
 sessionLabel_2 = Listbox( frm, width=14, bd=0, height=3 )
 sessionLabel_2.place(x=1075, y=230)
-sessionLabel_2.bind('<<ListboxSelect>>', onselect_2)
+sessionLabel_2.bind('<<ListboxSelect>>', lambda evt, labelNum=2 : onselect(evt, labelNum))
 
 sessionLabel_3 = Listbox( frm, width=14, bd=0, height=3 )
 sessionLabel_3.place(x=1075, y=327)
-sessionLabel_3.bind('<<ListboxSelect>>', onselect_3)
+sessionLabel_3.bind('<<ListboxSelect>>', lambda evt, labelNum=3 : onselect(evt, labelNum))
 
 sessionLabel_4 = Listbox( frm, width=14, bd=0, height=3 )
 sessionLabel_4.place(x=1075, y=440)
-sessionLabel_4.bind('<<ListboxSelect>>', onselect_4)
+sessionLabel_4.bind('<<ListboxSelect>>', lambda evt, labelNum=4 : onselect(evt, labelNum))
 
 # Create list of sessionLabels
 labels = [sessionLabel_1, sessionLabel_2, sessionLabel_3, sessionLabel_4]
