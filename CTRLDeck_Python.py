@@ -32,7 +32,7 @@ logging.basicConfig(filename='ctrldeck.log', filemode= 'w', encoding='utf-8', le
 #------------------------------------------------------------------
 
 # Get chosen COM port from drop down menu and open serial port
-def saveChoice(event):
+def savePortChoice(event):
     global chosenPort
     chosenPort = str(portsVar.get())
     portFile = open("COMport", "w")
@@ -144,7 +144,7 @@ def sliderRun():
     serialValuetoVolume.getValues()
 
 
-def clicked():
+def start_clicked():
     try:
         serialValuetoVolume.stop_program()
         logging.info('SerialtoVolume stopped before running')
@@ -157,7 +157,7 @@ def clicked():
     threads.append(t)
     t.start() # Starting thread runs the target function
     global startButton
-    startButton = ttk.Button(frm, text="Restart CTRLdeck", command=clicked).place(x=1110, y=670) # Rename the 'start' button to 'restart'
+    startButton = ttk.Button(frm, text="Restart CTRLdeck", command=start_clicked).place(x=1110, y=670) # Rename the 'start' button to 'restart'
 
 
 # This is the actual closing function which ends the program and it's associated threads. Only accessed by 'Quit' in the taskbar
@@ -204,7 +204,7 @@ def hide_window():
     image=Image.open("fader.ico")
     logging.debug('Icon created')
     menu=(item('Slider 1: ' + sliderProcess1, 0), item('Slider 2: ' + sliderProcess2, 0), item('Slider 3: ' + sliderProcess3, 0),
-    item('Slider 4: ' + sliderProcess4, 0), item('Restart', clicked), item('Show', open_window) , item('Quit', on_closing)) # Creates right click menu and it's options in the system tray icon
+    item('Slider 4: ' + sliderProcess4, 0), item('Restart', start_clicked), item('Show', open_window) , item('Quit', on_closing)) # Creates right click menu and it's options in the system tray icon
     icon=pystray.Icon("name", image, "CTRLDeck", menu) # Creates click options on system tray icon
     icon.run() # Start system tray icon
     logging.debug('System tray icon running')
@@ -240,7 +240,7 @@ portsVar = StringVar()
 portsVar.set("Choose your port:")
 
 # Create port dropdown menu
-portDrop = OptionMenu(frm, portsVar, *portOptions, command=saveChoice).place(x = 30, y = 25)
+portDrop = OptionMenu(frm, portsVar, *portOptions, command=savePortChoice).place(x = 30, y = 25)
 
 # Create label
 portLabel = Label( frm , textvariable = " " )
@@ -283,7 +283,7 @@ for i in range (numSliders):
     labels.append(label)
 
 # Creates start button that runs the clicked which kicks off the actual program
-startButton = ttk.Button(frm, text="Start CTRLdeck", command=clicked).place(x=1110, y=670)
+startButton = ttk.Button(frm, text="Start CTRLdeck", command=start_clicked).place(x=1110, y=670)
 
 # Loops the window processes
 root.protocol("WM_DELETE_WINDOW", hide_window)
