@@ -335,13 +335,13 @@ sessionsVar_slider4.set("Slider 4")
 # Create list of sliders
 sliders = [sessionsVar_slider1, sessionsVar_slider2, sessionsVar_slider3, sessionsVar_slider4]
 
-sessionsDrop_slider1 = OptionMenu(frm, sessionsVar_slider1, *sessionOptions, command= lambda x=1: saveSlider(1)).place(x=455, y=60)
+sessionsDrop_slider1 = OptionMenu(frm, sessionsVar_slider1, *sessionOptions, command=lambda event, sliderNum=1: saveSlider(sliderNum)).place(x=455, y=60)
 sessionLabel_slider1 = Label( frm , textvariable = " " )
-sessionsDrop_slider2 = OptionMenu(frm, sessionsVar_slider2, *sessionOptions, command= lambda x=1: saveSlider(2)).place(x=590, y=60)
+sessionsDrop_slider2 = OptionMenu(frm, sessionsVar_slider2, *sessionOptions, command=lambda event, sliderNum=2: saveSlider(sliderNum)).place(x=590, y=60)
 sessionLabel_slider2 = Label( frm, textvariable = " ")
-sessionsDrop_slider3 = OptionMenu(frm, sessionsVar_slider3, *sessionOptions, command= lambda x=1: saveSlider(3)).place(x=720, y=60)
+sessionsDrop_slider3 = OptionMenu(frm, sessionsVar_slider3, *sessionOptions, command=lambda event, sliderNum=3: saveSlider(sliderNum)).place(x=720, y=60)
 sessionLabel_slider3 = Label( frm, textvariable = " ")
-sessionsDrop_slider4 = OptionMenu(frm, sessionsVar_slider4, *sessionOptions, command= lambda x=1: saveSlider(4)).place(x=850, y=60)
+sessionsDrop_slider4 = OptionMenu(frm, sessionsVar_slider4, *sessionOptions, command=lambda event, sliderNum=4: saveSlider(sliderNum)).place(x=850, y=60)
 sessionLabel_slider4 = Label( frm, textvariable = " ")
 
 # Creates start button that runs the clicked which kicks off the actual program
