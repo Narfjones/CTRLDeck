@@ -1,11 +1,11 @@
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
-from getCOM import serial_ports
+from inc.getCOM import serial_ports
 from pystray import MenuItem as item
 import pystray
 from PIL import Image
-import serialValuetoVolume
+import inc.serialValuetoVolume as serialValuetoVolume
 import threading
 import pythoncom
 import logging
@@ -124,6 +124,7 @@ def saveSlider3(event):
         logging.debug('Process not added to Slider 3')
         pass
 
+
 def saveSlider4(event):
     process_Name = str(sessionsVar_slider4.get())
     if process_Name == "Choose a file:":
@@ -148,6 +149,7 @@ def saveSlider4(event):
         logging.debug('Process not added to Slider 4')
         pass
 
+
 # Opens filedialog and allows user to choose .exe file to which they wish to assign slider
 def chooseFile():
     filetypes = (
@@ -164,10 +166,201 @@ def chooseFile():
     return(str(filename[-1]))
 
 
-    
+# Create dropdown to choose arduino port
+def show():
+    portLabel.config( textvariable = portsVar.get() )
+
+
+# Function to delete items from the ListBox and remove the processes from the sliders
+def onselect_1(evt):
+    global lineList
+    print(len(lineList[1]))
+
+    # Access storage of processes and create widget that triggers on select event in ListBox
+    w = evt.widget
+    index = int(w.curselection()[0]) # Get index of currently selected process in Listbox
+    value = w.get(index) # Get the name of the process to remove
+    start = int(lineList[1].find(value)) # Get index of the first letter of the process name
+    length= int(len(value)) # Get length of the process name
+    stop = int(length + start + 1) # Create ending index of process name
+    value1 = (lineList[1][:start] + lineList[1][stop:-1]) # Take linList and create new string with currently selected process removed
+    lineList[1] = value1 # Substitute new string into lineList
+    sessionLabel_1.delete(index) # Remove the process from the label
+    print(len(lineList[1]))
+    # Prevent remove command from emptying the indices of lineList. If the number of indices changes the whole program will oh I don't know decide to rob a liquor store.
+    if len(lineList[1]) < 3:
+        lineList[1] += "2" # Stick in default value for lineList to keep the right number of indices
+    else: 
+        pass
+    # Open file and write new lineList
+    portFile = open("COMport", "w")
+    portFile.writelines(lineList)
+    portFile.close()
+
+
+def onselect_2(evt):
+    global lineList
+    w = evt.widget
+    index = int(w.curselection()[0])
+    value = w.get(index)
+    start = int(lineList[2].find(value))
+    length= int(len(value))
+    stop = int(length + start + 1)
+    value1 = (lineList[2][:start] + lineList[2][stop:-1])
+    lineList[2] = value1
+    sessionLabel_2.delete(index)
+    if len(lineList[2]) < 3:
+        lineList[2] += "3" # Stick in default value for lineList to keep the right number of indices
+    else: 
+        pass
+    portFile = open("COMport", "w")
+    portFile.writelines(lineList)
+    portFile.close()
+
+
+def onselect_3(evt):
+    global lineList
+    w = evt.widget
+    index = int(w.curselection()[0])
+    value = w.get(index)
+    start = int(lineList[3].find(value))
+    length= int(len(value))
+    stop = int(length + start + 1)
+    value1 = (lineList[3][:start] + lineList[3][stop:-1])
+    lineList[3] = value1
+    sessionLabel_3.delete(index)
+    if len(lineList[3]) < 3:
+        lineList[3] += "4" # Stick in default value for lineList to keep the right number of indices
+    else: 
+        pass
+    portFile = open("COMport", "w")
+    portFile.writelines(lineList)
+    portFile.close()
+
+
+def onselect_4(evt):
+    w = evt.widget
+    index = int(w.curselection()[0])
+    value = w.get(index)
+    start = int(lineList[4].find(value))
+    length= int(len(value))
+    stop = int(length + start + 1)
+    value1 = (lineList[4][:start] + lineList[4][stop:-1])
+    lineList[4] = value1
+    sessionLabel_4.delete(index)
+    if len(lineList[4]) < 3:
+        lineList[4] += "5" # Stick in default value for lineList to keep the right number of indices
+    else: 
+        pass
+    portFile = open("COMport", "w")
+    portFile.writelines(lineList)
+    portFile.close()
+
+
+# Create dropdown for audio sessions list for slider 1
+def show_audio_sessions_slider1():
+    sessionLabel_slider1.config( textvariable = sessionsVar_slider1.get() )
+
+
+# Create session dropdown label for slider2
+def show_audio_sessions_slider2():
+    sessionLabel_slider2.config( textvariable = sessionsVar_slider2.get())
+
+
+# Create session dropdown label for slider3
+def show_audio_sessions_slider3():
+    sessionLabel_slider3.config( textvariable = sessionsVar_slider3.get())
+
+
+# Create session dropdown label for slider4
+def show_audio_sessions_slider4():
+    sessionLabel_slider4.config( textvariable = sessionsVar_slider4.get())
+
+
+# This runs the functions that get serial data, convert to windows accepted values, and assign volumes
+def sliderRun():
+    pythoncom.CoInitialize() # Necessary to run this function in another thread
+
+    try: # Attempt to close the program first to make sure it isn't already running
+        serialValuetoVolume.stop_program()
+        print("program stopped")
+        logging.info('Program was stopped before starting again')
+    except: # If the program throws an exception we assume it's because it's not currently running
+        pass 
+    serialValuetoVolume.init()
+    serialValuetoVolume.connectSerial()
+    serialValuetoVolume.getValues()
+
+
+def clicked():
+    try:
+        serialValuetoVolume.stop_program()
+        logging.info('SerialtoVolume stopped before running')
+    except:
+        logging.debug('SerialtoVolume could not stop')
+        pass
+    # Creates thread and appends it to thread list
+    global t
+    t = threading.Thread(target=sliderRun) # Sets target function that should run in this thread
+    threads.append(t)
+    t.start() # Starting thread runs the target function
+    global startButton
+    startButton = ttk.Button(frm, text="Restart CTRLdeck", command=clicked).place(x=1110, y=670) # Rename the 'start' button to 'restart'
+
+
+# This is the actual closing function which ends the program and it's associated threads. Only accessed by 'Quit' in the taskbar
+def on_closing(icon, item):
+    serialValuetoVolume.stop_program() # serialValuetoVolume loop must be stopped before thread can be exited
+    logging.debug('Serial to Volume stopped')
+
+    # Reset temp file so that the number of entries in list stays the same for next execute. Might be redundant.
+    portFile = open("COMport", "w")
+    lineList = ["1", "\n2", "\n3", "\n4", "\n5"]
+    portFile.writelines(lineList)
+    portFile.close()
+    logging.debug('File reset')
+    try: # Attempt to close thread. This only works if getValues() loop has stopped.
+        t.join()
+        logging.debug('Thread for volume control ended')
+    except: # If this throws an exception we assume it's because it is not running. Could be more 
+        logging.debug('Could not end thread')
+        pass
+    icon.stop() # Destroys the system tray icon
+    logging.debug('Icon destroyed')
+    root.destroy() # Destroys the window
+    logging.debug('Window destroyed')
+
+
+# Recreates the window from the system tray icon
+def open_window(icon, item):
+    root.lift() # Brings window to the front
+    root.after( 0 , root.deiconify) # Destroys the system tray icon after the window is opened
+    logging.debug('System tray con was destroyed for window to open')
+    icon.stop() # Necessary to destroy system tray icon but I don't know why
+
+
+# Hide the window and show on the system taskbar
+def hide_window():
+    # Store proccesses assigned to sliders to display in icon menu
+    sliderProcess1 = str(serialValuetoVolume.sliderProcess1)
+    sliderProcess2 = str(serialValuetoVolume.sliderProcess2)
+    sliderProcess3 = str(serialValuetoVolume.sliderProcess3)
+    sliderProcess4 = str(serialValuetoVolume.sliderProcess4)
+    global icon
+    root.withdraw() # Hides GUI Window
+    logging.debug('Window hidden')
+    image=Image.open("fader.ico")
+    logging.debug('Icon created')
+    menu=(item('Slider 1: ' + sliderProcess1, 0), item('Slider 2: ' + sliderProcess2, 0), item('Slider 3: ' + sliderProcess3, 0),
+    item('Slider 4: ' + sliderProcess4, 0), item('Restart', clicked), item('Show', open_window) , item('Quit', on_closing)) # Creates right click menu and it's options in the system tray icon
+    icon=pystray.Icon("name", image, "CTRLDeck", menu) # Creates click options on system tray icon
+    icon.run() # Start system tray icon
+    logging.debug('System tray icon running')
+
+
 #------------------------------------------------------------------
 #                          Create GUI
-# -----------------------------------------------------------------   
+# -----------------------------------------------------------------
 
 # Create Window
 root = Tk()
@@ -219,97 +412,11 @@ portsVar = StringVar()
 # Set default value for menu
 portsVar.set("Choose your port:")
 
-# Create dropdown to choose arduino port
-def show():
-    portLabel.config( textvariable = portsVar.get() )
-
 # Create port dropdown menu
 portDrop = OptionMenu(frm, portsVar, *portOptions, command=saveChoice).place(x = 30, y = 25)
 
 # Create labels
 portLabel = Label( frm , textvariable = " " )
-
-# Function to delete items from the ListBox and remove the processes from the sliders
-def onselect_1(evt):
-    global lineList
-    print(len(lineList[1]))
-
-    # Access storage of processes and create widget that triggers on select event in ListBox
-    w = evt.widget
-    index = int(w.curselection()[0]) # Get index of currently selected process in Listbox
-    value = w.get(index) # Get the name of the process to remove
-    start = int(lineList[1].find(value)) # Get index of the first letter of the process name
-    length= int(len(value)) # Get length of the process name
-    stop = int(length + start + 1) # Create ending index of process name
-    value1 = (lineList[1][:start] + lineList[1][stop:-1]) # Take linList and create new string with currently selected process removed
-    lineList[1] = value1 # Substitute new string into lineList
-    sessionLabel_1.delete(index) # Remove the process from the label
-    print(len(lineList[1]))
-    # Prevent remove command from emptying the indices of lineList. If the number of indices changes the whole program will oh I don't know decide to rob a liquor store.
-    if len(lineList[1]) < 3:
-        lineList[1] += "2" # Stick in default value for lineList to keep the right number of indices
-    else: 
-        pass
-    # Open file and write new lineList
-    portFile = open("COMport", "w")
-    portFile.writelines(lineList)
-    portFile.close()
-
-def onselect_2(evt):
-    global lineList
-    w = evt.widget
-    index = int(w.curselection()[0])
-    value = w.get(index)
-    start = int(lineList[2].find(value))
-    length= int(len(value))
-    stop = int(length + start + 1)
-    value1 = (lineList[2][:start] + lineList[2][stop:-1])
-    lineList[2] = value1
-    sessionLabel_2.delete(index)
-    if len(lineList[2]) < 3:
-        lineList[2] += "3" # Stick in default value for lineList to keep the right number of indices
-    else: 
-        pass
-    portFile = open("COMport", "w")
-    portFile.writelines(lineList)
-    portFile.close()
-
-def onselect_3(evt):
-    global lineList
-    w = evt.widget
-    index = int(w.curselection()[0])
-    value = w.get(index)
-    start = int(lineList[3].find(value))
-    length= int(len(value))
-    stop = int(length + start + 1)
-    value1 = (lineList[3][:start] + lineList[3][stop:-1])
-    lineList[3] = value1
-    sessionLabel_3.delete(index)
-    if len(lineList[3]) < 3:
-        lineList[3] += "4" # Stick in default value for lineList to keep the right number of indices
-    else: 
-        pass
-    portFile = open("COMport", "w")
-    portFile.writelines(lineList)
-    portFile.close()
-    
-def onselect_4(evt):
-    w = evt.widget
-    index = int(w.curselection()[0])
-    value = w.get(index)
-    start = int(lineList[4].find(value))
-    length= int(len(value))
-    stop = int(length + start + 1)
-    value1 = (lineList[4][:start] + lineList[4][stop:-1])
-    lineList[4] = value1
-    sessionLabel_4.delete(index)
-    if len(lineList[4]) < 3:
-        lineList[4] += "5" # Stick in default value for lineList to keep the right number of indices
-    else: 
-        pass
-    portFile = open("COMport", "w")
-    portFile.writelines(lineList)
-    portFile.close()
 
 sessionLabel_1 = Listbox( frm, width=14, bd=0, height=3, selectmode="single", borderwidth=0,  )
 sessionLabel_1.place(x=1075, y=135)
@@ -323,8 +430,6 @@ sessionLabel_3.bind('<<ListboxSelect>>', onselect_3)
 sessionLabel_4 = Listbox( frm, width=14, bd=0, height=3 )
 sessionLabel_4.place(x=1075, y=440)
 sessionLabel_4.bind('<<ListboxSelect>>', onselect_4)
-
-
 
 #----------------------------------------------------------------------------
 #   - Call list of Audio Sessions volume_by_process.py
@@ -352,112 +457,17 @@ sessionsVar_slider3.set("Slider 3")
 sessionsVar_slider4 = StringVar()
 sessionsVar_slider4.set("Slider 4")
 
-# Create dropdown for audio sessions list for slider 1
-def show_audio_sessions_slider1():
-    sessionLabel_slider1.config( textvariable = sessionsVar_slider1.get() )
-
 sessionsDrop_slider1 = OptionMenu(frm, sessionsVar_slider1, *sessionOptions, command=saveSlider1).place(x=455, y=60)
 sessionLabel_slider1 = Label( frm , textvariable = " " )
-
-# Create session dropdown label for slider2
-def show_audio_sessions_slider2():
-    sessionLabel_slider2.config( textvariable = sessionsVar_slider2.get())
-
 sessionsDrop_slider2 = OptionMenu(frm, sessionsVar_slider2, *sessionOptions, command=saveSlider2).place(x=590, y=60)
 sessionLabel_slider2 = Label( frm, textvariable = " ")
-
-# Create session dropdown label for slider3
-def show_audio_sessions_slider3():
-    sessionLabel_slider3.config( textvariable = sessionsVar_slider3.get())
-
 sessionsDrop_slider3 = OptionMenu(frm, sessionsVar_slider3, *sessionOptions, command=saveSlider3).place(x=720, y=60)
 sessionLabel_slider3 = Label( frm, textvariable = " ")
-
-# Create session dropdown label for slider4
-def show_audio_sessions_slider4():
-    sessionLabel_slider4.config( textvariable = sessionsVar_slider4.get())
-
 sessionsDrop_slider4 = OptionMenu(frm, sessionsVar_slider4, *sessionOptions, command=saveSlider4).place(x=850, y=60)
 sessionLabel_slider4 = Label( frm, textvariable = " ")
 
-# This runs the functions that get serial data, convert to windows accepted values, and assign volumes
-def sliderRun():
-    pythoncom.CoInitialize() # Necessary to run this function in another thread
-
-    try: # Attempt to close the program first to make sure it isn't already running
-        serialValuetoVolume.stop_program()
-        print("program stopped")
-        logging.info('Program was stopped before starting again')
-    except: # If the program throws an exception we assume it's because it's not currently running
-        pass 
-    serialValuetoVolume.init()
-    serialValuetoVolume.connectSerial()
-    serialValuetoVolume.getValues()
-
-def clicked():
-    try:
-        serialValuetoVolume.stop_program()
-        logging.info('SerialtoVolume stopped before running')
-    except:
-        logging.debug('SerialtoVolume could not stop')
-        pass
-    # Creates thread and appends it to thread list
-    global t
-    t = threading.Thread(target=sliderRun) # Sets target function that should run in this thread
-    threads.append(t)
-    t.start() # Starting thread runs the target function
-    global startButton
-    startButton = ttk.Button(frm, text="Restart CTRLdeck", command=clicked).place(x=1110, y=670) # Rename the 'start' button to 'restart'
-
 # Creates start button that runs the clicked which kicks off the actual program
 startButton = ttk.Button(frm, text="Start CTRLdeck", command=clicked).place(x=1110, y=670)
-
-# This is the actual closing function which ends the program and it's associated threads. Only accessed by 'Quit' in the taskbar
-def on_closing(icon, item):
-    serialValuetoVolume.stop_program() # serialValuetoVolume loop must be stopped before thread can be exited
-    logging.debug('Serial to Volume stopped')
-
-    # Reset temp file so that the number of entries in list stays the same for next execute. Might be redundant.
-    portFile = open("COMport", "w")
-    lineList = ["1", "\n2", "\n3", "\n4", "\n5"]
-    portFile.writelines(lineList)
-    portFile.close()
-    logging.debug('File reset')
-    try: # Attempt to close thread. This only works if getValues() loop has stopped.
-        t.join()
-        logging.debug('Thread for volume control ended')
-    except: # If this throws an exception we assume it's because it is not running. Could be more 
-        logging.debug('Could not end thread')
-        pass
-    icon.stop() # Destroys the system tray icon
-    logging.debug('Icon destroyed')
-    root.destroy() # Destroys the window
-    logging.debug('Window destroyed')
-
-# Recreates the window from the system tray icon
-def open_window(icon, item):
-    root.lift() # Brings window to the front
-    root.after( 0 , root.deiconify) # Destroys the system tray icon after the window is opened
-    logging.debug('System tray con was destroyed for window to open')
-    icon.stop() # Necessary to destroy system tray icon but I don't know why
-
-# Hide the window and show on the system taskbar
-def hide_window():
-    # Store proccesses assigned to sliders to display in icon menu
-    sliderProcess1 = str(serialValuetoVolume.sliderProcess1)
-    sliderProcess2 = str(serialValuetoVolume.sliderProcess2)
-    sliderProcess3 = str(serialValuetoVolume.sliderProcess3)
-    sliderProcess4 = str(serialValuetoVolume.sliderProcess4)
-    global icon
-    root.withdraw() # Hides GUI Window
-    logging.debug('Window hidden')
-    image=Image.open("fader.ico")
-    logging.debug('Icon created')
-    menu=(item('Slider 1: ' + sliderProcess1, 0), item('Slider 2: ' + sliderProcess2, 0), item('Slider 3: ' + sliderProcess3, 0),
-    item('Slider 4: ' + sliderProcess4, 0), item('Restart', clicked), item('Show', open_window) , item('Quit', on_closing)) # Creates right click menu and it's options in the system tray icon
-    icon=pystray.Icon("name", image, "CTRLDeck", menu) # Creates click options on system tray icon
-    icon.run() # Start system tray icon
-    logging.debug('System tray icon running')
 
 # Loops the window processes
 root.protocol("WM_DELETE_WINDOW", hide_window)
