@@ -129,26 +129,6 @@ def onselect(evt, labelNum):
     portFile.close()
 
 
-# Create dropdown for audio sessions list for slider 1
-def show_audio_sessions_slider1():
-    sessionLabel_slider1.config( textvariable = sessionsVar_slider1.get() )
-
-
-# Create session dropdown label for slider2
-def show_audio_sessions_slider2():
-    sessionLabel_slider2.config( textvariable = sessionsVar_slider2.get())
-
-
-# Create session dropdown label for slider3
-def show_audio_sessions_slider3():
-    sessionLabel_slider3.config( textvariable = sessionsVar_slider3.get())
-
-
-# Create session dropdown label for slider4
-def show_audio_sessions_slider4():
-    sessionLabel_slider4.config( textvariable = sessionsVar_slider4.get())
-
-
 # This runs the functions that get serial data, convert to windows accepted values, and assign volumes
 def sliderRun():
     pythoncom.CoInitialize() # Necessary to run this function in another thread
@@ -234,7 +214,7 @@ def hide_window():
 #                          Create GUI
 # -----------------------------------------------------------------
 
-# Create Window
+### Create Window
 root = Tk()
 root.title("CTRLdeck")
 root.geometry('1240x720')
@@ -250,64 +230,25 @@ frm.grid()
 labelbg = Label(frm, image = bg, width = bg.width(), height = bg.height())
 labelbg.grid(column = 0, row = 0)
 
-
-#----------------------------------------------------------------------
-## canvas = Canvas(root, width=1240, height=762)
-## canvas.pack(fill=BOTH, expand=True)
-
-## canvas.create_image(0, 0, image=bg, anchor='nw')
-#
-#def resize_image(e):
-#   global image, resized, image2
-#   # open image to resize it
-#   image = Image.open("6x4deck-bkgrd.png")
-#   # resize the image with width and height of root
-#   resized = image.resize((e.width, e.height), Image.ANTIALIAS)
-#
-#   image2 = ImageTk.PhotoImage(resized)
-#   canvas.create_image(0, 0, image=image2, anchor='nw')
-
-# root.bind("<Configure>", resize_image)
-#----------------------------------------------------------------------
-
-
-#----------------------------------------------------------------------------
-#   - Call list of COM ports from getCOM
-#   - Create dropdown list with a 'clicked' action
-#   - Display dropdown list in frame
-#   - Send chosen value to saveChoice()
-#----------------------------------------------------------------------------
+### Set COM Port GUI elements
 
 # Call available COM ports and put in a list
 portOptions = (serial_ports())
-portsVar = StringVar()
+
 # Set default value for menu
+portsVar = StringVar()
 portsVar.set("Choose your port:")
 
 # Create port dropdown menu
 portDrop = OptionMenu(frm, portsVar, *portOptions, command=saveChoice).place(x = 30, y = 25)
 
-# Create labels
+# Create label
 portLabel = Label( frm , textvariable = " " )
 
-sessionLabel_1 = Listbox( frm, width=14, bd=0, height=3, selectmode="single", borderwidth=0,  )
-sessionLabel_1.place(x=1075, y=135)
-sessionLabel_1.bind('<<ListboxSelect>>', lambda evt, labelNum=1 : onselect(evt, labelNum))
+### Create slider GUI elements
 
-sessionLabel_2 = Listbox( frm, width=14, bd=0, height=3 )
-sessionLabel_2.place(x=1075, y=230)
-sessionLabel_2.bind('<<ListboxSelect>>', lambda evt, labelNum=2 : onselect(evt, labelNum))
-
-sessionLabel_3 = Listbox( frm, width=14, bd=0, height=3 )
-sessionLabel_3.place(x=1075, y=327)
-sessionLabel_3.bind('<<ListboxSelect>>', lambda evt, labelNum=3 : onselect(evt, labelNum))
-
-sessionLabel_4 = Listbox( frm, width=14, bd=0, height=3 )
-sessionLabel_4.place(x=1075, y=440)
-sessionLabel_4.bind('<<ListboxSelect>>', lambda evt, labelNum=4 : onselect(evt, labelNum))
-
-# Create list of sessionLabels
-labels = [sessionLabel_1, sessionLabel_2, sessionLabel_3, sessionLabel_4]
+# Define number of sliders
+numSliders = 4
 
 #----------------------------------------------------------------------------
 #   - Call list of Audio Sessions volume_by_process.py
@@ -320,29 +261,26 @@ labels = [sessionLabel_1, sessionLabel_2, sessionLabel_3, sessionLabel_4]
 sessionOptions = ["master", "chrome.exe", "firefox.exe", "discord.exe", "microphone", "unmapped", "Choose a file:" ]
 
 # Store audio sessions for 4 sliders
-sessionsVar_slider1 = StringVar()
-sessionsVar_slider1.set("Slider 1")
+SliderDropdownsXPositions = [455, 590, 720, 850]
+SliderDropdownsYPosition = 60
 
-sessionsVar_slider2 = StringVar()
-sessionsVar_slider2.set("Slider 2")
+sliders = []
+for i in range (numSliders):
+    slider = StringVar()
+    slider.set("Slider " + str(i+1))
+    OptionMenu(frm, slider, *sessionOptions, command=lambda event, sliderNum=i+1: saveSlider(sliderNum)).place(x=SliderDropdownsXPositions[i], y=SliderDropdownsYPosition)
+    sliders.append(slider)
 
-sessionsVar_slider3 = StringVar()
-sessionsVar_slider3.set("Slider 3")
+# Create sessionLabels for processes currently controlled by sliders
+SliderLabelsXPosition = 1075
+SliderLabelsYPositions = [135, 230, 327, 440]
 
-sessionsVar_slider4 = StringVar()
-sessionsVar_slider4.set("Slider 4")
-
-# Create list of sliders
-sliders = [sessionsVar_slider1, sessionsVar_slider2, sessionsVar_slider3, sessionsVar_slider4]
-
-sessionsDrop_slider1 = OptionMenu(frm, sessionsVar_slider1, *sessionOptions, command=lambda event, sliderNum=1: saveSlider(sliderNum)).place(x=455, y=60)
-sessionLabel_slider1 = Label( frm , textvariable = " " )
-sessionsDrop_slider2 = OptionMenu(frm, sessionsVar_slider2, *sessionOptions, command=lambda event, sliderNum=2: saveSlider(sliderNum)).place(x=590, y=60)
-sessionLabel_slider2 = Label( frm, textvariable = " ")
-sessionsDrop_slider3 = OptionMenu(frm, sessionsVar_slider3, *sessionOptions, command=lambda event, sliderNum=3: saveSlider(sliderNum)).place(x=720, y=60)
-sessionLabel_slider3 = Label( frm, textvariable = " ")
-sessionsDrop_slider4 = OptionMenu(frm, sessionsVar_slider4, *sessionOptions, command=lambda event, sliderNum=4: saveSlider(sliderNum)).place(x=850, y=60)
-sessionLabel_slider4 = Label( frm, textvariable = " ")
+labels = []
+for i in range (numSliders):
+    label = Listbox( frm, width=14, bd=0, height=3, selectmode="single", borderwidth=0,  )
+    label.place(x=SliderLabelsXPosition, y=SliderLabelsYPositions[i])
+    label.bind('<<ListboxSelect>>', lambda evt, labelNum=i+1 : onselect(evt, labelNum))
+    labels.append(label)
 
 # Creates start button that runs the clicked which kicks off the actual program
 startButton = ttk.Button(frm, text="Start CTRLdeck", command=clicked).place(x=1110, y=670)
