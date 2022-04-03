@@ -46,108 +46,37 @@ def saveChoice(event):
 #             using it to create AudioController object  
 #------------------------------------------------------------------
 
-# get chosen sessionID from drop down menu and set session volume to slider 1 value
-def saveSlider1(event):
+# get chosen sessionID from drop down menu and set session volume to slider sliderNum value
+def saveSlider(sliderNum):
+    slider = sliders[sliderNum - 1]
+    label = labels[sliderNum - 1]
+
     # Checks for user input choice and runs filedialog function chooseFile()
-    process_Name = str(sessionsVar_slider1.get())
+    process_Name = str(slider.get())
     if process_Name == "Choose a file:":
         process_Name = chooseFile()
-        sessionOptions[1] = process_Name
-        logging.info('Process ' + process_Name + 'successfully added to Slider 1')
+        sessionOptions[sliderNum] = process_Name
+        logging.info('Process ' + process_Name + 'successfully added to Slider ' +  str(sliderNum))
     else:
         pass
+
     # Opens the temp file and stores the chosen process name
-    sessionLabel_1.insert(END, process_Name) 
+    label.insert(END, process_Name)
     global lineList
-    listSize = sessionLabel_1.size()
+    listSize = label.size()
     sliderStr = ''
-    sliderList = list(sessionLabel_1.get(0, listSize))
+    sliderList = list(label.get(0, listSize))
     for item in sliderList:
         sliderStr += str(item) + ","
-    lineList[1] = ("\n" + sliderStr)
+    lineList[sliderNum] = ("\n" + sliderStr)
     try:
         portFile = open("COMport", "w")
         portFile.writelines(lineList)
         portFile.close()
-        logging.info(lineList[1] + 'added to Slider 1')
+        logging.info(lineList[sliderNum] + 'added to Slider ' +  str(sliderNum))
         serialValuetoVolume.init()
     except:
-        logging.debug('Process not added to Slider1')
-
-
-def saveSlider2(event):
-    process_Name = str(sessionsVar_slider2.get())
-    if process_Name == "Choose a file:":
-        process_Name = chooseFile()
-        sessionOptions[2] = process_Name
-    else:
-        pass
-    sessionLabel_2.insert(END, process_Name)
-    listSize = sessionLabel_2.size()
-    sliderStr = ''
-    sliderList = list(sessionLabel_2.get(0, listSize))
-    for item in sliderList:
-        sliderStr += str(item) + ","
-    lineList[2] = ("\n" + sliderStr)
-    try:
-        portFile = open("COMport", "w")
-        portFile.writelines(lineList)
-        portFile.close()
-        logging.info(lineList[2] + 'added to Slider 2')
-        serialValuetoVolume.init()
-    except:
-        logging.debug('Process not added to Slider 2')
-        pass
-
-
-def saveSlider3(event):
-    process_Name = str(sessionsVar_slider3.get())
-    if process_Name == "Choose a file:":
-        process_Name = chooseFile()
-        sessionOptions[3] = process_Name
-    else:
-        pass
-    sessionLabel_3.insert(END, process_Name)
-    listSize = sessionLabel_3.size()
-    sliderStr = ''
-    sliderList = list(sessionLabel_3.get(0, listSize))
-    for item in sliderList:
-        sliderStr += str(item) + ","
-    lineList[3] = ("\n" + sliderStr)
-    try:
-        portFile = open("COMport", "w")
-        portFile.writelines(lineList)
-        portFile.close()
-        serialValuetoVolume.init()
-        logging.info(lineList[3] + 'added to Slider 3')
-    except:
-        logging.debug('Process not added to Slider 3')
-        pass
-
-
-def saveSlider4(event):
-    process_Name = str(sessionsVar_slider4.get())
-    if process_Name == "Choose a file:":
-        process_Name = chooseFile()
-        sessionOptions[4] = process_Name
-    else:
-        pass
-    sessionLabel_4.insert(END, process_Name)
-    listSize = sessionLabel_4.size()
-    sliderStr = ''
-    sliderList = list(sessionLabel_4.get(0, listSize))
-    for item in sliderList:
-        sliderStr += str(item) + ","
-    lineList[4] = ("\n" + sliderStr)
-    try:
-        portFile = open("COMport", "w")
-        portFile.writelines(lineList)
-        portFile.close()
-        logging.info(lineList[4] + 'added to Slider 4')
-        serialValuetoVolume.init()
-    except:
-        logging.debug('Process not added to Slider 4')
-        pass
+        logging.debug('Process not added to Slider ' + str(sliderNum))
 
 
 # Opens filedialog and allows user to choose .exe file to which they wish to assign slider
@@ -421,15 +350,21 @@ portLabel = Label( frm , textvariable = " " )
 sessionLabel_1 = Listbox( frm, width=14, bd=0, height=3, selectmode="single", borderwidth=0,  )
 sessionLabel_1.place(x=1075, y=135)
 sessionLabel_1.bind('<<ListboxSelect>>', onselect_1)
+
 sessionLabel_2 = Listbox( frm, width=14, bd=0, height=3 )
 sessionLabel_2.place(x=1075, y=230)
 sessionLabel_2.bind('<<ListboxSelect>>', onselect_2)
+
 sessionLabel_3 = Listbox( frm, width=14, bd=0, height=3 )
 sessionLabel_3.place(x=1075, y=327)
 sessionLabel_3.bind('<<ListboxSelect>>', onselect_3)
+
 sessionLabel_4 = Listbox( frm, width=14, bd=0, height=3 )
 sessionLabel_4.place(x=1075, y=440)
 sessionLabel_4.bind('<<ListboxSelect>>', onselect_4)
+
+# Create list of sessionLabels
+labels = [sessionLabel_1, sessionLabel_2, sessionLabel_3, sessionLabel_4]
 
 #----------------------------------------------------------------------------
 #   - Call list of Audio Sessions volume_by_process.py
@@ -441,29 +376,29 @@ sessionLabel_4.bind('<<ListboxSelect>>', onselect_4)
 # Create list of common audio sessions
 sessionOptions = ["master", "chrome.exe", "firefox.exe", "discord.exe", "microphone", "unmapped", "Choose a file:" ]
 
-# Store audio sessions for slider 1
+# Store audio sessions for 4 sliders
 sessionsVar_slider1 = StringVar()
 sessionsVar_slider1.set("Slider 1")
 
-# Store audio sessions for slider 2
 sessionsVar_slider2 = StringVar()
 sessionsVar_slider2.set("Slider 2")
 
-# Store audio sessions for slider 2
 sessionsVar_slider3 = StringVar()
 sessionsVar_slider3.set("Slider 3")
 
-# Store audio sessions for slider 2
 sessionsVar_slider4 = StringVar()
 sessionsVar_slider4.set("Slider 4")
 
-sessionsDrop_slider1 = OptionMenu(frm, sessionsVar_slider1, *sessionOptions, command=saveSlider1).place(x=455, y=60)
+# Create list of sliders
+sliders = [sessionsVar_slider1, sessionsVar_slider2, sessionsVar_slider3, sessionsVar_slider4]
+
+sessionsDrop_slider1 = OptionMenu(frm, sessionsVar_slider1, *sessionOptions, command= lambda x=1: saveSlider(1)).place(x=455, y=60)
 sessionLabel_slider1 = Label( frm , textvariable = " " )
-sessionsDrop_slider2 = OptionMenu(frm, sessionsVar_slider2, *sessionOptions, command=saveSlider2).place(x=590, y=60)
+sessionsDrop_slider2 = OptionMenu(frm, sessionsVar_slider2, *sessionOptions, command= lambda x=1: saveSlider(2)).place(x=590, y=60)
 sessionLabel_slider2 = Label( frm, textvariable = " ")
-sessionsDrop_slider3 = OptionMenu(frm, sessionsVar_slider3, *sessionOptions, command=saveSlider3).place(x=720, y=60)
+sessionsDrop_slider3 = OptionMenu(frm, sessionsVar_slider3, *sessionOptions, command= lambda x=1: saveSlider(3)).place(x=720, y=60)
 sessionLabel_slider3 = Label( frm, textvariable = " ")
-sessionsDrop_slider4 = OptionMenu(frm, sessionsVar_slider4, *sessionOptions, command=saveSlider4).place(x=850, y=60)
+sessionsDrop_slider4 = OptionMenu(frm, sessionsVar_slider4, *sessionOptions, command= lambda x=1: saveSlider(4)).place(x=850, y=60)
 sessionLabel_slider4 = Label( frm, textvariable = " ")
 
 # Creates start button that runs the clicked which kicks off the actual program
