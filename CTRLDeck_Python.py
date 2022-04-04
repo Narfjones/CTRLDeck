@@ -52,7 +52,10 @@ def saveSlider1(event):
     process_Name = str(sessionsVar_slider1.get())
     if process_Name == "Choose a file:":
         process_Name = chooseFile()
-        sessionOptions[1] = process_Name
+        if len(process_Name) > 2:
+            sessionOptions[1] = process_Name
+        else:
+            pass
         logging.info('Process ' + process_Name + 'successfully added to Slider 1')
     else:
         pass
@@ -79,6 +82,7 @@ def saveSlider2(event):
     process_Name = str(sessionsVar_slider2.get())
     if process_Name == "Choose a file:":
         process_Name = chooseFile()
+    if len(process_Name) > 2:
         sessionOptions[2] = process_Name
     else:
         pass
@@ -104,7 +108,10 @@ def saveSlider3(event):
     process_Name = str(sessionsVar_slider3.get())
     if process_Name == "Choose a file:":
         process_Name = chooseFile()
-        sessionOptions[3] = process_Name
+        if len(process_Name) > 2:
+            sessionOptions[3] = process_Name
+        else:
+            pass
     else:
         pass
     sessionLabel_3.insert(END, process_Name)
@@ -128,7 +135,10 @@ def saveSlider4(event):
     process_Name = str(sessionsVar_slider4.get())
     if process_Name == "Choose a file:":
         process_Name = chooseFile()
-        sessionOptions[4] = process_Name
+        if len(process_Name) > 2:
+            sessionOptions[4] = process_Name
+        else:
+            pass
     else:
         pass
     sessionLabel_4.insert(END, process_Name)
@@ -211,84 +221,93 @@ portLabel = Label( frm , textvariable = " " )
 # Function to delete items from the ListBox and remove the processes from the sliders
 def onselect_1(evt):
     global lineList
-    print(len(lineList[1]))
-
     # Access storage of processes and create widget that triggers on select event in ListBox
     w = evt.widget
-    index = int(w.curselection()[0]) # Get index of currently selected process in Listbox
-    value = w.get(index) # Get the name of the process to remove
-    start = int(lineList[1].find(value)) # Get index of the first letter of the process name
-    length= int(len(value)) # Get length of the process name
-    stop = int(length + start + 1) # Create ending index of process name
-    value1 = (lineList[1][:start] + lineList[1][stop:-1]) # Take linList and create new string with currently selected process removed
-    lineList[1] = value1 # Substitute new string into lineList
-    sessionLabel_1.delete(index) # Remove the process from the label
-    print(len(lineList[1]))
-    # Prevent remove command from emptying the indices of lineList. If the number of indices changes the whole program will oh I don't know decide to rob a liquor store.
-    if len(lineList[1]) < 3:
-        lineList[1] += "2" # Stick in default value for lineList to keep the right number of indices
-    else: 
+    try:
+        index = int(w.curselection()[0]) # Get index of currently selected process in Listbox
+        value = w.get(index) # Get the name of the process to remove
+        start = int(lineList[1].find(value)) # Get index of the first letter of the process name
+        length= int(len(value)) # Get length of the process name
+        stop = int(length + start + 1) # Create ending index of process name
+        value1 = (lineList[1][:start] + lineList[1][stop:-1]) # Take linList and create new string with currently selected process removed
+        lineList[1] = value1 # Substitute new string into lineList
+        sessionLabel_1.delete(index) # Remove the process from the label
+        # Prevent remove command from emptying the indices of lineList. If the number of indices changes the whole program will oh I don't know decide to rob a liquor store.
+        if len(lineList[1]) < 3:
+            lineList[1] += "2" # Stick in default value for lineList to keep the right number of indices
+        else: 
+            pass
+        # Open file and write new lineList
+        portFile = open("COMport", "w")
+        portFile.writelines(lineList)
+        portFile.close()
+    except IndexError:
         pass
-    # Open file and write new lineList
-    portFile = open("COMport", "w")
-    portFile.writelines(lineList)
-    portFile.close()
 
 def onselect_2(evt):
     global lineList
     w = evt.widget
-    index = int(w.curselection()[0])
-    value = w.get(index)
-    start = int(lineList[2].find(value))
-    length= int(len(value))
-    stop = int(length + start + 1)
-    value1 = (lineList[2][:start] + lineList[2][stop:-1])
-    lineList[2] = value1
-    sessionLabel_2.delete(index)
-    if len(lineList[2]) < 3:
-        lineList[2] += "3" # Stick in default value for lineList to keep the right number of indices
-    else: 
+    try:
+        index = int(w.curselection()[0])
+        value = w.get(index)
+        start = int(lineList[2].find(value))
+        length= int(len(value))
+        stop = int(length + start + 1)
+        value1 = (lineList[2][:start] + lineList[2][stop:-1])
+        lineList[2] = value1
+        sessionLabel_2.delete(index)
+        if len(lineList[2]) < 3:
+            lineList[2] += "3" # Stick in default value for lineList to keep the right number of indices
+        else: 
+            pass
+        portFile = open("COMport", "w")
+        portFile.writelines(lineList)
+        portFile.close()
+    except IndexError:
         pass
-    portFile = open("COMport", "w")
-    portFile.writelines(lineList)
-    portFile.close()
 
 def onselect_3(evt):
     global lineList
     w = evt.widget
-    index = int(w.curselection()[0])
-    value = w.get(index)
-    start = int(lineList[3].find(value))
-    length= int(len(value))
-    stop = int(length + start + 1)
-    value1 = (lineList[3][:start] + lineList[3][stop:-1])
-    lineList[3] = value1
-    sessionLabel_3.delete(index)
-    if len(lineList[3]) < 3:
-        lineList[3] += "4" # Stick in default value for lineList to keep the right number of indices
-    else: 
+    try:
+        index = int(w.curselection()[0])
+        value = w.get(index)
+        start = int(lineList[3].find(value))
+        length= int(len(value))
+        stop = int(length + start + 1)
+        value1 = (lineList[3][:start] + lineList[3][stop:-1])
+        lineList[3] = value1
+        sessionLabel_3.delete(index)
+        if len(lineList[3]) < 3:
+            lineList[3] += "4" # Stick in default value for lineList to keep the right number of indices
+        else: 
+            pass
+        portFile = open("COMport", "w")
+        portFile.writelines(lineList)
+        portFile.close()
+    except IndexError:
         pass
-    portFile = open("COMport", "w")
-    portFile.writelines(lineList)
-    portFile.close()
     
 def onselect_4(evt):
     w = evt.widget
-    index = int(w.curselection()[0])
-    value = w.get(index)
-    start = int(lineList[4].find(value))
-    length= int(len(value))
-    stop = int(length + start + 1)
-    value1 = (lineList[4][:start] + lineList[4][stop:-1])
-    lineList[4] = value1
-    sessionLabel_4.delete(index)
-    if len(lineList[4]) < 3:
-        lineList[4] += "5" # Stick in default value for lineList to keep the right number of indices
-    else: 
+    try:
+        index = int(w.curselection()[0])
+        value = w.get(index)
+        start = int(lineList[4].find(value))
+        length= int(len(value))
+        stop = int(length + start + 1)
+        value1 = (lineList[4][:start] + lineList[4][stop:-1])
+        lineList[4] = value1
+        sessionLabel_4.delete(index)
+        if len(lineList[4]) < 3:
+            lineList[4] += "5" # Stick in default value for lineList to keep the right number of indices
+        else: 
+            pass
+        portFile = open("COMport", "w")
+        portFile.writelines(lineList)
+        portFile.close()
+    except IndexError:
         pass
-    portFile = open("COMport", "w")
-    portFile.writelines(lineList)
-    portFile.close()
 
 sessionLabel_1 = Listbox( frm, width=14, bd=0, height=3, selectmode="single", borderwidth=0,  )
 sessionLabel_1.place(x=1075, y=135)
