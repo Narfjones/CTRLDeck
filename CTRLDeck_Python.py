@@ -185,27 +185,6 @@ frm.grid()
 labelbg = Label(frm, image = bg, width = bg.width(), height = bg.height())
 labelbg.grid(column = 0, row = 0)
 
-
-#----------------------------------------------------------------------
-## canvas = Canvas(root, width=1240, height=762)
-## canvas.pack(fill=BOTH, expand=True)
-
-## canvas.create_image(0, 0, image=bg, anchor='nw')
-#
-#def resize_image(e):
-#   global image, resized, image2
-#   # open image to resize it
-#   image = Image.open("6x4deck-bkgrd.png")
-#   # resize the image with width and height of root
-#   resized = image.resize((e.width, e.height), Image.ANTIALIAS)
-#
-#   image2 = ImageTk.PhotoImage(resized)
-#   canvas.create_image(0, 0, image=image2, anchor='nw')
-
-# root.bind("<Configure>", resize_image)
-#----------------------------------------------------------------------
-
-
 #----------------------------------------------------------------------------
 #   - Call list of COM ports from getCOM
 #   - Create dropdown list with a 'clicked' action
