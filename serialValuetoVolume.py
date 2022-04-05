@@ -72,6 +72,7 @@ def init():
     global unmappedList
     unmappedList = sliderProcess1 + sliderProcess2 + sliderProcess3 + sliderProcess4
     running = True
+    print(sliderProcess1)
     logging.debug('Program Initiated')
     
 # Create serial connect with chosen COM port(from COMport data file) and store in global serial variable
