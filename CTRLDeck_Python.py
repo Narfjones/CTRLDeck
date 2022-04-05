@@ -24,7 +24,7 @@ global icon
 # List to which we append threads
 threads = []
 # Create log file
-logging.basicConfig(filename='ctrldeck.log', filemode= 'w', encoding='utf-8', level=logging.DEBUG)
+logging.basicConfig(filename='ctrldeck.log', filemode= 'w', level=logging.DEBUG)
 
 #------------------------------------------------------------------
 #       Create Functions for getting user chosen port and

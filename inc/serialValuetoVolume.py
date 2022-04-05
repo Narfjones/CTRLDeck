@@ -43,10 +43,19 @@ def init():
     numSliders = 4
 
     sliderProcesses = []
+    
     for i in range(numSliders):
+<<<<<<< Updated upstream
         sliderProcesses.append(str(fileLines[i+1]).rstrip("\n").split(','))
+    
+    for i in range(len(sliderProcesses)):    
+        sliderProcesses[i] = [j for j in sliderProcesses[i] if j != '']
+    print(sliderProcesses)
+=======
+        sliderProcesses.append(str(fileLines[i+1]).rstrip().split(','))
+>>>>>>> Stashed changes
 
-    sliders = [None] * numSliders
+    sliders = [float] * numSliders
     global unmappedList
     unmappedList = sliderProcesses[0] + sliderProcesses[1] + sliderProcesses[2] + sliderProcesses[3]
     running = True
@@ -67,6 +76,7 @@ def connectSerial():
         sleep(.001) # Short sleep is necessary apparently
         print("connected to: " + chosenPort)
         logging.debug('Serial Port connected')
+        print(sliderProcesses)
     except: # If an exception is thrown we assume it is already connected. Needs to be more specific.
         logging.debug('Serial Port was unable to connect')
         pass
@@ -139,6 +149,7 @@ def volumeSlider(sliderNum):
     # Iterate over and set volume for all processes controlled by the supplied slider
     for sliderProcess in sliderProcesses[sliderNum-1]:
         if sliderProcess != None: # Only runs if the sliderProcess was chosen
+            # print(sliderProcess)
 
             # 'master' uses EndpointVolume while processes are done with ISimpleAudioVolume
             if sliderProcess == "master":
@@ -227,7 +238,7 @@ def getValues():
 
                     for i in range(numSliders):
                         try:
-                            if sliders[i] <= .02:
+                            if sliders[i] <= .00:
                                 sliders[i] = 0.00
                                 volumeSlider(i+1)
                             else:
