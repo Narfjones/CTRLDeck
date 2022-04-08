@@ -55,7 +55,10 @@ def saveSlider(sliderNum):
     process_Name = str(slider.get())
     if process_Name == "Choose a file:":
         process_Name = chooseFile()
-        sessionOptions[sliderNum] = process_Name
+        if len(process_Name) > 2:
+            sessionOptions[sliderNum] = process_Name
+        else:
+            pass
         logging.info('Process ' + process_Name + 'successfully added to Slider ' +  str(sliderNum))
     else:
         pass
@@ -76,7 +79,7 @@ def saveSlider(sliderNum):
         logging.info(lineList[sliderNum] + 'added to Slider ' +  str(sliderNum))
         serialValuetoVolume.init()
     except:
-        logging.debug('Process not added to Slider ' + str(sliderNum))
+        logging.debug('Process was not added to Slider ' + str(sliderNum))
 
 
 # Opens filedialog and allows user to choose .exe file to which they wish to assign slider
@@ -109,25 +112,28 @@ def onselect(evt, labelNum):
 
     # Access storage of processes and create widget that triggers on select event in ListBox
     w = evt.widget
-    index = int(w.curselection()[0]) # Get index of currently selected process in Listbox
-    value = w.get(index) # Get the name of the process to remove
-    start = int(lineList[labelNum].find(value)) # Get index of the first letter of the process name
-    length= int(len(value)) # Get length of the process name
-    stop = int(length + start + 1) # Create ending index of process name
-    value1 = (lineList[labelNum][:start] + lineList[labelNum][stop:-1]) # Take linList and create new string with currently selected process removed
-    lineList[labelNum] = value1 # Substitute new string into lineList
-    label.delete(index) # Remove the process from the label
-    print(len(lineList[labelNum]))
-    # Prevent remove command from emptying the indices of lineList. If the number of indices changes the whole program will oh I don't know decide to rob a liquor store.
-    if len(lineList[labelNum]) < 3:
-        lineList[labelNum] += str(labelNum + 1) # Stick in default value for lineList to keep the right number of indices
-    else: 
+    try:
+        index = int(w.curselection()[0]) # Get index of currently selected process in Listbox
+        value = w.get(index) # Get the name of the process to remove
+        start = int(lineList[labelNum].find(value)) # Get index of the first letter of the process name
+        length= int(len(value)) # Get length of the process name
+        stop = int(length + start + 1) # Create ending index of process name
+        value1 = (lineList[labelNum][:start] + lineList[labelNum][stop:-1]) # Take linList and create new string with currently selected process removed
+        lineList[labelNum] = value1 # Substitute new string into lineList
+        label.delete(index) # Remove the process from the label
+        print(len(lineList[labelNum]))
+        # Prevent remove command from emptying the indices of lineList. If the number of indices changes the whole program will oh I don't know decide to rob a liquor store.
+        if len(lineList[labelNum]) < 3:
+            lineList[labelNum] += str(labelNum + 1) # Stick in default value for lineList to keep the right number of indices
+        else: 
+            pass
+        # Open file and write new lineList
+        portFile = open("COMport", "w")
+        portFile.writelines(lineList)
+        portFile.close()
+    except IndexError:
         pass
-    # Open file and write new lineList
-    portFile = open("COMport", "w")
-    portFile.writelines(lineList)
-    portFile.close()
-
+    
 
 # This runs the functions that get serial data, convert to windows accepted values, and assign volumes
 def sliderRun():
