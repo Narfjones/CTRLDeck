@@ -202,7 +202,10 @@ def hide_window():
     # Store proccesses assigned to sliders to display in icon menu
     sliderProcesses = []
     for i in range(numSliders):
-        sliderProcesses.append(str(serialValuetoVolume.sliderProcesses[i]))
+        try:
+            sliderProcesses.append(str(serialValuetoVolume.sliderProcesses[i]))
+        except TypeError:
+            sliderProcesses.append("No process assigned")
 
     global icon
     root.withdraw() # Hides GUI Window

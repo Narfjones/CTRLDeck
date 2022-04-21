@@ -45,15 +45,11 @@ def init():
     sliderProcesses = []
     
     for i in range(numSliders):
-<<<<<<< Updated upstream
         sliderProcesses.append(str(fileLines[i+1]).rstrip("\n").split(','))
     
     for i in range(len(sliderProcesses)):    
         sliderProcesses[i] = [j for j in sliderProcesses[i] if j != '']
     print(sliderProcesses)
-=======
-        sliderProcesses.append(str(fileLines[i+1]).rstrip().split(','))
->>>>>>> Stashed changes
 
     sliders = [float] * numSliders
     global unmappedList
@@ -123,11 +119,12 @@ def masterVolume(volumeToSet):
     IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
     volume = cast(interface, POINTER(IAudioEndpointVolume))
     #print("Time to setup interface: " + str(time.perf_counter()))
-
-    # Send volume value to device. Must be float or int(min = -65.25, max = 0)
-    volume.SetMasterVolumeLevelScalar(volumeToSet, None)
-    #print("Time to set volume: " + str(time.perf_counter()))
-
+    try:
+        # Send volume value to device. Must be float or int(min = -65.25, max = 0)
+        volume.SetMasterVolumeLevelScalar(volumeToSet, None)
+        #print("Time to set volume: " + str(time.perf_counter()))
+    except:
+        pass
 
 def micVolume(volumeToSet):
     # Get the devices for the system. Always returns active speaker device
@@ -137,8 +134,10 @@ def micVolume(volumeToSet):
     interface = devices.Activate(
     IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
     volume = cast(interface, POINTER(IAudioEndpointVolume))
-
-    volume.SetMasterVolumeLevelScalar(volumeToSet, None)
+    try:
+        volume.SetMasterVolumeLevelScalar(volumeToSet, None)
+    except:
+        pass
 
 
 # Takes assigned process from slider variable and sends the value to the audio endpoint to update volume
@@ -164,16 +163,22 @@ def volumeSlider(sliderNum):
                 # sessions = AudioUtilities.GetAllSessions() # Scans sessions and locates the one with a name matching the sliderProcess
                 for session in sessions:
                     volume = session._ctl.QueryInterface(ISimpleAudioVolume)
-                    # If an audio session is not assigned, change it's volume
+                        # If an audio session is not assigned, change it's volume
                     if session.Process and session.Process.name() not in unmappedList:
-                        volume.SetMasterVolume(sliders[sliderNum-1], None) # Send updated volume value
+                        try:
+                            volume.SetMasterVolume(sliders[sliderNum-1], None) # Send updated volume value
+                        except:
+                            pass
 
             else:
                 #sessions = AudioUtilities.GetAllSessions() # Scans sessions and locates the one with a name matching the sliderProcess
                 for session in sessions:
                     volume = session._ctl.QueryInterface(ISimpleAudioVolume)
                     if session.Process and session.Process.name() == sliderProcess:
-                        volume.SetMasterVolume(sliders[sliderNum-1], None) # Send updated volume value
+                        try:
+                            volume.SetMasterVolume(sliders[sliderNum-1], None) # Send updated volume value
+                        except:
+                            pass
 
 
 #------------------------------------------------------------------

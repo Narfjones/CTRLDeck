@@ -2,8 +2,8 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "CTRLDeck"
-#define MyAppVersion ".5"
-#define MyAppURL "github.com/Narfjones/CTRLDeck-Python"
+#define MyAppVersion ".5.3"
+#define MyAppURL "github.com/Narfjones/CTRLDeck"
 #define MyAppExeName "CTRLDeck.exe"
 
 [Setup]
@@ -21,8 +21,8 @@ DisableProgramGroupPage=yes
 LicenseFile=C:\Users\rghile\Documents\CTRLdeck License.txt
 ; Remove the following line to run in administrative install mode (install for all users.)
 PrivilegesRequired=lowest
-OutputDir=C:\Users\rghile\Documents\GitHub\CTRLDeck-Python\executable
-SetupIconFile=C:\Users\rghile\Documents\GitHub\CTRLDeck-Python\fader.ico
+OutputDir=C:\Users\rghile\Documents\GitHub\CTRLDeck\executable
+SetupIconFile=C:\Users\rghile\Documents\GitHub\CTRLDeck\fader.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -34,8 +34,8 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\Users\rghile\Documents\GitHub\CTRLDeck-Python\dist\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\rghile\Documents\GitHub\CTRLDeck-Python\dist\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "C:\Users\rghile\Documents\GitHub\CTRLDeck\dist\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\rghile\Documents\GitHub\CTRLDeck\dist\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

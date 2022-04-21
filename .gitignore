@@ -365,3 +365,5 @@ FodyWeavers.xsd
 dist/
 build/
 .vscode/
+utils/
+executable/
