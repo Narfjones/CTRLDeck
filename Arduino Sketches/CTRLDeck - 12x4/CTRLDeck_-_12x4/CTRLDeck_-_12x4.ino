@@ -21,11 +21,11 @@ int analogSliderValues[NUM_SLIDERS];
 char keys[ROWS][COLS] = {
   {'1', '2', '3', '4'},
   {'5', '6', '7', '8'},
-  {'9', '0', 'A', 'S'}
+  {'9', '0', 'A', 'B'}
 };
 
 byte rowPins[ROWS] = {6, 7, 8};
-byte colPins[COLS] = {2, 3, 4, 5};
+byte colPins[COLS] = {2, 3, 4, 14};
 
 Keypad keypad = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS );
 
@@ -42,8 +42,8 @@ void setup() {
 }
 
 void sendMacroCommand(uint8_t key) {
-  Keyboard.press(KEY_LEFT_CTRL);
   Keyboard.press(key);
+  Keyboard.releaseAll();
 }
 
 void loop() {
@@ -54,49 +54,45 @@ void loop() {
     Serial.println(key);
     switch (key) {
       case '1':
-        sendMacroCommand(KEY_F13);
+        sendMacroCommand(KEY_F24);
         break;
       case '2':
-        sendMacroCommand(KEY_F14);
+        sendMacroCommand(KEY_F23);
         break;
       case '3':
-        sendMacroCommand(KEY_F15);
+        sendMacroCommand(KEY_F22);
         break;
       case '4':
-        sendMacroCommand(KEY_F16);
+        sendMacroCommand(KEY_F21);
         break;
       case '5':
-        sendMacroCommand(KEY_F17);
+        sendMacroCommand(KEY_F20);
         break;
       case '6':
-        sendMacroCommand(KEY_F18);
+        sendMacroCommand(KEY_F19);
         break;
         case '7':
-        sendMacroCommand(KEY_F13);
+        sendMacroCommand(KEY_F18);
         break;
       case '8':
-        sendMacroCommand(KEY_F14);
-        break;
-      case '9':
-        sendMacroCommand(KEY_F15);
-        break;
-      case '0':
-        sendMacroCommand(KEY_F16);
-        break;
-      case 'A':
         sendMacroCommand(KEY_F17);
         break;
-      case 'S':
-        sendMacroCommand(KEY_F18);
+      case '9':
+        sendMacroCommand(KEY_F16);
+        break;
+      case '0':
+        sendMacroCommand(KEY_F15);
+        break;
+      case 'A':
+        sendMacroCommand(KEY_F14);
+        break;
+      case 'B':
+        sendMacroCommand(KEY_F13);
         break;
     }
 
     delay(30);
     Keyboard.releaseAll();
-
-    while(Serial.available())
-    Serial.write(Serial.read());
-
   }
   
   updateSliderValues();
@@ -122,7 +118,7 @@ void sendSliderValues() {
     }
   }
   
-  Serial.println(builtString);
+  // Serial.println(builtString);
 }
 
 void printSliderValues() {
