@@ -40,7 +40,6 @@ void setup() {
 }
 
 void sendMacroCommand(uint8_t key) {
-  Keyboard.press(KEY_LEFT_CTRL);
   Keyboard.press(key);
   Keyboard.releaseAll();
 }
@@ -72,6 +71,9 @@ void loop() {
         break;
     }
 
+  if (Serial.available()){
+    handshake();
+  }
     delay(20);
     Keyboard.releaseAll();
 
@@ -81,6 +83,21 @@ void loop() {
   sendSliderValues();
   delay(10);
   
+}
+
+void handshake(){
+  String input = Serial.read();
+  switch(input){
+    case 'sliders':
+      Serial.println(NUM_SLIDERS);
+    case 'keys':
+      Serial.println(ROWS*COLS);
+  }
+  Serial.println("confirm");
+  String confirm = Serial.read();
+  if (confirm = "true"){
+    return
+  }
 }
 
 void updateSliderValues() {
