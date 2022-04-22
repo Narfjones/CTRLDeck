@@ -42,6 +42,7 @@ void setup() {
 void sendMacroCommand(uint8_t key) {
   Keyboard.press(KEY_LEFT_CTRL);
   Keyboard.press(key);
+  Keyboard.releaseAll();
 }
 
 void loop() {
@@ -71,7 +72,7 @@ void loop() {
         break;
     }
 
-    delay(30);
+    delay(20);
     Keyboard.releaseAll();
 
   }
@@ -79,14 +80,13 @@ void loop() {
   updateSliderValues();
   sendSliderValues();
   delay(10);
-  while(Serial.available())
-    Serial.write(Serial.read());
   
 }
 
 void updateSliderValues() {
   for (int i = 0; i < NUM_SLIDERS; i++) {
-     analogSliderValues[i] = analogRead(analogInputs[i]);
+          analogSliderValues[i] = map(analogRead(analogInputs[i]), 24, 4085, 0, 100);
+
   }
 }
 
