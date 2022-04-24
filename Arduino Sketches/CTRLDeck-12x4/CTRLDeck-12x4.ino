@@ -1,4 +1,4 @@
-include <Keyboard.h>
+#include <Keyboard.h>
 #include <Keypad.h>
 #include <Control_Surface.h>
 
@@ -118,7 +118,7 @@ void sendSliderValues() {
     }
   }
   
-  // Serial.println(builtString);
+  Serial.println(builtString);
 }
 
 void printSliderValues() {
