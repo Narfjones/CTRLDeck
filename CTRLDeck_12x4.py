@@ -9,7 +9,6 @@ import inc.serialValuetoVolume as serialValuetoVolume
 import threading
 import pythoncom
 import logging
-import time
 
 # Create global variable for arduino port. Can't remember if it is still needed
 chosenPort = str()
@@ -280,9 +279,9 @@ sessionOptions = ["master", "chrome.exe", "firefox.exe", "discord.exe", "microph
 
 # Store audio sessions for 4 sliders
 SliderDropdownsXPositions = [573, 680, 783, 890]
-SliderDropdownsYPosition = 609
-faderKnobXPos = [589, 688, 793, 900]
-faderKnobYPos = serialValuetoVolume.faders
+SliderDropdownsYPosition = 613
+faderKnobXPos = [590, 689, 795, 901]
+faderKnobYPos = [318, 450, 265, 500]
 
 sliders = []
 for i in range (numSliders):

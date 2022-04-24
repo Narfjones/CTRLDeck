@@ -6,7 +6,6 @@ from pycaw.pycaw import DEVICE_STATE, AudioUtilities, ISimpleAudioVolume, IAudio
 from ctypes import POINTER, cast
 from comtypes import CLSCTX_ALL 
 import logging
-from numpy import interp
 
 # Create global variables. I'm sure there's a more efficient way to handle all of this.   
 chosenPort = str()
@@ -263,7 +262,6 @@ def getValues():
                     for i in range(numSliders):
                         if sliders[i] != previousSliders[i]:
                             previousSliders[i] = sliders[i]
-                            faders[i] = interp(sliders[i], [.00,1.00], [540, 225])
                             volumeSlider(i+1)
                         else:
                             pass
