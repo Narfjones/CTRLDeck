@@ -4,12 +4,11 @@ from tkinter import filedialog
 from inc.getCOM import serial_ports
 from pystray import MenuItem as item
 import pystray
-from PIL import Image, ImageTk
+from PIL import Image
 import inc.serialValuetoVolume as serialValuetoVolume
 import threading
 import pythoncom
 import logging
-import time
 
 # Create global variable for arduino port. Can't remember if it is still needed
 chosenPort = str()
@@ -233,11 +232,10 @@ def hide_window():
 ### Create Window
 root = Tk()
 root.title("CTRLdeck")
-root.geometry('1024x702')
-
+root.geometry('1240x720')
 
 # Create background image
-bg = PhotoImage(file = "12x4deck-bkgrd.png")
+bg = PhotoImage(file = "6x4deck-bkgrd.png")
 
 # Create a child frame from root
 frm = ttk.Frame(root, padding = 0)
@@ -246,7 +244,6 @@ frm = ttk.Frame(root, padding = 0)
 frm.grid()
 labelbg = Label(frm, image = bg, width = bg.width(), height = bg.height())
 labelbg.grid(column = 0, row = 0)
-faderImg = ImageTk.PhotoImage(Image.open("./assets/fader_knob.png"))
 
 ### Set COM Port GUI elements
 
@@ -258,7 +255,7 @@ portsVar = StringVar()
 portsVar.set("Choose your port:")
 
 # Create port dropdown menu
-portDrop = OptionMenu(frm, portsVar, *portOptions, command=savePortChoice).place(x = 867, y = 150)
+portDrop = OptionMenu(frm, portsVar, *portOptions, command=savePortChoice).place(x = 30, y = 25)
 
 # Create label
 portLabel = Label( frm , textvariable = " " )
@@ -279,10 +276,8 @@ numSliders = 4
 sessionOptions = ["master", "chrome.exe", "firefox.exe", "discord.exe", "microphone", "unmapped", "Choose a file:" ]
 
 # Store audio sessions for 4 sliders
-SliderDropdownsXPositions = [573, 680, 783, 890]
-SliderDropdownsYPosition = 609
-faderKnobXPos = [589, 688, 793, 900]
-faderKnobYPos = serialValuetoVolume.faders
+SliderDropdownsXPositions = [455, 590, 720, 850]
+SliderDropdownsYPosition = 60
 
 sliders = []
 for i in range (numSliders):
@@ -292,24 +287,18 @@ for i in range (numSliders):
     sliders.append(slider)
 
 # Create sessionLabels for processes currently controlled by sliders
-SliderLabelsXPosition = [573, 680, 783, 890]
-SliderLabelsYPositions = 650
+SliderLabelsXPosition = 1075
+SliderLabelsYPositions = [135, 230, 327, 440]
 
 labels = []
 for i in range (numSliders):
-    label = Listbox( frm, width=13, bd=0, height=2, selectmode="single", borderwidth=0,  )
-    label.place(x=SliderLabelsXPosition[i], y=SliderLabelsYPositions)
+    label = Listbox( frm, width=14, bd=0, height=3, selectmode="single", borderwidth=0,  )
+    label.place(x=SliderLabelsXPosition, y=SliderLabelsYPositions[i])
     label.bind('<<ListboxSelect>>', lambda evt, labelNum=i+1 : onselect(evt, labelNum))
     labels.append(label)
-    
-fader_labels = []
-for i in range (numSliders):
-    fader_label = Label(frm, image = faderImg, borderwidth = 0, relief="flat")
-    fader_label.place(x=faderKnobXPos[i], y=faderKnobYPos[i])
-    fader_labels.append(fader_label)
 
 # Creates start button that runs the clicked which kicks off the actual program
-startButton = ttk.Button(frm, text="Start CTRLdeck", command=start_clicked).place(x=26, y=632)
+startButton = ttk.Button(frm, text="Start CTRLdeck", command=start_clicked).place(x=1110, y=670)
 
 # Loops the window processes
 root.protocol("WM_DELETE_WINDOW", hide_window)
