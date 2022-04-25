@@ -235,14 +235,12 @@ def updateSliderYPos():
         faderKnobYPosPrev = faderKnobYPos.copy()         
         for i in range (len(faderKnobYPos)):
             if faderKnobYPos[i] != faderKnobYPosPrev:
-                fader_label = Label(frm, image = faderImg, borderwidth = 0, relief="flat")
                 faderKnobYPos[i] = interp(faderKnobYPos[i], [0.0,1.0], [511,233])
                 print(faderKnobYPos[i])
                 fader_label.place(x=faderKnobXPos[i], y=faderKnobYPos[i])
                 fader_labels.append(fader_label)
                 faderKnobYPosPrev[i] = faderKnobYPos[i]
         sleep(.02)
-        fader_label.place()
 
 def startSliderYPos():
     global t2
@@ -328,7 +326,8 @@ for i in range (numSliders):
     labels.append(label)
     
 fader_labels = []
-fader_label = Label(frm, image = faderImg, borderwidth = 0, relief="flat")
+for i in range (numSliders):
+    fader_label = Label(frm, image = faderImg, borderwidth = 0, relief="flat")
 
 # Creates start button that runs the clicked which kicks off the actual program
 startButton = ttk.Button(frm, text="Start CTRLdeck", command=start_clicked).place(x=26, y=632)
