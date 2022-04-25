@@ -9,6 +9,8 @@ import inc.serialValuetoVolume as serialValuetoVolume
 import threading
 import pythoncom
 import logging
+from time import sleep
+from numpy import interp
 
 # Create global variable for arduino port. Can't remember if it is still needed
 chosenPort = str()
@@ -16,7 +18,7 @@ chosenPort = str()
 # Create list variable to hold information in buffer file. It must hold these variables so that we don't reference empty indices
 global lineList
 lineList = ["1", "\n2", "\n3", "\n4", "\n5"] # Default value to maintain the correct number of indicies.
-macroList = ["1", "\n2", "\n3", "\n4", "\n5", "\n6", "\n7", "\n8", "\n9", "\n10", "\n11", "\n12"] 
+macroList = ["1", "\n2", "\n3", "\n4", "\n5", "\n6", "\n7", "\n8", "\n9", "\n10", "\n11", "\n12"]
 
 # Variable for systray icon
 global icon
@@ -224,7 +226,32 @@ def hide_window():
         icon.run() # Start system tray icon
         logging.debug('System tray icon running')
 
+def updateSliderYPos():
+    while True:
+        global faderKnobYPosPrev
+        global faderKnobYPos
+        global fader_label
+        faderKnobYPos = serialValuetoVolume.faders.copy()
+        faderKnobYPosPrev = faderKnobYPos.copy()         
+        for i in range (len(faderKnobYPos)):
+            if faderKnobYPos[i] != faderKnobYPosPrev:
+                fader_label = Label(frm, image = faderImg, borderwidth = 0, relief="flat")
+                faderKnobYPos[i] = interp(faderKnobYPos[i], [0.0,1.0], [511,233])
+                print(faderKnobYPos[i])
+                fader_label.place(x=faderKnobXPos[i], y=faderKnobYPos[i])
+                fader_labels.append(fader_label)
+                faderKnobYPosPrev[i] = faderKnobYPos[i]
+        sleep(.02)
+        fader_label.place()
 
+def startSliderYPos():
+    global t2
+    t2 = threading.Thread(target=updateSliderYPos) # Sets target function that should run in this thread
+    threads.append(t2)
+    t2.start() # Starting thread runs the target function
+
+
+    
 #------------------------------------------------------------------
 #                          Create GUI
 # -----------------------------------------------------------------
@@ -281,7 +308,6 @@ sessionOptions = ["master", "chrome.exe", "firefox.exe", "discord.exe", "microph
 SliderDropdownsXPositions = [575, 680, 785, 890]
 SliderDropdownsYPosition = 613
 faderKnobXPos = [596, 693, 797, 901]
-faderKnobYPos = [318, 450, 265, 500]
 
 sliders = []
 for i in range (numSliders):
@@ -302,14 +328,12 @@ for i in range (numSliders):
     labels.append(label)
     
 fader_labels = []
-for i in range (numSliders):
-    fader_label = Label(frm, image = faderImg, borderwidth = 0, relief="flat")
-    fader_label.place(x=faderKnobXPos[i], y=faderKnobYPos[i])
-    fader_labels.append(fader_label)
+fader_label = Label(frm, image = faderImg, borderwidth = 0, relief="flat")
 
 # Creates start button that runs the clicked which kicks off the actual program
 startButton = ttk.Button(frm, text="Start CTRLdeck", command=start_clicked).place(x=26, y=632)
 
 # Loops the window processes
+startSliderYPos()
 root.protocol("WM_DELETE_WINDOW", hide_window)
 root.mainloop()

@@ -6,6 +6,7 @@ from pycaw.pycaw import DEVICE_STATE, AudioUtilities, ISimpleAudioVolume, IAudio
 from ctypes import POINTER, cast
 from comtypes import CLSCTX_ALL 
 import logging
+from numpy import copy
 
 # Create global variables. I'm sure there's a more efficient way to handle all of this.   
 chosenPort = str()
@@ -17,7 +18,7 @@ sliderProcesses = None
 sliders = None
 running = None
 numSliders = None
-faders = [541, 541, 541, 541]
+faders = []
 unmappedList = []
 
 # Initializes variables and stores values from temp data file in proper places. Should not run before 'Start CTRLdeck' button is clicked.
@@ -261,8 +262,16 @@ def getValues():
 
                     for i in range(numSliders):
                         if sliders[i] != previousSliders[i]:
+                            global faders
                             previousSliders[i] = sliders[i]
                             volumeSlider(i+1)
+                            if (sliders[i] != 'null'):
+                                if (len(faders) < numSliders):
+                                    print(len(faders))
+                                    faders.append(sliders[i])
+                                else:
+                                    faders[i] = sliders[i]
+                            
                         else:
                             pass
 
