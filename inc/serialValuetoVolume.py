@@ -115,12 +115,12 @@ def masterVolume(volumeToSet):
     #devices = AudioUtilities.GetSpeakers()
     #print(type(devices))
 
-    # Activate the interface with the speaker device so you can get and set volume.
-    interface = devices.Activate(
-    IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
-    volume = cast(interface, POINTER(IAudioEndpointVolume))
-    #print("Time to setup interface: " + str(time.perf_counter()))
     try:
+        # Activate the interface with the speaker device so you can get and set volume.
+        interface = devices.Activate(
+        IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
+        volume = cast(interface, POINTER(IAudioEndpointVolume))
+        #print("Time to setup interface: " + str(time.perf_counter()))
         # Send volume value to device. Must be float or int(min = -65.25, max = 0)
         volume.SetMasterVolumeLevelScalar(volumeToSet, None)
         #print("Time to set volume: " + str(time.perf_counter()))

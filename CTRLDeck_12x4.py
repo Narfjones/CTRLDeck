@@ -24,7 +24,7 @@ global icon
 # List to which we append threads
 threads = []
 # Create log file
-logging.basicConfig(filename='ctrldeck.log', filemode= 'w', level=logging.WARNING)
+logging.basicConfig(filename='ctrldeck.log', filemode= 'w', level=logging.ERROR)
 
 #------------------------------------------------------------------
 #       Create Functions for getting user chosen port and
@@ -163,7 +163,7 @@ def start_clicked():
     threads.append(t)
     t.start() # Starting thread runs the target function
     global startButton
-    startButton = ttk.Button(frm, text="Restart CTRLdeck", command=start_clicked).place(x=1110, y=670) # Rename the 'start' button to 'restart'
+    startButton = ttk.Button(frm, text="Restart CTRLdeck", command=start_clicked).place(x=26, y=632) # Rename the 'start' button to 'restart'
 
 
 # This is the actual closing function which ends the program and it's associated threads. Only accessed by 'Quit' in the taskbar
@@ -257,7 +257,7 @@ portsVar = StringVar()
 portsVar.set("Choose your port:")
 
 # Create port dropdown menu
-portDrop = OptionMenu(frm, portsVar, *portOptions, command=savePortChoice).place(x = 867, y = 150)
+portDrop = OptionMenu(frm, portsVar, *portOptions, command=savePortChoice).place(x = 867, y = 130)
 
 # Create label
 portLabel = Label( frm , textvariable = " " )
@@ -278,9 +278,9 @@ numSliders = 4
 sessionOptions = ["master", "chrome.exe", "firefox.exe", "discord.exe", "microphone", "unmapped", "Choose a file:" ]
 
 # Store audio sessions for 4 sliders
-SliderDropdownsXPositions = [573, 680, 783, 890]
+SliderDropdownsXPositions = [575, 680, 785, 890]
 SliderDropdownsYPosition = 613
-faderKnobXPos = [590, 689, 795, 901]
+faderKnobXPos = [596, 693, 797, 901]
 faderKnobYPos = [318, 450, 265, 500]
 
 sliders = []
@@ -291,7 +291,7 @@ for i in range (numSliders):
     sliders.append(slider)
 
 # Create sessionLabels for processes currently controlled by sliders
-SliderLabelsXPosition = [573, 680, 783, 890]
+SliderLabelsXPosition = [575, 680, 785, 890]
 SliderLabelsYPositions = 650
 
 labels = []
