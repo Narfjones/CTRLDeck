@@ -191,6 +191,9 @@ def volumeSlider(sliderNum):
 def getValues():
     global sliders
     global numSliders
+    previousSliders = []
+    for i in range(numSliders):
+        previousSliders.append(float())
 
     while True: # Infinite loop unless trigger variable is changed by stop_program()
         #timeStart = float( time.perf_counter())
@@ -202,9 +205,6 @@ def getValues():
             if (ser.in_waiting > 0): # Checks if there is data in the serial buffer. Always true if connected
 
                     # Create variables to store value to check against for change
-                    previousSliders= []
-                    for i in range(numSliders):
-                        previousSliders.append(float())
 
                     #timeStart = float( time.perf_counter())
                     # create string, convert serial input data to a string a store it
@@ -267,7 +267,6 @@ def getValues():
                             volumeSlider(i+1)
                             if (sliders[i] != 'null'):
                                 if (len(faders) < numSliders):
-                                    print(len(faders))
                                     faders.append(sliders[i])
                                 else:
                                     faders[i] = sliders[i]

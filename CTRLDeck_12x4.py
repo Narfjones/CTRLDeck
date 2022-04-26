@@ -170,6 +170,7 @@ def start_clicked():
 
 # This is the actual closing function which ends the program and it's associated threads. Only accessed by 'Quit' in the taskbar
 def on_closing(icon, item):
+    
     serialValuetoVolume.stop_program() # serialValuetoVolume loop must be stopped before thread can be exited
     logging.warning('Serial to Volume stopped')
 
@@ -181,6 +182,7 @@ def on_closing(icon, item):
     logging.debug('File reset')
     try: # Attempt to close thread. This only works if getValues() loop has stopped.
         t.join()
+        t2.join()
         logging.debug('Thread for volume control ended')
     except: # If this throws an exception we assume it's because it is not running. Could be more 
         logging.warning('Could not end thread')
@@ -214,6 +216,7 @@ def hide_window():
     logging.debug('Window hidden')
     image=Image.open("fader.ico")
     logging.debug('Icon created')
+    
     try:
         menu=(item('Slider 1: ' + sliderProcesses[0], 0), item('Slider 2: ' + sliderProcesses[1], 0), item('Slider 3: ' + sliderProcesses[2], 0),
         item('Slider 4: ' + sliderProcesses[3], 0), item('Restart', start_clicked), item('Show', open_window) , item('Quit', on_closing)) # Creates right click menu and it's options in the system tray icon
@@ -227,20 +230,20 @@ def hide_window():
         logging.debug('System tray icon running')
 
 def updateSliderYPos():
+    pythoncom.CoInitialize()
+    
+    faderKnobYPosPrev = [0,0,0,0]
+    faderKnobYPos = [400,400,400,400]
+    global fader_labels
     while True:
-        global faderKnobYPosPrev
-        global faderKnobYPos
-        global fader_label
         faderKnobYPos = serialValuetoVolume.faders.copy()
-        faderKnobYPosPrev = faderKnobYPos.copy()         
+        # faderKnobYPosPrev = faderKnobYPos.copy()         
         for i in range (len(faderKnobYPos)):
-            if faderKnobYPos[i] != faderKnobYPosPrev:
+            if faderKnobYPos[i] != faderKnobYPosPrev[i]:
                 faderKnobYPos[i] = interp(faderKnobYPos[i], [0.0,1.0], [511,233])
-                print(faderKnobYPos[i])
-                fader_label.place(x=faderKnobXPos[i], y=faderKnobYPos[i])
-                fader_labels.append(fader_label)
+                fader_labels[i].place(x=faderKnobXPos[i], y=faderKnobYPos[i])
                 faderKnobYPosPrev[i] = faderKnobYPos[i]
-        sleep(.02)
+        sleep(.01)
 
 def startSliderYPos():
     global t2
@@ -326,8 +329,9 @@ for i in range (numSliders):
     labels.append(label)
     
 fader_labels = []
-for i in range (numSliders):
-    fader_label = Label(frm, image = faderImg, borderwidth = 0, relief="flat")
+for i in faderKnobXPos:
+    fl = Label(frm, image = faderImg, borderwidth = 0, relief="flat")
+    fader_labels.append(fl)
 
 # Creates start button that runs the clicked which kicks off the actual program
 startButton = ttk.Button(frm, text="Start CTRLdeck", command=start_clicked).place(x=26, y=632)
