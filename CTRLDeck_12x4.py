@@ -243,7 +243,7 @@ def updateSliderYPos():
                 faderKnobYPos[i] = interp(faderKnobYPos[i], [0.0,1.0], [511,233])
                 fader_labels[i].place(x=faderKnobXPos[i], y=faderKnobYPos[i])
                 faderKnobYPosPrev[i] = faderKnobYPos[i]
-        sleep(.01)
+        sleep(.001)
 
 def startSliderYPos():
     global t2
