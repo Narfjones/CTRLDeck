@@ -1,0 +1,39 @@
+Button:
+                text: "F13"
+            
+            Button:
+                text: "F14"
+
+            Button:
+                text: "F15"
+
+            Button:
+                text: "F16"
+            
+            Button:
+                text: "F17"
+
+            Button:
+                text: "F18"
+
+            Button:
+                text: "F19"
+
+            Button:
+                text: "F20"
+
+            Button:
+                text: "F21"
+
+            Button:
+                text: "F22"
+
+            Button:
+                text: "F23"
+
+            Button:
+                text: "F24"
+
+                canvas:
+            Color:
+                rgba: .17, .329, .44, 1

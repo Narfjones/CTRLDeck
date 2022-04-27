@@ -1,53 +1,77 @@
 #:kivy 2.1.0
 
 <Boxes>:
-    cols: 10
-    size: 1023, 707
-    canvas:
-        Color:
-            rgba: .17, .329, .44, 1
-        Rectangle:
-            pos: self.pos
+    cols: 3
     GridLayout:
-        cols: 4
-        pos_hint: {"center_y": .5}
-        size_hint: 458, 338
+        rows: 5
+        padding_horizontal: 2 
+        padding_vertical: 8
+        GridLayout: 
+            rows: 1
+            size_hint: 1, .05        
         Button:
-            text: "F13"
-        
+            text:"Welcome"
+            size_hint: .2, .4
         Button:
-            text: "F14"
-
+            text: "Sliders"
+            size_hint: .2, .4
         Button:
-            text: "F15"
-
-        Button:
-            text: "F16"
-        
-        Button:
-            text: "F17"
-
-        Button:
-            text: "F18"
-
-        Button:
-            text: "F19"
-
-        Button:
-            text: "F20"
-
-        Button:
-            text: "F21"
-
-        Button:
-            text: "F22"
-
-        Button:
-            text: "F23"
-
-        Button:
-            text: "F24"
-    B
+            text:"Macro Keys"
+            size_hint: .2, .4
+        GridLayout:
+            rows: 1
+            size_hint: 1, .05  
+    GridLayout:
+        rows: 3
+        size_hint: .6, .2
+        GridLayout: 
+            rows: 1     
+        GridLayout:
+            rows:3
+            cols: 4
+            Button:
+                text: "F13"
+                size: 107, 97 
+            Button:
+                text: "F14"
+                size: 107, 97 
+            Button:
+                text: "F15"
+                size: 107, 97 
+            Button:
+                text: "F16"
+                size: 107, 97 
+            Button:
+                text: "F17"
+                size: 107, 97 
+            Button:
+                text: "F18"
+                size: 107, 97 
+            Button:
+                text: "F19"
+                size: 107, 97 
+            Button:
+                text: "F20"
+                size: 107, 97 
+            Button:
+                text: "F21"
+                size: 107, 97 
+            Button:
+                text: "F22"
+                size: 107, 97 
+            Button:
+                text: "F23"
+                size: 107, 97 
+            Button:
+                text: "F24"
+                size: 107, 97
+        GridLayout:
+            rows: 1
+            size_hint: 1, .05  
+    GridLayout:
+        rows: 1
+        column_default_width: .1  
+        col_force_width: True  
 
     
 

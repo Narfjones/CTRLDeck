@@ -5,6 +5,7 @@ from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.uix.button import Button
 from kivy.uix.gridlayout import GridLayout
+from kivy.uix.boxlayout import BoxLayout
 import kivy.properties as prop
 from kivy.vector import Vector
 from kivy.clock import Clock
