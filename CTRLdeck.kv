@@ -1,12 +1,55 @@
 #:kivy 2.1.0
 
-<Fader>:
+<Boxes>:
+    cols: 10
+    size: 1023, 707
     canvas:
         Color:
-            rgba: .996, .592, .365, 100
+            rgba: .17, .329, .44, 1
         Rectangle:
             pos: self.pos
-            size: 107, 97
+    GridLayout:
+        cols: 4
+        pos_hint: {"center_y": .5}
+        size_hint: 458, 338
+        Button:
+            text: "F13"
+        
+        Button:
+            text: "F14"
+
+        Button:
+            text: "F15"
+
+        Button:
+            text: "F16"
+        
+        Button:
+            text: "F17"
+
+        Button:
+            text: "F18"
+
+        Button:
+            text: "F19"
+
+        Button:
+            text: "F20"
+
+        Button:
+            text: "F21"
+
+        Button:
+            text: "F22"
+
+        Button:
+            text: "F23"
+
+        Button:
+            text: "F24"
+    B
+
+    
 
 <CTRLdeck>:   
     canvas:
@@ -15,5 +58,3 @@
         Rectangle:
             pos: self.pos
             size: 1023, 707
-    Fader:
-        pos: 89, 233 
