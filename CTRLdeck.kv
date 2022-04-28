@@ -1,14 +1,15 @@
 #:kivy 2.1.0
 
 <Boxes>:
-    cols: 3
+    cols: 4
     GridLayout:
         rows: 5
         padding_horizontal: 2 
         padding_vertical: 8
+        size_hint: .25, 1
         GridLayout: 
             rows: 1
-            size_hint: 1, .05        
+            size_hint: .25, .05        
         Button:
             text:"Welcome"
             size_hint: .2, .4
@@ -20,15 +21,20 @@
             size_hint: .2, .4
         GridLayout:
             rows: 1
-            size_hint: 1, .05  
+            size_hint: 1, .05
     GridLayout:
-        rows: 3
-        size_hint: .6, .2
+        rows: 1
+        size_hint: .05, 1   
+    BoxLayout:
+        orientation:'horizontal'
+        size_hint: .65, 1
         GridLayout: 
-            rows: 1     
+            rows: 1  
+            size_hint: 1, .4   
         GridLayout:
             rows:3
             cols: 4
+            size_hint: 1, .5
             Button:
                 text: "F13"
                 size: 107, 97 
@@ -67,11 +73,10 @@
                 size: 107, 97
         GridLayout:
             rows: 1
-            size_hint: 1, .05  
+            size_hint: 1, .1
     GridLayout:
         rows: 1
-        column_default_width: .1  
-        col_force_width: True  
+        size_hint: .05, 1   
 
     
 
