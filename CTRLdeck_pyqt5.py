@@ -41,6 +41,7 @@ class MainWindow(QMainWindow):
 def leftMenu():
     leftMenu = QTabWidget()
     leftMenu.setTabPosition(QTabWidget.West)
+    leftMenu.setTabShape()
     leftMenu.setMovable(True)
     for n, menu in enumerate(["Main Menu", "Sliders", "Macro Keys"]):
             leftMenu.addTab(Color(menu), menu)
