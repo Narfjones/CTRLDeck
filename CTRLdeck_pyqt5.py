@@ -1,3 +1,4 @@
+from random import triangular
 import sys
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
@@ -10,19 +11,11 @@ from PyQt5.QtWidgets import (
     QWidget,
     QMainWindow,
     QPushButton,
-    QTabWidget
+    QTabWidget,
+    QLabel
 )
+
 from PyQt5.QtGui import QPalette, QColor
-
-class Color(QWidget):
-
-    def __init__(self, color):
-        super(Color, self).__init__()
-        self.setAutoFillBackground(True)
-
-        palette = self.palette()
-        palette.setColor(QPalette.Window, QColor(color))
-        self.setPalette(palette)
 
 class MainWindow(QMainWindow):
         
@@ -31,39 +24,40 @@ class MainWindow(QMainWindow):
 
             self.setWindowTitle("CTRLdeck")
             self.setGeometry(500,250,1023,707)
-            
-            mainLayout = QVBoxLayout()
 
             mainWidget = leftMenu()
-            mainWidget.setLayout(mainLayout)
             self.setCentralWidget(mainWidget)
 
 def leftMenu():
     leftMenu = QTabWidget()
     leftMenu.setTabPosition(QTabWidget.West)
-    leftMenu.setTabShape()
-    leftMenu.setMovable(True)
-    for n, menu in enumerate(["Main Menu", "Sliders", "Macro Keys"]):
-            leftMenu.addTab(Color(menu), menu)
+    leftMenu.setMovable(False)
+    leftMenu.addTab(MainMenu(), "Main Menu")
+    leftMenu.addTab(SliderMenu(), "Sliders")
+    leftMenu.addTab(MacroKeysMenu(), "Macro Keys")
     return leftMenu
 
+    
 def MainMenu():
-    # add main menu stuff here like profile, serial connection, etc...
-    pass
+    mainMenu = QWidget()
+    return mainMenu
 
 def SliderMenu():
-    # add slider animations and code for assignments here
-    pass
+    sliderMenu = QWidget()
+    return sliderMenu
 
 def MacroKeysMenu():
-    # Add code here to assign the macro keys to functions. Keyboard Macros, Open Programs, Scripting, etc...
-    pass
-
+    macroKeysMenu = QWidget()
+    return macroKeysMenu
 
     
 app = QApplication(sys.argv)
 
 window = MainWindow()
+
+with open("./inc/style.css", "r") as file:
+    app.setStyleSheet(file.read())
+
 window.show()
 
 app.exec()
