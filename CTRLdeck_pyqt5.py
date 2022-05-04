@@ -40,16 +40,42 @@ class MainWindow(QMainWindow):
 
             topMenu = TopMenu()
             leftMenu = LeftMenu()
-            layout.addWidget(topMenu)
+            connectButton = ConnectButton()
+            layout.addLayout(topMenu)
             layout.addWidget(leftMenu)
+            layout.addWidget(connectButton)
 
             
 
 def TopMenu():
-    topLabel = QLabel()
+    container = QHBoxLayout()
+    topLabel_logo = QLabel()
+    topLabel_space = QLabel()
     topImg = QPixmap('ctrldeck-title.png')
-    topLabel.setPixmap(topImg)
-    return topLabel
+    topLabel_logo.setPixmap(topImg)
+    topLabel_label = QLabel("Choose your port:")
+    topLabel_comboBox = QComboBox()
+    topLabel_comboBox.addItem("COM1")
+    topLabel_comboBox.addItem("COM2")
+    container.addWidget(topLabel_logo)
+    container.addWidget(topLabel_space)
+    container.addWidget(topLabel_label)
+    container.addWidget(topLabel_comboBox)
+    container.addStretch(1)
+    return container
+
+def ConnectButton():
+    button_widget = QWidget()
+    button_layout = QHBoxLayout()
+    connect_button = QPushButton()
+    connect_button.setText("Connect")
+    connect_button.setObjectName("connect_button")
+    button_label = QLabel()
+    button_layout.addWidget(connect_button)
+    button_layout.addWidget(button_label)
+    button_layout.addWidget(button_label)
+    button_widget.setLayout(button_layout)
+    return button_widget
 
 def LeftMenu():
     leftMenu = QTabWidget()
@@ -81,7 +107,7 @@ def SliderMenuUI():
         fader.setTickPosition(QSlider.TicksLeft)
         fader.setMinimum(0)
         fader.setMaximum(100)
-        fader.setTickInterval(5)
+        fader.setTickInterval(1)
         layout.addWidget(process, 1, x)
         layout.addWidget(fader, 2, x)
     return layout

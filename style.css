@@ -11,6 +11,7 @@ QTabWidget::pane
 QTabWidget::tab-bar 
 {
     alignment: bottom;
+    max-width: 100%;
 }
 
 /* Style the tab using the tab sub-control. Note that it reads QTabBar _not_ QTabWidget */
@@ -71,6 +72,46 @@ QComboBox::drop-down
 }
 
 QSlider
+{ 
+    width: 200%;
+}
+
+QSlider::groove:vertical {
+    background: red;
+    width: 15px;
+    position: absolute; /* absolutely position 4px from the left and right of the widget. setting margins on the widget should work too... */
+    left: 4px; right: 4px;
+}
+
+QSlider::handle:vertical {
+    image: url(fader-knob.png);
+    height: 30px;
+    background: #2C5471;
+    margin: 0 -60px; /* expand outside the groove */
+}
+
+QSlider::add-page:vertical {
+    background: #FE975D;
+}
+
+QSlider::sub-page:vertical
 {
-    padding: 50px;
+    background: white;
+}
+
+QPushButton#connect_button
+{
+    color: white;
+    background-color: #48494F;
+    max-width: 110px;
+    max-height: 40px;
+    font-size: 12pt;
+    border-radius: 8px;
+    margin-left: 0px;
+}
+
+QHBoxLayout#slider_frame
+{
+    border: #FE975D;
+    border-width: 4px;
 }
