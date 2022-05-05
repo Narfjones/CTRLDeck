@@ -11,6 +11,8 @@ from PyQt5.QtWidgets import (
     QLineEdit,
     QHBoxLayout,
     QSlider,
+    QStackedLayout,
+    QStackedWidget,
     QVBoxLayout,
     QWidget,
     QMainWindow,
@@ -30,17 +32,18 @@ class MainWindow(QMainWindow):
         def __init__ (self):
             super(MainWindow, self).__init__()
 
-            central_widget = QWidget()
-            layout = QVBoxLayout()
-            central_widget.setLayout(layout)
+
+            central_widget = QWidget() # Create central widget container to be displayed in window
+            layout = QVBoxLayout() # Embed a box layout in the central widget container
+            central_widget.setLayout(layout) 
             self.setCentralWidget(central_widget)
 
             self.setWindowTitle("CTRLdeck")
             self.setGeometry(500,250,1023,707)
 
-            topMenu = TopMenu()
-            leftMenu = LeftMenu()
-            connectButton = ConnectButton()
+            topMenu = TopMenu() # Create the Top Menu which contains the title bar and COMport connecter
+            leftMenu = LeftMenu() # Attach tabbed menu for switching between main functions
+            connectButton = ConnectButton() # Attach big connect button that's always visible
             layout.addLayout(topMenu)
             layout.addWidget(leftMenu)
             layout.addWidget(connectButton)
@@ -48,6 +51,8 @@ class MainWindow(QMainWindow):
             
 
 def TopMenu():
+
+    # Create three widgets and embed them in a layout to be displayed at the top of the window
     container = QHBoxLayout()
     topLabel_logo = QLabel()
     topLabel_space = QLabel()
@@ -84,7 +89,7 @@ def LeftMenu():
     mainTab = QWidget()
     sliderTab = QWidget()
     macroTab = QWidget()
-    leftMenu.addTab(mainTab, "Main Menu")
+    leftMenu.addTab(mainTab, "Setup")
     leftMenu.addTab(sliderTab, "Sliders")
     leftMenu.addTab(macroTab, "Macro Keys")
     mainTab.setLayout(MainMenuUI())
@@ -94,12 +99,36 @@ def LeftMenu():
 
     
 def MainMenuUI():
-    mainMenu = QHBoxLayout()
-    process = QComboBox()
-    for i in sessionOptions:
-        process.addItem(i)
-    mainMenu.addWidget(process)
-    return mainMenu
+    setupPage = QStackedLayout()
+
+    mainMenu1 = QWidget()
+    mainMenu1_layout = QHBoxLayout()
+    assignSlidersButton = QPushButton("Assign Sliders")
+    assignSlidersButton.setObjectName('assignSliderButton')
+    assignMacrosButton = QPushButton("Assign Macros")
+    assignMacrosButton.setObjectName('')
+    mainMenu1_layout.addWidget(assignSlidersButton)
+    mainMenu1_layout.addWidget(assignMacrosButton)
+    mainMenu1.setLayout(mainMenu1_layout)
+    mainMenu1_layout.addWidget(assignSlidersButton)
+    mainMenu1_layout.addWidget(assignMacrosButton)
+    mainMenu1.setLayout(mainMenu1_layout)
+
+    mainMenu2 = QWidget()
+    mainMenu2_layout = QVBoxLayout()
+    for i in sliders:
+        i = QLabel()
+        mainMenu2_layout.addWidget(i)
+    
+    mainMenu2.setLayout(mainMenu2_layout)
+
+#    process = QComboBox()
+#    for i in sessionOptions:
+#        process.addItem(i)
+
+    setupPage.addWidget(mainMenu1)
+    setupPage.addWidget(mainMenu2)
+    return setupPage
 
 def SliderMenuUI():
     layout = QGridLayout()
