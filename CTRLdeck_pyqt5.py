@@ -95,20 +95,20 @@ def LeftMenu():
     
 def MainMenuUI():
     mainMenu = QHBoxLayout()
+    process = QComboBox()
+    for i in sessionOptions:
+        process.addItem(i)
+    mainMenu.addWidget(process)
     return mainMenu
 
 def SliderMenuUI():
     layout = QGridLayout()
     for x in sliders:
-        process = QComboBox()
-        for i in sessionOptions:
-            process.addItem(i)
         fader = QSlider(Qt.Vertical)
         fader.setTickPosition(QSlider.TicksLeft)
         fader.setMinimum(0)
         fader.setMaximum(100)
         fader.setTickInterval(1)
-        layout.addWidget(process, 1, x)
         layout.addWidget(fader, 2, x)
     return layout
 
