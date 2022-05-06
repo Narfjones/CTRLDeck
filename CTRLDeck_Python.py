@@ -157,6 +157,7 @@ def start_clicked():
     except:
         logging.debug('SerialtoVolume could not stop')
         pass
+    
     # Creates thread and appends it to thread list
     global t
     t = threading.Thread(target=sliderRun) # Sets target function that should run in this thread
@@ -164,6 +165,16 @@ def start_clicked():
     t.start() # Starting thread runs the target function
     global startButton
     startButton = ttk.Button(frm, text="Restart CTRLdeck", command=start_clicked).place(x=1110, y=670) # Rename the 'start' button to 'restart'
+
+
+
+
+
+#-------------------------------------------------------------------#
+#                                                                   #
+# The following code is all related specifically to the tkiner GUI  #
+#                                                                   #
+#-------------------------------------------------------------------#
 
 
 # This is the actual closing function which ends the program and it's associated threads. Only accessed by 'Quit' in the taskbar
