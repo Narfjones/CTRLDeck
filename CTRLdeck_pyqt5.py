@@ -18,14 +18,16 @@ from PyQt5.QtWidgets import (
     QMainWindow,
     QPushButton,
     QTabWidget,
-    QLabel
+    QLabel,
 )
+from serial.serialutil import PortNotOpenError
+import CTRLDeck 
 
-from PyQt5.QtGui import QPalette, QColor
-
-sliders = [1, 2, 3, 4]
+sliders = CTRLDeck.sliders
 macroKeys = []
-sessionOptions = ["master", "chrome.exe", "firefox.exe", "discord.exe", "microphone", "unmapped", "Choose a file:" ]
+sessionOptions = CTRLDeck.sessionOptions
+labels = CTRLDeck.labels
+global port
 
 class MainWindow(QMainWindow):
         
@@ -60,8 +62,10 @@ def TopMenu():
     topLabel_logo.setPixmap(topImg)
     topLabel_label = QLabel("Choose your port:")
     topLabel_comboBox = QComboBox()
-    topLabel_comboBox.addItem("COM1")
-    topLabel_comboBox.addItem("COM2")
+    for i in CTRLDeck.portOptions:
+        topLabel_comboBox.addItem(i)
+    global port
+    port = str(topLabel_comboBox.currentText())
     container.addWidget(topLabel_logo)
     container.addWidget(topLabel_space)
     container.addWidget(topLabel_label)
@@ -75,6 +79,10 @@ def ConnectButton():
     connect_button = QPushButton()
     connect_button.setText("Connect")
     connect_button.setObjectName("connect_button")
+    connect_button.clicked.connect(CTRLDeck.savePortChoice(port))
+    # connect_button.clicked.connect()
+    print(port)
+    print(type(port))
     button_label = QLabel()
     button_layout.addWidget(connect_button)
     button_layout.addWidget(button_label)
@@ -106,7 +114,8 @@ def MainMenuUI():
     assignSlidersButton = QPushButton("Assign Sliders")
     assignSlidersButton.setObjectName('assignSliderButton')
     assignMacrosButton = QPushButton("Assign Macros")
-    assignMacrosButton.setObjectName('')
+    assignMacrosButton.setObjectName('assignMacrosButton')
+    space = QWidget()
     mainMenu1_layout.addWidget(assignSlidersButton)
     mainMenu1_layout.addWidget(assignMacrosButton)
     mainMenu1.setLayout(mainMenu1_layout)
@@ -119,7 +128,6 @@ def MainMenuUI():
     for i in sliders:
         i = QLabel()
         mainMenu2_layout.addWidget(i)
-    
     mainMenu2.setLayout(mainMenu2_layout)
 
 #    process = QComboBox()
@@ -138,7 +146,7 @@ def SliderMenuUI():
         fader.setMinimum(0)
         fader.setMaximum(100)
         fader.setTickInterval(1)
-        layout.addWidget(fader, 2, x)
+        layout.addWidget(fader, 2, sliders.index(x))
     return layout
 
 def MacroKeysMenuUI():
