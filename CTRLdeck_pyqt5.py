@@ -60,12 +60,13 @@ def TopMenu():
     topLabel_space = QLabel()
     topImg = QPixmap('ctrldeck-title.png')
     topLabel_logo.setPixmap(topImg)
+
+    # Create port choice label and combobox for available 
     topLabel_label = QLabel("Choose your port:")
+    global topLabel_comboBox
     topLabel_comboBox = QComboBox()
     for i in CTRLDeck.portOptions:
         topLabel_comboBox.addItem(i)
-    global port
-    port = str(topLabel_comboBox.currentText())
     container.addWidget(topLabel_logo)
     container.addWidget(topLabel_space)
     container.addWidget(topLabel_label)
@@ -73,22 +74,26 @@ def TopMenu():
     container.addStretch(1)
     return container
 
+
 def ConnectButton():
     button_widget = QWidget()
     button_layout = QHBoxLayout()
     connect_button = QPushButton()
     connect_button.setText("Connect")
     connect_button.setObjectName("connect_button")
-    connect_button.clicked.connect(CTRLDeck.savePortChoice(port))
+    CTRLDeck.lineList[0] = str(topLabel_comboBox.currentText())
+    connect_button.clicked.connect(lambda: SavePort())
     # connect_button.clicked.connect()
-    print(port)
-    print(type(port))
     button_label = QLabel()
     button_layout.addWidget(connect_button)
     button_layout.addWidget(button_label)
     button_layout.addWidget(button_label)
     button_widget.setLayout(button_layout)
     return button_widget
+
+def SavePort():
+    CTRLDeck.lineList[0] = str(topLabel_comboBox.currentText())
+    CTRLDeck.savePortChoice()
 
 def LeftMenu():
     leftMenu = QTabWidget()

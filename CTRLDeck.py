@@ -32,11 +32,11 @@ logging.basicConfig(filename='ctrldeck.log', filemode= 'w', level=logging.DEBUG)
 #------------------------------------------------------------------
 
 # Get chosen COM port from drop down menu and open serial port
-def savePortChoice(port):
-    global chosenPort
-    chosenPort = port
+def savePortChoice():
+    # global chosenPort
+    # chosenPort = port
     portFile = open("COMport", "w")
-    lineList[0] = (chosenPort)
+    # lineList[0] = (chosenPort)
     portFile.writelines(lineList)
     portFile.close()
     
