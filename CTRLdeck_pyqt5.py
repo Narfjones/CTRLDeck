@@ -112,12 +112,14 @@ def LeftMenu():
 
     
 def MainMenuUI():
+    global setupPage
     setupPage = QStackedLayout()
 
     mainMenu1 = QWidget()
     mainMenu1_layout = QHBoxLayout()
     assignSlidersButton = QPushButton("Assign Sliders")
     assignSlidersButton.setObjectName('assignSliderButton')
+    assignSlidersButton.pressed.connect(lambda: setupPage.setCurrentIndex(1))
     assignMacrosButton = QPushButton("Assign Macros")
     assignMacrosButton.setObjectName('assignMacrosButton')
     space = QWidget()
@@ -140,8 +142,50 @@ def MainMenuUI():
 #        process.addItem(i)
 
     setupPage.addWidget(mainMenu1)
-    setupPage.addWidget(mainMenu2)
+    setupPage.addWidget(SliderAssign())
+
+    setupPage.setCurrentIndex(0)
+
     return setupPage
+
+def SliderAssign():
+    assignSlider_widget = QWidget()
+    assignSlider_layout = QGridLayout()
+    slider1_label = QLabel("Slider 1")
+    slider1_label.setObjectName('sliderlabel')
+    slider2_label = QLabel("Slider 2")
+    slider1_label.setObjectName('sliderlabel')
+    slider3_label = QLabel("Slider 3")
+    slider1_label.setObjectName('sliderlabel')
+    slider4_label = QLabel("Slider 4")
+    slider1_label.setObjectName('sliderlabel')
+    slider1_comboBox = QComboBox()
+    slider2_comboBox = QComboBox()
+    slider3_comboBox = QComboBox()
+    slider4_comboBox = QComboBox()
+
+    for i in CTRLDeck.sessionOptions:
+        slider1_comboBox.addItem(i)
+    for i in CTRLDeck.sessionOptions:
+        slider2_comboBox.addItem(i)
+    for i in CTRLDeck.sessionOptions:
+        slider3_comboBox.addItem(i)
+    for i in CTRLDeck.sessionOptions:
+        slider4_comboBox.addItem(i)
+
+    assignSlider_layout.addWidget(slider1_label, 1, 1)
+    assignSlider_layout.addWidget(slider1_comboBox, 2, 1)
+    assignSlider_layout.addWidget(slider2_label, 1, 2)
+    assignSlider_layout.addWidget(slider2_comboBox, 2, 2)
+    assignSlider_layout.addWidget(slider3_label, 3, 1)
+    assignSlider_layout.addWidget(slider3_comboBox, 4, 1)
+    assignSlider_layout.addWidget(slider4_label, 3, 2)
+    assignSlider_layout.addWidget(slider4_comboBox, 4, 2)
+
+    assignSlider_widget.setLayout(assignSlider_layout)
+
+    return assignSlider_widget
+
 
 def SliderMenuUI():
     layout = QGridLayout()
