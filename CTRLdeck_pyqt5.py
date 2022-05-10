@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import (
     QComboBox,
     QFormLayout,
     QGridLayout,
-    QLineEdit,
+    QListWidget,
     QHBoxLayout,
     QSlider,
     QStackedLayout,
@@ -149,39 +149,98 @@ def MainMenuUI():
     return setupPage
 
 def SliderAssign():
+    # Create widget and and insert a grid layout
     assignSlider_widget = QWidget()
     assignSlider_layout = QGridLayout()
+    
+    # Create labels and assign them an object name to style
     slider1_label = QLabel("Slider 1")
     slider1_label.setObjectName('sliderlabel')
     slider2_label = QLabel("Slider 2")
     slider1_label.setObjectName('sliderlabel')
     slider3_label = QLabel("Slider 3")
-    slider1_label.setObjectName('sliderlabel')
+    slider3_label.setObjectName('sliderlabel')
     slider4_label = QLabel("Slider 4")
-    slider1_label.setObjectName('sliderlabel')
+    slider4_label.setObjectName('sliderlabel')
+    
+    # These are container widgets to hold the combobox and 'add' button layout
+    slider1_widget = QWidget()
+    slider2_widget = QWidget()
+    slider3_widget = QWidget()
+    slider4_widget = QWidget()
+    
+    # These are the layouts to put the combobox and add button widgets
+    slider1_choiceLayout = QHBoxLayout()
+    slider2_choiceLayout = QHBoxLayout()
+    slider3_choiceLayout = QHBoxLayout()
+    slider4_choiceLayout = QHBoxLayout()
+    
+    # Create combobox elements to hold the process list
     slider1_comboBox = QComboBox()
     slider2_comboBox = QComboBox()
     slider3_comboBox = QComboBox()
     slider4_comboBox = QComboBox()
 
+    # Add all items from SessionOptions to our combo boxes
     for i in CTRLDeck.sessionOptions:
         slider1_comboBox.addItem(i)
+    slider1_comboBox.addAction
     for i in CTRLDeck.sessionOptions:
         slider2_comboBox.addItem(i)
     for i in CTRLDeck.sessionOptions:
         slider3_comboBox.addItem(i)
     for i in CTRLDeck.sessionOptions:
         slider4_comboBox.addItem(i)
-
+        
+    # Create buttons to add the process to sliders
+    slider1_addButton = QPushButton("add")
+    slider1_addButton.clicked.connect(lambda: slider1_listBox.addItem(slider1_comboBox.currentText()))
+    slider2_addButton = QPushButton("add")
+    slider2_addButton.clicked.connect(lambda: slider2_listBox.addItem(slider2_comboBox.currentText()))
+    slider3_addButton = QPushButton("add")
+    slider3_addButton.clicked.connect(lambda: slider3_listBox.addItem(slider3_comboBox.currentText()))
+    slider4_addButton = QPushButton("add")
+    slider4_addButton.clicked.connect(lambda: slider4_listBox.addItem(slider4_comboBox.currentText()))
+    
+    # Create listboxes to hold the assigned processes
+    slider1_listBox = QListWidget()
+    slider2_listBox = QListWidget()
+    slider3_listBox = QListWidget()
+    slider4_listBox = QListWidget()
+    
+    # Create single slider assignment box to insert into the grid
+    slider1_choiceLayout.addWidget(slider1_comboBox)
+    slider1_choiceLayout.addWidget(slider1_addButton)
+    slider1_widget.setLayout(slider1_choiceLayout)
     assignSlider_layout.addWidget(slider1_label, 1, 1)
-    assignSlider_layout.addWidget(slider1_comboBox, 2, 1)
+    assignSlider_layout.addWidget(slider1_widget, 2, 1)
+    assignSlider_layout.addWidget(slider1_listBox, 3, 1)
+    
+    # Create single slider assignment box to insert into the grid
+    slider2_choiceLayout.addWidget(slider2_comboBox)
+    slider2_choiceLayout.addWidget(slider2_addButton)
+    slider2_widget.setLayout(slider2_choiceLayout)
     assignSlider_layout.addWidget(slider2_label, 1, 2)
-    assignSlider_layout.addWidget(slider2_comboBox, 2, 2)
-    assignSlider_layout.addWidget(slider3_label, 3, 1)
-    assignSlider_layout.addWidget(slider3_comboBox, 4, 1)
-    assignSlider_layout.addWidget(slider4_label, 3, 2)
-    assignSlider_layout.addWidget(slider4_comboBox, 4, 2)
+    assignSlider_layout.addWidget(slider2_widget, 2, 2)
+    assignSlider_layout.addWidget(slider2_listBox, 3, 2)
+    
+    # Create single slider assignment box to insert into the grid
+    slider3_choiceLayout.addWidget(slider3_comboBox)
+    slider3_choiceLayout.addWidget(slider3_addButton)
+    slider3_widget.setLayout(slider3_choiceLayout)
+    assignSlider_layout.addWidget(slider4_label, 4, 1)
+    assignSlider_layout.addWidget(slider3_widget, 5, 1)
+    assignSlider_layout.addWidget(slider3_listBox, 6, 1)
+    
+    # Create single slider assignment box to insert into the grid
+    slider4_choiceLayout.addWidget(slider4_comboBox)
+    slider4_choiceLayout.addWidget(slider4_addButton)
+    slider4_widget.setLayout(slider4_choiceLayout)
+    assignSlider_layout.addWidget(slider4_label, 4, 2)
+    assignSlider_layout.addWidget(slider4_widget, 5, 2)
+    assignSlider_layout.addWidget(slider4_listBox, 6, 2)
 
+    # Insert all widgets into layout for 'Assign Sliders' main Menu
     assignSlider_widget.setLayout(assignSlider_layout)
 
     return assignSlider_widget
