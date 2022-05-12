@@ -147,6 +147,10 @@ def MainMenuUI():
     setupPage.setCurrentIndex(0)
 
     return setupPage
+    
+def printButton(btn):
+    print("clicked button: " + btn)
+
 
 def SliderAssign():
     # Create widget and and insert a grid layout
@@ -172,7 +176,7 @@ def SliderAssign():
     slider_addButtons = {}
 
     global btn_connector
-    sum = 0
+    sum = 1
 
     for i in CTRLDeck.sliders:
         label = QLabel("Slider" + str(i))
@@ -186,21 +190,21 @@ def SliderAssign():
         slider_labels.append(label)
         slider_widgets.append(widget)
         slider_choiceLayouts.append(choiceLayout)
-        slider_listBoxes["listBox{sum}"] = listBox
-        slider_comboBoxes["comboBox{sum}"] = comboBox
-        slider_addButtons["button{sum}"] = addButton
-        slider_addButtons["button{sum}"].clicked.connect(lambda: slider_listBoxes["listBox{sum}"].addItem(slider_comboBoxes["comboBox{sum}"].currentText()))
-        print(slider_listBoxes, slider_comboBoxes, slider_addButtons)
-        sum = sum + 1
+        slider_listBoxes["listBox{0}".format(sum)] = listBox
+        slider_comboBoxes["comboBox{0}".format(sum)] = comboBox
+        slider_addButtons["button{0}".format(sum)] = addButton
+        slider_addButtons["button{0}".format(sum)].clicked.connect(lambda: slider_listBoxes["listBox{0}".format(sum)].addItem(slider_comboBoxes["comboBox{0}".format(sum)].currentText()))
+        slider_addButtons["button{0}".format(sum)].clicked.connect(lambda: printButton("button{0}".format(sum)))
+        if sum < 4:
+            sum = sum + 1
+        else:
+            sum = 4
 
-    
     widgetsNum = len(slider_choiceLayouts)
 
     for i in range(widgetsNum):
-        for key in slider_comboBoxes:
-            slider_choiceLayouts[i].addWidget(slider_comboBoxes[key])
-        for key in slider_addButtons:
-            slider_choiceLayouts[i].addWidget(slider_addButtons[key])
+        slider_choiceLayouts[i].addWidget(slider_comboBoxes["comboBox{0}".format(i+1)])
+        slider_choiceLayouts[i].addWidget(slider_addButtons["button{0}".format(i+1)])
     
     for i in range(widgetsNum):
         slider_widgets[i].setLayout(slider_choiceLayouts[i])
@@ -215,8 +219,7 @@ def SliderAssign():
         row = row + 1
         assignSlider_layout.addWidget(slider_widgets[i], row, col)
         row = row + 1
-        for key in slider_listBoxes:
-            assignSlider_layout.addWidget(slider_listBoxes[key], row, col)
+        assignSlider_layout.addWidget(slider_listBoxes["listBox{0}".format(i+1)], row, col)
         if  row == 3 and col == 2:
             row = 4
             col = 1
@@ -226,7 +229,7 @@ def SliderAssign():
         else:
             row = 1
             col = col + 1
-    
+
     assignSlider_widget.setLayout(assignSlider_layout)
 
     return assignSlider_widget
