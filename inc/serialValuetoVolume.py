@@ -44,8 +44,11 @@ def init():
 
     sliderProcesses = []
     
-    for i in range(numSliders):
-        sliderProcesses.append(str(fileLines[i+1]).rstrip("\n").split(','))
+    try:
+        for i in range(numSliders):
+            sliderProcesses.append(str(fileLines[i+1]).rstrip("\n").split(','))
+    except IndexError:
+        pass
     
     for i in range(len(sliderProcesses)):    
         sliderProcesses[i] = [j for j in sliderProcesses[i] if j != '']

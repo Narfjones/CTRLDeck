@@ -16,7 +16,7 @@ chosenPort = str()
 # Create list variable to hold information in buffer file. It must hold these variables so that we don't reference empty indices
 global lineList
 lineList = ["1", "\n2", "\n3", "\n4", "\n5"] # Default value to maintain the correct number of indicies.
-macroList = ["1", "\n2", "\n3", "\n4", "\n5", "\n6", "\n7", "\n8", "\n9", "\n10", "\n11", "\n12"] 
+macroList = ["", "\n", "\n", "\n", "\n", "\n", "\n", "\n", "\n", "\n", "\n", "\n"] 
 
 # Variable for systray icon
 global icon

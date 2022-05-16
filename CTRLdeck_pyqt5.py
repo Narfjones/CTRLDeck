@@ -1,5 +1,6 @@
 import sys
-from PyQt5.QtCore import Qt
+from types import NoneType
+from PyQt5.QtCore import Qt, QSignalMapper
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import (
     QApplication,
@@ -17,7 +18,7 @@ from PyQt5.QtWidgets import (
     QMainWindow,
     QPushButton,
     QTabWidget,
-    QLabel,
+    QLabel
 )
 from serial.serialutil import PortNotOpenError
 import CTRLDeck 
@@ -39,6 +40,7 @@ class MainWindow(QMainWindow):
             layout = QVBoxLayout() # Embed a box layout in the central widget container
             central_widget.setLayout(layout) 
             self.setCentralWidget(central_widget)
+            btnMapper = QSignalMapper
 
             self.setWindowTitle("CTRLdeck")
             self.setGeometry(500,250,1023,707)
@@ -49,7 +51,6 @@ class MainWindow(QMainWindow):
             layout.addLayout(topMenu)
             layout.addWidget(leftMenu)
             layout.addWidget(connectButton)
-
 
         def TopMenu(self):
 
@@ -74,14 +75,14 @@ class MainWindow(QMainWindow):
             return container
 
 
-        def ConnectButton():
+        def ConnectButton(self):
             button_widget = QWidget()
             button_layout = QHBoxLayout()
             connect_button = QPushButton()
             connect_button.setText("Connect")
             connect_button.setObjectName("connect_button")
-            CTRLDeck.lineList[0] = str(topLabel_comboBox.currentText())
-            connect_button.clicked.connect(MainWindow.SavePort())
+            lineList[0] = str(topLabel_comboBox.currentText())
+            connect_button.clicked.connect(lambda: MainWindow.SavePort())
             # connect_button.clicked.connect()
             button_label = QLabel()
             button_layout.addWidget(connect_button)
@@ -90,9 +91,22 @@ class MainWindow(QMainWindow):
             button_widget.setLayout(button_layout)
             return button_widget
 
-        def SavePort(self):
-            CTRLDeck.lineList[0] = str(topLabel_comboBox.currentText())
-            CTRLDeck.savePortChoice()
+        def SavePort():
+            lineList[0] = str(topLabel_comboBox.currentText())
+
+            for val in range(len(slider_listBoxes)):
+                # lineList[i+1] = "\n" + slider_listBoxes[i+1].currentText()
+                value = next( v for i, v in enumerate(slider_listBoxes.values()) if i == val )
+                lineList[val+1] = "\n"
+                for j in range(value.count()):
+                    lineList[val+1] += str(value.item(j).text()) + ","
+                    print(lineList)
+                
+            MainWindow.saveSlidertoFile()
+            CTRLDeck.start_clicked()
+            
+
+            
 
         def LeftMenu(self):
             leftMenu = QTabWidget()
@@ -121,7 +135,7 @@ class MainWindow(QMainWindow):
             assignSlidersButton.pressed.connect(lambda: setupPage.setCurrentIndex(1))
             assignMacrosButton = QPushButton("Assign Macros")
             assignMacrosButton.setObjectName('assignMacrosButton')
-            space = QWidget()
+
             mainMenu1_layout.addWidget(assignSlidersButton)
             mainMenu1_layout.addWidget(assignMacrosButton)
             mainMenu1.setLayout(mainMenu1_layout)
@@ -154,25 +168,15 @@ class MainWindow(QMainWindow):
             assignSlider_layout = QGridLayout()
             assignSlider_layout.cellRect(4, 2)
             
-            # Create labels and assign them an object name to style
-            slider1_label = QLabel("Slider 1")
-            slider1_label.setObjectName('sliderlabel')
-            slider2_label = QLabel("Slider 2")
-            slider1_label.setObjectName('sliderlabel')
-            slider3_label = QLabel("Slider 3")
-            slider3_label.setObjectName('sliderlabel')
-            slider4_label = QLabel("Slider 4")
-            slider4_label.setObjectName('sliderlabel')
-            
             slider_labels = []
             slider_widgets = []
             slider_choiceLayouts = []
+            global slider_listBoxes
             slider_listBoxes = {}
             slider_comboBoxes = {}
             slider_addButtons = {}
 
-            global btn_connector
-            sum = 1
+            sum = 1 # Enumerator for adding dictionary keys
 
             for i in CTRLDeck.sliders:
                 label = QLabel("Slider" + str(i))
@@ -183,15 +187,14 @@ class MainWindow(QMainWindow):
                 for j in CTRLDeck.sessionOptions:
                     comboBox.addItem(j)
                 addButton = QPushButton("add")
-                addButton.setObjectName('Button%d' % sum)
+                addButton.setObjectName('%d' % sum)
                 slider_labels.append(label)
                 slider_widgets.append(widget)
                 slider_choiceLayouts.append(choiceLayout)
                 slider_listBoxes["listBox{0}".format(sum)] = listBox
                 slider_comboBoxes["comboBox{0}".format(sum)] = comboBox
                 slider_addButtons["button{0}".format(sum)] = addButton
-                slider_addButtons["button{0}".format(sum)].released.connect(lambda: slider_listBoxes["listBox{0}".format(sum)].addItem(slider_comboBoxes["comboBox{0}".format(sum)].currentText()))
-                slider_addButtons["button{0}".format(sum)].released.connect(MainWindow.printButton(addButton))
+                slider_addButtons["button{0}".format(sum)].released.connect(lambda i=sum: slider_listBoxes["listBox{0}".format(i)].addItem(slider_comboBoxes["comboBox{0}".format(i)].currentText()))
 
                 if sum < 4:
                     sum = sum + 1
@@ -232,33 +235,9 @@ class MainWindow(QMainWindow):
 
             return assignSlider_widget
 
-        def printButton(widget_arg):
-            btn_sender = widget_arg.sender()
-            print(btn_sender)
 
-        def saveSlidertoFile(sliderNum):
-            global lineList
-            sliderStr = ''
-            if sliderNum == 1:
-                slider1_listBox.addItem(slider1_comboBox.currentText())
-                for i in range(slider1_listBox.count()):
-                    sliderStr += (str(slider1_listBox.item(i).text()) + ",")
-            elif sliderNum == 2:
-                slider2_listBox.addItem(slider1_comboBox.currentText())
-                for i in slider2_listBox.count():
-                    sliderStr += (str(slider2_listBox.item(i).text()) + ",")
-            elif sliderNum == 3:
-                slider3_listBox.addItem(slider1_comboBox.currentText())
-                for i in slider1_listBox.count():
-                    sliderStr += (str(slider3_listBox.item(i).text()) + ",")
-            elif sliderNum == 4:
-                slider4_listBox.addItem(slider1_comboBox.currentText())
-                for i in slider1_listBox.count():
-                    sliderStr += (str(slider4_listBox.item(i).text()) + ",")
-                    
-
-            lineList[sliderNum] = "\n" + sliderStr
-
+        def saveSlidertoFile():
+            
             try:
                 portFile = open("COMport", "w")
                 portFile.writelines(lineList)
