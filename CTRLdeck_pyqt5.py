@@ -23,6 +23,15 @@ from PyQt5.QtWidgets import (
 from serial.serialutil import PortNotOpenError
 import CTRLDeck 
 
+
+#-----------------------------------------------------------------------------------------------------------------------------------------#
+#   PyQt is built around two main objects. The widget is the thing and the layout is the container for the thing. To build a complex UI   #
+# you must nest these things. It's best to think of each of these complex widget->layout->widget progressions as containers. You build    #
+# the necessary elements and package them together based on how they will be displayed. It seems like a giant house of cards but it's not #
+# so bad once you get practice.                                                                                                           #
+#-----------------------------------------------------------------------------------------------------------------------------------------#
+
+
 sliders = CTRLDeck.sliders
 macroKeys = []
 sessionOptions = CTRLDeck.sessionOptions
@@ -76,38 +85,43 @@ class MainWindow(QMainWindow):
 
 
         def ConnectButton(self):
+            # Create widget, layout, and button
             button_widget = QWidget()
             button_layout = QHBoxLayout()
             connect_button = QPushButton()
+            button_label = QLabel()
+
+            # Set button text and create a name for individual styling
             connect_button.setText("Connect")
             connect_button.setObjectName("connect_button")
-            lineList[0] = str(topLabel_comboBox.currentText())
-            connect_button.clicked.connect(lambda: MainWindow.SavePort())
-            # connect_button.clicked.connect()
-            button_label = QLabel()
+
+            lineList[0] = str(topLabel_comboBox.currentText()) # Get chosen COMport from top combobox
+            connect_button.clicked.connect(lambda: MainWindow.SavePort()) # Save port and process info to COMport file
+
+            # Add the button and other elements to the layout as widgets
             button_layout.addWidget(connect_button)
             button_layout.addWidget(button_label)
             button_layout.addWidget(button_label)
-            button_widget.setLayout(button_layout)
+            button_widget.setLayout(button_layout) # Apply the layout to the larger widget to be sent to the MainWindow
+
+            # The main widget contains a layout which contains the individual element widgets
             return button_widget
 
         def SavePort():
-            lineList[0] = str(topLabel_comboBox.currentText())
+            lineList[0] = str(topLabel_comboBox.currentText()) # Set [0] of lineList to the chosen COMPort in the upper right hand combobox
 
+            # Iterate over sliderListBoxes dictionary containing the listBox widget per slider. These were generated in UI creation
             for val in range(len(slider_listBoxes)):
-                # lineList[i+1] = "\n" + slider_listBoxes[i+1].currentText()
-                value = next( v for i, v in enumerate(slider_listBoxes.values()) if i == val )
-                lineList[val+1] = "\n"
+                value = next( v for i, v in enumerate(slider_listBoxes.values()) if i == val ) # Get value of current dictionary index and assign it to a veriable
+                lineList[val+1] = "\n" # Clear the line because each loop will iterate and grab every value in the listBox
+
+                # Iterate over the listBox and concatenate each item to a string for that line with a comma as a delimiter
                 for j in range(value.count()):
                     lineList[val+1] += str(value.item(j).text()) + ","
-                    print(lineList)
                 
-            MainWindow.saveSlidertoFile()
-            CTRLDeck.start_clicked()
+            MainWindow.saveSlidertoFile() # Writes all the values to the COMport file which serialValuetoVolume will then read
+            CTRLDeck.start_clicked() #Starts the program
             
-
-            
-
         def LeftMenu(self):
             leftMenu = QTabWidget()
             leftMenu.setTabPosition(QTabWidget.West)
