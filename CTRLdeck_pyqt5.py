@@ -1,5 +1,4 @@
 import sys
-from types import NoneType
 from PyQt5.QtCore import Qt, QSignalMapper
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import (
@@ -39,6 +38,8 @@ labels = CTRLDeck.labels
 global port
 lineList = CTRLDeck.lineList
 sliderNum = []
+
+
 class MainWindow(QMainWindow):
         
         def __init__ (self):
@@ -62,7 +63,6 @@ class MainWindow(QMainWindow):
             layout.addWidget(connectButton)
 
         def TopMenu(self):
-
             # Create three widgets and embed them in a layout to be displayed at the top of the window
             container = QHBoxLayout()
             topLabel_logo = QLabel()
@@ -70,7 +70,7 @@ class MainWindow(QMainWindow):
             topImg = QPixmap('ctrldeck-title.png')
             topLabel_logo.setPixmap(topImg)
 
-            # Create port choice label and combobox for available 
+            # Create port choice label and combobox for available ports
             topLabel_label = QLabel("Choose your port:")
             global topLabel_comboBox
             topLabel_comboBox = QComboBox()
@@ -123,25 +123,35 @@ class MainWindow(QMainWindow):
             CTRLDeck.start_clicked() #Starts the program
             
         def LeftMenu(self):
+            # Create the tabs that stick to the left of the window
             leftMenu = QTabWidget()
             leftMenu.setTabPosition(QTabWidget.West)
             leftMenu.setMovable(False)
+            
+            # Create widgets to place inside tabs
             mainTab = QWidget()
             sliderTab = QWidget()
             macroTab = QWidget()
-            leftMenu.addTab(mainTab, "Setup")
-            leftMenu.addTab(sliderTab, "Sliders")
-            leftMenu.addTab(macroTab, "Macro Keys")
+            
+            # Apply layouts to Widgets
             mainTab.setLayout(MainWindow.MainMenuUI())
             sliderTab.setLayout(MainWindow.SliderMenuUI())
             macroTab.setLayout(MainWindow.MacroKeysMenuUI())
+            
+            # Assign widgets to tabs. They are added top to bottom
+            leftMenu.addTab(mainTab, "Setup")
+            leftMenu.addTab(sliderTab, "Sliders")
+            leftMenu.addTab(macroTab, "Macro Keys")
+            
             return leftMenu
 
             
         def MainMenuUI():
+            # Create UI for the main menu
             global setupPage
-            setupPage = QStackedLayout()
+            setupPage = QStackedLayout() # Set to stacked layout. Button clicks change the widget that sits on top
 
+            # Create buttons to be displayed in the top widget in setupPage 
             mainMenu1 = QWidget()
             mainMenu1_layout = QHBoxLayout()
             assignSlidersButton = QPushButton("Assign Sliders")
@@ -157,6 +167,7 @@ class MainWindow(QMainWindow):
             mainMenu1_layout.addWidget(assignMacrosButton)
             mainMenu1.setLayout(mainMenu1_layout)
 
+            # Create slider assignment widget
             mainMenu2 = QWidget()
             mainMenu2_layout = QVBoxLayout()
             for i in sliders:
@@ -164,14 +175,10 @@ class MainWindow(QMainWindow):
                 mainMenu2_layout.addWidget(i)
             mainMenu2.setLayout(mainMenu2_layout)
 
-        #    process = QComboBox()
-        #    for i in sessionOptions:
-        #        process.addItem(i)
-
             setupPage.addWidget(mainMenu1)
             setupPage.addWidget(MainWindow.SliderAssign())
 
-            setupPage.setCurrentIndex(0)
+            setupPage.setCurrentIndex(0) # Set main page to orginal buttons
 
             return setupPage
 
@@ -229,6 +236,7 @@ class MainWindow(QMainWindow):
             row = 1
             col = 1
 
+            # Insert widget bundles in a 2x2 grid
             for i in range(widgetsNum):
                 assignSlider_layout.addWidget(slider_labels[i], row, col)
                 row = row + 1
@@ -251,7 +259,7 @@ class MainWindow(QMainWindow):
 
 
         def saveSlidertoFile():
-            
+            # Save slider assignments to file for background service
             try:
                 portFile = open("COMport", "w")
                 portFile.writelines(lineList)
@@ -262,6 +270,9 @@ class MainWindow(QMainWindow):
 
 
         def SliderMenuUI():
+            # Create sliders to be inserted into Slider Tab
+            
+            faders = {}
             layout = QGridLayout()
             for x in sliders:
                 fader = QSlider(Qt.Vertical)
@@ -273,6 +284,7 @@ class MainWindow(QMainWindow):
             return layout
 
         def MacroKeysMenuUI():
+            # Macro assignment not build yet
             macroKeysMenu = QGridLayout()
             return macroKeysMenu
 

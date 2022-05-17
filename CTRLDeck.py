@@ -1,10 +1,5 @@
-from tkinter import *
-from tkinter import ttk
 from tkinter import filedialog
 from inc.getCOM import serial_ports
-from pystray import MenuItem as item
-import pystray
-from PIL import Image
 import inc.serialValuetoVolume as serialValuetoVolume
 import threading
 import pythoncom
@@ -24,7 +19,7 @@ global icon
 # List to which we append threads
 threads = []
 # Create log file
-logging.basicConfig(filename='ctrldeck.log', filemode= 'w', level=logging.DEBUG)
+logging.basicConfig(filename='ctrldeck.log', filemode= 'w', level=logging.WARNING)
 
 #------------------------------------------------------------------
 #       Create Functions for getting user chosen port and
@@ -45,42 +40,6 @@ def savePortChoice():
 #       Create Functions for getting user chosen AudioSession and
 #             using it to create AudioController object  
 #------------------------------------------------------------------
-
-# get chosen sessionID from drop down menu and set session volume to slider sliderNum value
-def saveSlider(sliderNum):
-    slider = sliders[sliderNum - 1]
-    label = labels[sliderNum - 1]
-
-    # Checks for user input choice and runs filedialog function chooseFile()
-    process_Name = str(slider.get())
-    if process_Name == "Choose a file:":
-        process_Name = chooseFile()
-        if len(process_Name) > 2:
-            sessionOptions[sliderNum] = process_Name
-        else:
-            pass
-        logging.info('Process ' + process_Name + 'successfully added to Slider ' +  str(sliderNum))
-    else:
-        pass
-
-    # Opens the temp file and stores the chosen process name
-    label.insert(END, process_Name)
-    global lineList
-    listSize = label.size()
-    sliderStr = ''
-    sliderList = list(label.get(0, listSize))
-    for item in sliderList:
-        sliderStr += str(item) + ","
-    lineList[sliderNum] = ("\n" + sliderStr)
-    try:
-        portFile = open("COMport", "w")
-        portFile.writelines(lineList)
-        portFile.close()
-        logging.info(lineList[sliderNum] + 'added to Slider ' +  str(sliderNum))
-        serialValuetoVolume.init()
-    except:
-        logging.debug('Process was not added to Slider ' + str(sliderNum))
-
 
 # Opens filedialog and allows user to choose .exe file to which they wish to assign slider
 def chooseFile():
@@ -173,7 +132,6 @@ numSliders = 4
 
 # Create list of common audio sessions
 sessionOptions = ["master", "chrome.exe", "firefox.exe", "discord.exe", "microphone", "unmapped", "Choose a file:" ]
-
 
 sliders = []
 for i in range (numSliders):
