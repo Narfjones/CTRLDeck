@@ -3,15 +3,12 @@ from PyQt5.QtCore import Qt, QSignalMapper
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import (
     QApplication,
-    QCheckBox,
     QComboBox,
-    QFormLayout,
     QGridLayout,
     QListWidget,
     QHBoxLayout,
     QSlider,
     QStackedLayout,
-    QStackedWidget,
     QVBoxLayout,
     QWidget,
     QMainWindow,
@@ -19,7 +16,6 @@ from PyQt5.QtWidgets import (
     QTabWidget,
     QLabel
 )
-from serial.serialutil import PortNotOpenError
 import CTRLDeck 
 
 
@@ -264,15 +260,16 @@ class MainWindow(QMainWindow):
                 portFile = open("COMport", "w")
                 portFile.writelines(lineList)
                 portFile.close()
-                # CTRLDeck.serialValuetoVolume.init()
+                CTRLDeck.serialValuetoVolume.init()
             except:
                 print("process was not added to slider")
 
-
+        
         def SliderMenuUI():
             # Create sliders to be inserted into Slider Tab
-            
-            faders = {}
+            faderSum = 1
+            global fadersDict
+            fadersDict = {}
             layout = QGridLayout()
             for x in sliders:
                 fader = QSlider(Qt.Vertical)
@@ -280,6 +277,9 @@ class MainWindow(QMainWindow):
                 fader.setMinimum(0)
                 fader.setMaximum(100)
                 fader.setTickInterval(1)
+                fader.valueChanged
+                fadersDict["fader{0}".format(faderSum)] = fader
+                faderSum += 1
                 layout.addWidget(fader, 2, sliders.index(x))
             return layout
 
