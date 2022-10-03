@@ -22,7 +22,7 @@ char keys[ROWS][COLS] = {
   {'2', '1'}
 };
 
-byte rowPins[ROWS] = {6, 7, 8};
+byte rowPins[ROWS] = {10, 9, 8};
 byte colPins[COLS] = {2, 3};
 
 Keypad keypad = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS );
@@ -71,9 +71,9 @@ void loop() {
         break;
     }
 
-  if (Serial.available()){
-    handshake();
-  }
+  // if (Serial.available()){
+   // handshake();
+  // }
     delay(20);
     Keyboard.releaseAll();
 
@@ -85,6 +85,7 @@ void loop() {
   
 }
 
+/*
 void handshake(){
   String input = Serial.read();
   switch(input){
@@ -99,6 +100,7 @@ void handshake(){
     return
   }
 }
+*/
 
 void updateSliderValues() {
   for (int i = 0; i < NUM_SLIDERS; i++) {
