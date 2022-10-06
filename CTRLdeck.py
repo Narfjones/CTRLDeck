@@ -11,6 +11,7 @@ import pythoncom
 import logging
 from time import sleep
 from numpy import interp
+from getCOM import findDeck
 
 # Create global variable for arduino port. Can't remember if it is still needed
 chosenPort = str()
@@ -20,13 +21,16 @@ global lineList
 lineList = ["1", "\n2", "\n3", "\n4", "\n5"] # Default value to maintain the correct number of indicies.
 macroList = ["1", "\n2", "\n3", "\n4", "\n5", "\n6", "\n7", "\n8", "\n9", "\n10", "\n11", "\n12"]
 
+# Variable for ending threads
+threadState = False
+
 # Variable for systray icon
 global icon
 
 # List to which we append threads
 threads = []
 # Create log file
-logging.basicConfig(filename='ctrldeck.log', filemode= 'w', level=logging.ERROR)
+logging.basicConfig(filename='ctrldeck.log', filemode= 'w', level=logging.DEBUG)
 
 #------------------------------------------------------------------
 #       Create Functions for getting user chosen port and
@@ -34,13 +38,19 @@ logging.basicConfig(filename='ctrldeck.log', filemode= 'w', level=logging.ERROR)
 #------------------------------------------------------------------
 
 # Get chosen COM port from drop down menu and open serial port
-def savePortChoice(event):
+def savePortChoice():
     global chosenPort
+    global lineList
     chosenPort = str(portsVar.get())
-    portFile = open("COMport", "w")
-    lineList[0] = (chosenPort)
-    portFile.writelines(lineList)
+    portFile = open("COMport", "r")
+    # lineList[0] = (chosenPort)
+    port = portFile.readlines()
+    lineList[0] = (port[0].rstrip("\n"))
     portFile.close()
+    print(str(port[0]))
+    print(lineList)
+    return str(port[0])
+
     
 
 #------------------------------------------------------------------
@@ -171,8 +181,7 @@ def start_clicked():
 # This is the actual closing function which ends the program and it's associated threads. Only accessed by 'Quit' in the taskbar
 def on_closing(icon, item):
     
-    serialValuetoVolume.stop_program() # serialValuetoVolume loop must be stopped before thread can be exited
-    logging.warning('Serial to Volume stopped')
+    global threadState
 
     # Reset temp file so that the number of entries in list stays the same for next execute. Might be redundant.
     portFile = open("COMport", "w")
@@ -181,10 +190,14 @@ def on_closing(icon, item):
     portFile.close()
     logging.debug('File reset')
     try: # Attempt to close thread. This only works if getValues() loop has stopped.
+        serialValuetoVolume.stop_program() # serialValuetoVolume loop must be stopped before thread can be exited
+        logging.warning('Serial to Volume stopped')
         t.join()
+        threadState = False # updateSlider loop must be stopped before thread can be exited
         t2.join()
         logging.debug('Thread for volume control ended')
     except: # If this throws an exception we assume it's because it is not running. Could be more 
+        print("couldn't end thread")
         logging.warning('Could not end thread')
         pass
     icon.stop() # Destroys the system tray icon
@@ -230,12 +243,13 @@ def hide_window():
         logging.debug('System tray icon running')
 
 def updateSliderYPos():
+    global threadState
     pythoncom.CoInitialize()
-    
+
     faderKnobYPosPrev = [0,0,0,0]
     faderKnobYPos = [400,400,400,400]
     global fader_labels
-    while True:
+    while threadState==True:
         faderKnobYPos = serialValuetoVolume.faders.copy()
         # faderKnobYPosPrev = faderKnobYPos.copy()         
         for i in range (len(faderKnobYPos)):
@@ -247,9 +261,11 @@ def updateSliderYPos():
 
 def startSliderYPos():
     global t2
+    global threadState
     t2 = threading.Thread(target=updateSliderYPos) # Sets target function that should run in this thread
     threads.append(t2)
     t2.start() # Starting thread runs the target function
+    threadState = True
 
 
     
@@ -285,7 +301,8 @@ portsVar = StringVar()
 portsVar.set("Choose your port:")
 
 # Create port dropdown menu
-portDrop = OptionMenu(frm, portsVar, *portOptions, command=savePortChoice).place(x = 867, y = 130)
+# portDrop = OptionMenu(frm, portsVar, *portOptions, command=savePortChoice).place(x = 867, y = 130)
+# portLabel1 = Label( frm, textvariable = savePortChoice).place(x = 867, y = 130)
 
 # Create label
 portLabel = Label( frm , textvariable = " " )
@@ -335,6 +352,9 @@ for i in faderKnobXPos:
 
 # Creates start button that runs the clicked which kicks off the actual program
 startButton = ttk.Button(frm, text="Start CTRLdeck", command=start_clicked).place(x=26, y=632)
+
+findDeck()
+savePortChoice()
 
 # Loops the window processes
 startSliderYPos()

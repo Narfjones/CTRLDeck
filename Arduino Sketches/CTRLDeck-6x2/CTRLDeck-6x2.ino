@@ -85,22 +85,6 @@ void loop() {
   
 }
 
-/*
-void handshake(){
-  String input = Serial.read();
-  switch(input){
-    case 'sliders':
-      Serial.println(NUM_SLIDERS);
-    case 'keys':
-      Serial.println(ROWS*COLS);
-  }
-  Serial.println("confirm");
-  String confirm = Serial.read();
-  if (confirm = "true"){
-    return
-  }
-}
-*/
 
 void updateSliderValues() {
   for (int i = 0; i < NUM_SLIDERS; i++) {

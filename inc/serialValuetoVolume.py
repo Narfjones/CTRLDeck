@@ -40,7 +40,8 @@ def init():
     portFile = open("COMport", "r")
     fileLines = portFile.readlines()
     chosenPort = str(fileLines[0]) # Line 1 is the chosen COMport
-    chosenPort = chosenPort.rstrip("\n")
+    portFile.close()
+    chosenPort = chosenPort.rstrip("\n").lstrip("\n")
 
     numSliders = 4
 
@@ -57,7 +58,7 @@ def init():
     global unmappedList
     unmappedList = sliderProcesses[0] + sliderProcesses[1] + sliderProcesses[2] + sliderProcesses[3]
     running = True
-    logging.debug('Program Initiated')
+    logging.warning('Program Initiated')
 
 
 # Create serial connect with chosen COM port(from COMport data file) and store in global serial variable
@@ -73,10 +74,10 @@ def connectSerial():
             timeout=0)
         sleep(.001) # Short sleep is necessary apparently
         print("connected to: " + chosenPort)
-        logging.debug('Serial Port connected')
+        logging.warning('Serial Port connected')
         print(sliderProcesses)
     except: # If an exception is thrown we assume it is already connected. Needs to be more specific.
-        logging.debug('Serial Port was unable to connect')
+        logging.warning('Serial Port was unable to connect')
         pass
 
 
@@ -293,7 +294,7 @@ def stop_program():
     running = False #Set trigger variable to false and loop will end on next iteration
     try: # Try to close the open port. If an exception is thrown we assume the port is already closed. Could be more specific.
         ser.close()
-        logging.debug('Serial Port closed')
+        logging.warning('Serial Port closed')
     except:
-        logging.debug('Not able to close Serial Port')
+        logging.warning('Not able to close Serial Port')
         pass

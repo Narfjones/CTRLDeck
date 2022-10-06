@@ -1,5 +1,5 @@
 #####################################################################################################################################
-# This is deprecated as we are now listing the common executable processes and providing an optoin for the user to choose their own #
+# This is deprecated as we are now listing the common executable processes and providing an option for the user to choose their own #
 # executable from a filedialog window                                                                                               #
 #####################################################################################################################################
 
