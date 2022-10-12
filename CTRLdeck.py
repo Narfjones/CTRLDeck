@@ -13,12 +13,15 @@ from time import sleep
 from numpy import interp
 from getCOM import findDeck
 
+# Find the deck, verify, and save connection info
+findDeck()
+
 # Create global variable for arduino port. Can't remember if it is still needed
 chosenPort = str()
 
 # Create list variable to hold information in buffer file. It must hold these variables so that we don't reference empty indices
 global lineList
-lineList = ["1", "\n2", "\n3", "\n4", "\n5"] # Default value to maintain the correct number of indicies.
+lineList = ["1", "\n2", "\n3", "\n4", "\n5", "\n6"] # Default value to maintain the correct number of indicies.
 macroList = ["1", "\n2", "\n3", "\n4", "\n5", "\n6", "\n7", "\n8", "\n9", "\n10", "\n11", "\n12"]
 
 # Variable for ending threads
@@ -29,8 +32,14 @@ global icon
 
 # List to which we append threads
 threads = []
+
 # Create log file
 logging.basicConfig(filename='ctrldeck.log', filemode= 'w', level=logging.DEBUG)
+
+portFile = open("COMport", "r")
+nums = portFile.readlines()
+numSliders = int(nums[5].rstrip("\n"))
+portFile.close()
 
 #------------------------------------------------------------------
 #       Create Functions for getting user chosen port and
@@ -46,12 +55,9 @@ def savePortChoice():
     # lineList[0] = (chosenPort)
     port = portFile.readlines()
     lineList[0] = (port[0].rstrip("\n"))
+    lineList[5] = ("\n" + port[5])
     portFile.close()
-    print(str(port[0]))
-    print(lineList)
     return str(port[0])
-
-    
 
 #------------------------------------------------------------------
 #       Create Functions for getting user chosen AudioSession and
@@ -120,8 +126,6 @@ def onselect(evt, labelNum):
     global lineList
     label = labels[labelNum - 1]
 
-    print(len(lineList[labelNum]))
-
     # Access storage of processes and create widget that triggers on select event in ListBox
     w = evt.widget
     try:
@@ -130,10 +134,10 @@ def onselect(evt, labelNum):
         start = int(lineList[labelNum].find(value)) # Get index of the first letter of the process name
         length= int(len(value)) # Get length of the process name
         stop = int(length + start + 1) # Create ending index of process name
-        value1 = (lineList[labelNum][:start] + lineList[labelNum][stop:-1]) # Take linList and create new string with currently selected process removed
+        value1 = (lineList[labelNum][:start] + lineList[labelNum][stop:-1]) # Take lineList and create new string with currently selected process removed
         lineList[labelNum] = value1 # Substitute new string into lineList
         label.delete(index) # Remove the process from the label
-        print(len(lineList[labelNum]))
+
         # Prevent remove command from emptying the indices of lineList. If the number of indices changes the whole program will oh I don't know decide to rob a liquor store.
         if len(lineList[labelNum]) < 3:
             lineList[labelNum] += str(labelNum + 1) # Stick in default value for lineList to keep the right number of indices
@@ -157,8 +161,8 @@ def sliderRun():
         logging.info('Program was stopped before starting again')
     except: # If the program throws an exception we assume it's because it's not currently running
         pass 
-    serialValuetoVolume.init()
     serialValuetoVolume.connectSerial()
+    serialValuetoVolume.init()
     serialValuetoVolume.getValues()
 
 
@@ -174,36 +178,36 @@ def start_clicked():
     t = threading.Thread(target=sliderRun) # Sets target function that should run in this thread
     threads.append(t)
     t.start() # Starting thread runs the target function
+    startSliderYPos()
+
     global startButton
     startButton = ttk.Button(frm, text="Restart CTRLdeck", command=start_clicked).place(x=26, y=632) # Rename the 'start' button to 'restart'
 
 
 # This is the actual closing function which ends the program and it's associated threads. Only accessed by 'Quit' in the taskbar
 def on_closing(icon, item):
-    
     global threadState
+    threadState = False
+
 
     # Reset temp file so that the number of entries in list stays the same for next execute. Might be redundant.
     portFile = open("COMport", "w")
-    lineList = ["1", "\n2", "\n3", "\n4", "\n5"]
+    lineList = ["1", "\n2", "\n3", "\n4", "\n5", "\n6"]
     portFile.writelines(lineList)
     portFile.close()
     logging.debug('File reset')
     try: # Attempt to close thread. This only works if getValues() loop has stopped.
         serialValuetoVolume.stop_program() # serialValuetoVolume loop must be stopped before thread can be exited
         logging.warning('Serial to Volume stopped')
+        sleep(.002)
         t.join()
-        threadState = False # updateSlider loop must be stopped before thread can be exited
-        t2.join()
         logging.debug('Thread for volume control ended')
     except: # If this throws an exception we assume it's because it is not running. Could be more 
         print("couldn't end thread")
         logging.warning('Could not end thread')
         pass
-    icon.stop() # Destroys the system tray icon
-    logging.debug('Icon destroyed')
-    root.destroy() # Destroys the window
-    logging.debug('Window destroyed')
+    root.destroy()
+    icon.stop() # Necessary to destroy system tray icon but I don't know why
 
 
 # Recreates the window from the system tray icon
@@ -216,10 +220,14 @@ def open_window(icon, item):
 
 # Hide the window and show on the system taskbar
 def hide_window():
+
+    global t2
+
     # Store proccesses assigned to sliders to display in icon menu
     sliderProcesses = []
+
     try:
-        for i in range(numSliders):
+        for i in range(numSliders - 1):
             sliderProcesses.append(str(serialValuetoVolume.sliderProcesses[i]))
     except TypeError:
         pass
@@ -231,8 +239,7 @@ def hide_window():
     logging.debug('Icon created')
     
     try:
-        menu=(item('Slider 1: ' + sliderProcesses[0], 0), item('Slider 2: ' + sliderProcesses[1], 0), item('Slider 3: ' + sliderProcesses[2], 0),
-        item('Slider 4: ' + sliderProcesses[3], 0), item('Restart', start_clicked), item('Show', open_window) , item('Quit', on_closing)) # Creates right click menu and it's options in the system tray icon
+        menu = ((item('Restart', start_clicked), item('Show', open_window), item('Quit', on_closing))) # Creates right click menu and it's options in the system tray icon)
         icon=pystray.Icon("name", image, "CTRLDeck", menu) # Creates click options on system tray icon
         icon.run() # Start system tray icon
         logging.debug('System tray icon running')
@@ -242,11 +249,12 @@ def hide_window():
         icon.run() # Start system tray icon
         logging.debug('System tray icon running')
 
+
 def updateSliderYPos():
     global threadState
     pythoncom.CoInitialize()
 
-    faderKnobYPosPrev = [0,0,0,0]
+    faderKnobYPosPrev = [0.0,0.0,0.0,0.0]
     faderKnobYPos = [400,400,400,400]
     global fader_labels
     while threadState==True:
@@ -262,10 +270,11 @@ def updateSliderYPos():
 def startSliderYPos():
     global t2
     global threadState
+    threadState = True
     t2 = threading.Thread(target=updateSliderYPos) # Sets target function that should run in this thread
+    t2.daemon = True
     threads.append(t2)
     t2.start() # Starting thread runs the target function
-    threadState = True
 
 
     
@@ -310,7 +319,6 @@ portLabel = Label( frm , textvariable = " " )
 ### Create slider GUI elements
 
 # Define number of sliders
-numSliders = 4
 
 #----------------------------------------------------------------------------
 #   - Call list of Audio Sessions volume_by_process.py
@@ -353,10 +361,8 @@ for i in faderKnobXPos:
 # Creates start button that runs the clicked which kicks off the actual program
 startButton = ttk.Button(frm, text="Start CTRLdeck", command=start_clicked).place(x=26, y=632)
 
-findDeck()
 savePortChoice()
 
 # Loops the window processes
-startSliderYPos()
 root.protocol("WM_DELETE_WINDOW", hide_window)
 root.mainloop()

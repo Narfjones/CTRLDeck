@@ -40,10 +40,10 @@ def init():
     portFile = open("COMport", "r")
     fileLines = portFile.readlines()
     chosenPort = str(fileLines[0]) # Line 1 is the chosen COMport
+    numSliders = str(fileLines[5]) # Line 6 is the number of sliders
     portFile.close()
     chosenPort = chosenPort.rstrip("\n").lstrip("\n")
-
-    numSliders = 4
+    numSliders = int(numSliders.rstrip("\n").lstrip("\n"))
 
     sliderProcesses = []
     
@@ -52,11 +52,11 @@ def init():
     
     for i in range(len(sliderProcesses)):    
         sliderProcesses[i] = [j for j in sliderProcesses[i] if j != '']
-    print(sliderProcesses)
 
     sliders = [float] * numSliders
     global unmappedList
-    unmappedList = sliderProcesses[0] + sliderProcesses[1] + sliderProcesses[2] + sliderProcesses[3]
+    for i in range(len(sliderProcesses) - 1):
+        unmappedList.append(sliderProcesses[i])
     running = True
     logging.warning('Program Initiated')
 
@@ -64,6 +64,7 @@ def init():
 # Create serial connect with chosen COM port(from COMport data file) and store in global serial variable
 def connectSerial():
     global ser
+    global numSliders
     try:
         ser = serial.Serial(
         port = chosenPort,\
@@ -75,7 +76,8 @@ def connectSerial():
         sleep(.001) # Short sleep is necessary apparently
         print("connected to: " + chosenPort)
         logging.warning('Serial Port connected')
-        print(sliderProcesses)
+        data = str(ser.readline()) # Get any serial output from device
+        numSliders = data.count('|') + 1
     except: # If an exception is thrown we assume it is already connected. Needs to be more specific.
         logging.warning('Serial Port was unable to connect')
         pass
@@ -224,31 +226,31 @@ def getValues():
                     # timeEnd = float( time.perf_counter())
                     # timeTaken = str(timeEnd - timeStart)
                     # print("String Convserion: " + timeTaken )
+                    for i in range(len(sliderStrs)):
+                        if (sliderStrs[i] != ''): # Runs if any slider has process assignment
+                            # timeStart = float( time.perf_counter())
+                            # Convert digit strings to integer, maps (0,100) input to (0,1) output and rounds to two decimal places
+                            for i in range(numSliders):
+                                try:
+                                    sliders[i] = float(float(sliderStrs[i]) * .01) # The smallest number of sliders is 2 so this will always run. 
+                                    sliders[i] = round(sliders[i], 2)
+                                except:
+                                    sliders[i] = 'null'
 
-                    if (sliderStrs[0] != '' or sliderStrs[1] !='' or sliderStrs[2] != '' or sliderStrs[3] != ''): # Runs if any slider has process assignment
+                        else: # Skip if no sliders or no process assignments
+                            pass
+                        # timeEnd = float( time.perf_counter())
+                        # timeTaken = str(timeEnd - timeStart)
+                        # print("Store Values: " + timeTaken )
+                    
                         # timeStart = float( time.perf_counter())
-                        # Convert digit strings to integer, maps (0,100) input to (0,1) output and rounds to two decimal places
-                        for i in range(numSliders):
-                            try:
-                                sliders[i] = float(float(sliderStrs[i]) * .01) # The smallest number of sliders is 2 so this will always run. 
-                                sliders[i] = round(sliders[i], 2)
-                            except:
-                                sliders[i] = 'null'
-
-                    else: # Skip if no sliders or no process assignments
-                        pass
-                    # timeEnd = float( time.perf_counter())
-                    # timeTaken = str(timeEnd - timeStart)
-                    # print("Store Values: " + timeTaken )
-                
-                    # timeStart = float( time.perf_counter())
-                    # These are currently acting as a deadband. There is probably a better way.
+                        # These are currently acting as a deadband. There is probably a better way.
 
                     for i in range(numSliders):
                         try:
                             if sliders[i] <= .00:
                                 sliders[i] = 0.00
-                                volumeSlider(i+1)
+                                volumeSlider(i)
                             else:
                                 pass
                         except TypeError:
@@ -265,7 +267,7 @@ def getValues():
                         if sliders[i] != previousSliders[i]:
                             global faders
                             previousSliders[i] = sliders[i]
-                            volumeSlider(i+1)
+                            volumeSlider(i)
                             if (sliders[i] != 'null'):
                                 if (len(faders) < numSliders):
                                     faders.append(sliders[i])

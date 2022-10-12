@@ -5,13 +5,13 @@ from time import sleep
 import re
 
 #------------------------------------------------------------------------#
-# Create list and populate it with available COM ports by checking all   #
-#           ports and appending them to list if they return              #
-#                   a response to the open command                       #
+# Get list of COM ports, pull output from buffer and check format to     #
+# verify that it is a CTRLdeck and then stores the proper port for main  #
+# scrip to access.                                                       #
 #------------------------------------------------------------------------#
 
 chosenPort = None
-lineList = ["1", "\n2", "\n3", "\n4", "\n5"]
+lineList = ["1", "\n2", "\n3", "\n4", "\n5", "\n6"]
 ser = serial.Serial
 
 def serial_ports():
@@ -45,8 +45,9 @@ def serial_ports():
 def findDeck():
     global chosenPort
     global ser
-    for i in serial_ports():
+    for i in serial_ports(): # Cycle through available COM ports on machine
         try:
+            # Connect to COM port
             ser = serial.Serial(
             port = i,\
             baudrate=9600,\
@@ -58,34 +59,34 @@ def findDeck():
             print("Trying to connect to: " + i)
             ser.flush()
             sleep(.01)
-            data = str(ser.readline())
-            data = data.lstrip("b'").rstrip("\\r\\n'").strip("|")
-            print(data)
-            RE_D = re.compile('\d\d')
+            data = str(ser.readline()) # Get any serial output from device
+            numSliders = "\n" + str(data.count("|") + 1)
+            data = data.lstrip("b'").rstrip("\\r\\n'").strip("|") # strip any newline, carriage return, or extra characters
+            RE_D = re.compile('\d') # Create format against which to check the serial data
             def f3(string):
                 return RE_D.search(string)
-            if f3(data):
+            if f3(data): # If serial string matches format store it in the first line of the COMport file
                 global lineList
                 chosenPort = str(i)
                 chosenPort = chosenPort.rstrip("\n")
                 lineList[0] = chosenPort
+                lineList[5] = numSliders
                 portFile = open("COMport", "w")
-                portFile.writelines(lineList)                
+                portFile.writelines(lineList)              
                 portFile.close()            
                 print("Device found and recorded")
                 sleep(.01)
-                try:
+                try: # Safely closes connection so that the port can be opened by main script
                     ser.flush()
                     ser.close()
                     print("connection closed")
-                except:
+                except: # Pops if connection cannot be closed
                     print("connection couldn't close")
-                break
-            else:
+                
+            else: # Pops if the connection is not correct device(serial data doesn't match expected format)
                 print("cannot store connection port")
-                break
-                   #print(ser.readline())
-        except: # If an exception is thrown we assume it is already connected. This needs to be more specific.
+                
+        except: # If an exception is thrown we assume the device is already connected somewhere  else. This needs to be more specific.
             try:
                 ser.flush()
                 ser.close()
@@ -95,4 +96,3 @@ def findDeck():
 
 if __name__ == '__main__':
     findDeck()
-    print(chosenPort)

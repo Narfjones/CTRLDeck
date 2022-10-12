@@ -15,7 +15,7 @@ chosenPort = str()
 
 # Create list variable to hold information in buffer file. It must hold these variables so that we don't reference empty indices
 global lineList
-lineList = ["1", "\n2", "\n3", "\n4", "\n5"] # Default value to maintain the correct number of indicies.
+lineList = ["1", "\n2", "\n3", "\n4", "\n5", "\n6"] # Default value to maintain the correct number of indicies.
 macroList = ["1", "\n2", "\n3", "\n4", "\n5", "\n6", "\n7", "\n8", "\n9", "\n10", "\n11", "\n12"] 
 
 # Variable for systray icon
@@ -37,6 +37,7 @@ def savePortChoice(event):
     chosenPort = str(portsVar.get())
     portFile = open("COMport", "w")
     lineList[0] = (chosenPort)
+    lineList[5] = (numSliders)
     portFile.writelines(lineList)
     portFile.close()
     
@@ -108,8 +109,6 @@ def onselect(evt, labelNum):
     global lineList
     label = labels[labelNum - 1]
 
-    print(len(lineList[labelNum]))
-
     # Access storage of processes and create widget that triggers on select event in ListBox
     w = evt.widget
     try:
@@ -173,7 +172,7 @@ def on_closing(icon, item):
 
     # Reset temp file so that the number of entries in list stays the same for next execute. Might be redundant.
     portFile = open("COMport", "w")
-    lineList = ["1", "\n2", "\n3", "\n4", "\n5"]
+    lineList = ["1", "\n2", "\n3", "\n4", "\n5", "\n6"]
     portFile.writelines(lineList)
     portFile.close()
     logging.debug('File reset')
@@ -229,7 +228,7 @@ root.title("CTRLdeck")
 root.geometry('1240x720')
 
 # Create background image
-bg = PhotoImage(file = "6x4deck-bkgrd.png")
+bg = PhotoImage(file = "./src/6x4deck-bkgrd.png")
 
 # Create a child frame from root
 frm = ttk.Frame(root, padding = 0)
