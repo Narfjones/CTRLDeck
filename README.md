@@ -10,7 +10,8 @@ CTRLDeck software in python using pyserial and tkinter
 - Multiple processes per slider working properly. Click the process in the ListBox to remove it
 - System Tray icon shows assignments on mouseover
 - Added event logging
-- Auto Detects CTRLdeck
+- Auto detects CTRLdeck
+- Auto detects number of sliders
 
 **Current Issues**
 ~~- The keystrokes only get noticed if you hold them down for an extended time
