@@ -1,3 +1,4 @@
+import profile
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
@@ -149,7 +150,6 @@ def onselect(evt, labelNum):
         portFile.close()
     except IndexError:
         pass
-    
 
 # This runs the functions that get serial data, convert to windows accepted values, and assign volumes
 def sliderRun():
@@ -167,6 +167,7 @@ def sliderRun():
 
 
 def start_clicked():
+    
     try:
         serialValuetoVolume.stop_program()
         logging.info('SerialtoVolume stopped before running')
@@ -188,7 +189,6 @@ def start_clicked():
 def on_closing(icon, item):
     global threadState
     threadState = False
-
 
     # Reset temp file so that the number of entries in list stays the same for next execute. Might be redundant.
     portFile = open("COMport", "w")

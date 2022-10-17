@@ -1,4 +1,5 @@
 from __future__ import print_function
+import profile
 from tkinter.constants import X
 import serial
 from time import sleep
@@ -7,6 +8,7 @@ from ctypes import POINTER, cast
 from comtypes import CLSCTX_ALL 
 from numpy import copy
 import logging
+from memory_profiler import profile
 
 # Create global variables. I'm sure there's a more efficient way to handle all of this.   
 chosenPort = str()
@@ -105,7 +107,9 @@ def getSessionsSpeakers():
     global devices
     global sessions
     devices = AudioUtilities.GetSpeakers()
-    sessions = AudioUtilities.GetAllSessions() # Scans sessions and locates the one with a name matching the sliderProcess
+    lst = AudioUtilities.GetAllSessions()
+    for i in range(len(lst)):
+        sessions[i] = lst[i] # Scans sessions and locates the one with a name matching the sliderProcess
 
 
 # Master volume communicates with Windows through IAudioEndPointVolume instead of ISimpleAudioVolume.
@@ -190,10 +194,12 @@ def volumeSlider(sliderNum):
 #       Create function to retrieve variables and 
 #               store them as integers
 #------------------------------------------------------------------
+@profile
 
 def getValues():
     global sliders
     global numSliders
+    global faders
 
     while True: # Infinite loop unless trigger variable is changed by stop_program()
         #timeStart = float( time.perf_counter())
@@ -250,7 +256,7 @@ def getValues():
                         try:
                             if sliders[i] <= .00:
                                 sliders[i] = 0.00
-                                volumeSlider(i)
+                                # volumeSlider(i)
                             else:
                                 pass
                         except TypeError:
@@ -265,7 +271,6 @@ def getValues():
 
                     for i in range(numSliders):
                         if sliders[i] != previousSliders[i]:
-                            global faders
                             previousSliders[i] = sliders[i]
                             volumeSlider(i)
                             if (sliders[i] != 'null'):
@@ -287,7 +292,6 @@ def getValues():
             else:
                 pass
             print('SerialException: Cannot check in_waiting')
-
 
 # Used to end while loop in getValues(). Must be used before thread can terminate.
 def stop_program():
