@@ -3,6 +3,12 @@
 CTRLDeck software in python using pyserial and tkinter
 ![This is an image](https://raw.githubusercontent.com/Narfjones/CTRLDeck-Python/master/src/repository-graph.png)
 
+**BIG UPDATE**
+- New UI
+- Refactored processing methods in serialValuetoVolume.py
+- Fixed memory leaks
+- Fixed CPU usage
+
 **Recent Features Added**
 - Runs in background on exit
 - Can assign up to 4 sliders
@@ -22,6 +28,7 @@ CTRLDeck software in python using pyserial and tkinter
 ~ - No warning for 'COM port not chosen' exception
 - Currently limited to 4 faders
 - GUI background does not reflect number of sliders or keys on actual device
+- If any slider is at 0 then all sliders stop sending volume to machine(happened before refactor)
 
 **To-do List**
 - Add ability to assign the keystroke assignment to macro keys
