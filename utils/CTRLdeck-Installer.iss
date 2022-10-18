@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "CTRLDeck"
-#define MyAppVersion ".5.3"
+#define MyAppVersion "0.6.1"
 #define MyAppURL "github.com/Narfjones/CTRLDeck"
 #define MyAppExeName "CTRLDeck.exe"
 
