@@ -288,7 +288,8 @@ def getValues():
             else:
                 pass
             print('SerialException: Cannot check in_waiting')
-        sleep(.03)
+            
+        sleep(.01)
 
 # Used to end while loop in getValues(). Must be used before thread can terminate.
 def stop_program():
