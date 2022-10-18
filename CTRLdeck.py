@@ -222,6 +222,7 @@ def open_window(icon, item):
 def hide_window():
 
     global t2
+    global threadState
 
     # Store proccesses assigned to sliders to display in icon menu
     sliderProcesses = []
@@ -250,6 +251,7 @@ def hide_window():
         logging.debug('System tray icon running')
 
 
+
 def updateSliderYPos():
     global threadState
     pythoncom.CoInitialize()
@@ -265,7 +267,7 @@ def updateSliderYPos():
                 faderKnobYPos[i] = interp(faderKnobYPos[i], [0.0,1.0], [511,233])
                 fader_labels[i].place(x=faderKnobXPos[i], y=faderKnobYPos[i])
                 faderKnobYPosPrev[i] = faderKnobYPos[i]
-        sleep(.001)
+        sleep(.05)
 
 def startSliderYPos():
     global t2
