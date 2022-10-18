@@ -8,7 +8,6 @@ from ctypes import POINTER, cast
 from comtypes import CLSCTX_ALL 
 from numpy import copy
 import logging
-from memory_profiler import profile
 
 # Create global variables. I'm sure there's a more efficient way to handle all of this.   
 chosenPort = str()
@@ -56,9 +55,11 @@ def init():
         sliderProcesses[i] = [j for j in sliderProcesses[i] if j != '']
 
     sliders = [float] * numSliders
+
     global unmappedList
     for i in range(len(sliderProcesses) - 1):
         unmappedList.append(sliderProcesses[i])
+
     running = True
     logging.warning('Program Initiated')
 
@@ -108,8 +109,7 @@ def getSessionsSpeakers():
     global sessions
     devices = AudioUtilities.GetSpeakers()
     lst = AudioUtilities.GetAllSessions()
-    for i in range(len(lst)):
-        sessions[i] = lst[i] # Scans sessions and locates the one with a name matching the sliderProcess
+    sessions = [x for x in lst if x not in sessions]
 
 
 # Master volume communicates with Windows through IAudioEndPointVolume instead of ISimpleAudioVolume.
@@ -194,7 +194,6 @@ def volumeSlider(sliderNum):
 #       Create function to retrieve variables and 
 #               store them as integers
 #------------------------------------------------------------------
-@profile
 
 def getValues():
     global sliders
@@ -250,17 +249,6 @@ def getValues():
                         # print("Store Values: " + timeTaken )
                     
                         # timeStart = float( time.perf_counter())
-                        # These are currently acting as a deadband. There is probably a better way.
-
-                    for i in range(numSliders):
-                        try:
-                            if sliders[i] <= .00:
-                                sliders[i] = 0.00
-                                # volumeSlider(i)
-                            else:
-                                pass
-                        except TypeError:
-                            pass
 
                     # timeEnd = float( time.perf_counter())
                     # timeTaken = str(timeEnd - timeStart)
@@ -272,6 +260,14 @@ def getValues():
                     for i in range(numSliders):
                         if sliders[i] != previousSliders[i]:
                             previousSliders[i] = sliders[i]
+                            try:
+                                if sliders[i] <= .00: # These are currently acting as a deadband. There is probably a better way.
+                                    sliders[i] = 0.00
+                                    volumeSlider(i)
+                                else:
+                                    pass
+                            except TypeError:
+                                pass
                             volumeSlider(i)
                             if (sliders[i] != 'null'):
                                 if (len(faders) < numSliders):
@@ -292,6 +288,7 @@ def getValues():
             else:
                 pass
             print('SerialException: Cannot check in_waiting')
+        sleep(.03)
 
 # Used to end while loop in getValues(). Must be used before thread can terminate.
 def stop_program():
