@@ -6,7 +6,7 @@ from inc.getCOM import serial_ports
 from pystray import MenuItem as item
 import pystray
 from PIL import Image, ImageTk
-# import inc.serialValuetoVolume as serialValuetoVolume
+import inc.serialValuetoVolume_mac as serialValuetoVolume
 import threading
 import logging
 from time import sleep
@@ -95,8 +95,7 @@ def saveSlider(sliderNum):
         portFile.writelines(lineList)
         portFile.close()
         logging.info(lineList[sliderNum] + 'added to Slider ' +  str(sliderNum))
-        # serialValuetoVolume.init()
-        print("started the volume process...") # temporary
+        serialValuetoVolume.init()
     except:
         logging.debug('Process was not added to Slider ' + str(sliderNum))
 
@@ -155,20 +154,20 @@ def onselect(evt, labelNum):
 def sliderRun():
 
     try: # Attempt to close the program first to make sure it isn't already running
-        # serialValuetoVolume.stop_program()
+        serialValuetoVolume.stop_program()
         print("program stopped")
         logging.info('Program was stopped before starting again')
     except: # If the program throws an exception we assume it's because it's not currently running
         pass 
-    # serialValuetoVolume.connectSerial()
-    # serialValuetoVolume.init()
-    # serialValuetoVolume.getValues()
+    serialValuetoVolume.connectSerial()
+    serialValuetoVolume.init()
+    serialValuetoVolume.getValues()
 
 
 def start_clicked():
     
     try:
-        # serialValuetoVolume.stop_program()
+        serialValuetoVolume.stop_program()
         logging.info('SerialtoVolume stopped before running')
     except:
         logging.warning('SerialtoVolume could not stop')
@@ -191,12 +190,12 @@ def on_closing(icon, item):
 
     # Reset temp file so that the number of entries in list stays the same for next execute. Might be redundant.
     portFile = open("COMport", "w")
-    lineList = ["1", "\n2", "\n3", "\n4", "\n5", "\n6"]
+    lineList = ["None", "\nNone", "\nNone", "\nNone", "\nNone", "\nNone"]
     portFile.writelines(lineList)
     portFile.close()
     logging.debug('File reset')
     try: # Attempt to close thread. This only works if getValues() loop has stopped.
-        # serialValuetoVolume.stop_program() # serialValuetoVolume loop must be stopped before thread can be exited
+        serialValuetoVolume.stop_program() # serialValuetoVolume loop must be stopped before thread can be exited
         logging.warning('Serial to Volume stopped')
         sleep(.002)
         t.join()
@@ -228,7 +227,7 @@ def hide_window():
 
     try:
         for i in range(numSliders - 1):
-            # sliderProcesses.append(str(serialValuetoVolume.sliderProcesses[i]))
+            sliderProcesses.append(str(serialValuetoVolume.sliderProcesses[i]))
             sliderProcesses.append(str(i))
             print("added process to slider")
     except TypeError:
@@ -260,7 +259,7 @@ def updateSliderYPos():
     faderKnobYPos = [400,400,400,400]
     global fader_labels
     while threadState==True:
-        # faderKnobYPos = serialValuetoVolume.faders.copy()
+        faderKnobYPos = serialValuetoVolume.faders.copy()
         faderKnobYPosPrev = faderKnobYPos.copy()         
         for i in range (len(faderKnobYPos)):
             if faderKnobYPos[i] != faderKnobYPosPrev[i]:
@@ -330,7 +329,7 @@ portLabel = Label( frm , textvariable = " " )
 #----------------------------------------------------------------------------
 
 # Create list of common audio sessions
-sessionOptions = ["master", "chrome.exe", "firefox.exe", "discord.exe", "microphone", "unmapped", "Choose a file:" ]
+sessionOptions = ["Master", "Chrome", "iTunes", "Firefox", "Microphone", "Choose a file:" ]
 
 # Store audio sessions for 4 sliders
 SliderDropdownsXPositions = [575, 680, 785, 890]
