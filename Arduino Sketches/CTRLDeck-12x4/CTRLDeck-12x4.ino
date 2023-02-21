@@ -1,8 +1,8 @@
 #include <Keyboard.h>
 #include <Keypad.h>
-#include <Control_Surface.h>
+/* #include <Control_Surface.h> */
 
-USBMIDI_Interface midi;
+/* USBMIDI_Interface midi;
 
 CCPotentiometer potentiometers[] = {
   {A0, 0x10},
@@ -10,6 +10,7 @@ CCPotentiometer potentiometers[] = {
   {A2, 0x12},
   {A3, 0x13},
 };
+*/
 
 const byte ROWS = 3;
 const byte COLS = 4;
@@ -17,6 +18,7 @@ const int NUM_SLIDERS = 4;
 const int analogInputs[NUM_SLIDERS] = {A0, A1, A2, A3};
 
 int analogSliderValues[NUM_SLIDERS];
+int analogSliderValuesPrev[NUM_SLIDERS];
 
 char keys[ROWS][COLS] = {
   {'1', '2', '3', '4'},
@@ -30,7 +32,7 @@ byte colPins[COLS] = {2, 3, 4, 5};
 Keypad keypad = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS );
 
 void setup() {
-  Control_Surface.begin();
+  /* Control_Surface.begin(); */
   Serial.begin(9600);
   Keyboard.begin();
 
@@ -47,8 +49,8 @@ void sendMacroCommand(uint8_t key) {
 }
 
 void loop() {
-  Control_Surface.loop();
-    char key = keypad.getKey();
+  /* Control_Surface.loop(); */
+  char key = keypad.getKey();
 
   if (key) {
     Serial.println(key);
@@ -91,7 +93,7 @@ void loop() {
         break;
     }
 
-    delay(30);
+    delay(20);
     Keyboard.releaseAll();
   }
   
@@ -102,8 +104,14 @@ void loop() {
 }
 
 void updateSliderValues() {
+  int sliders[NUM_SLIDERS];
   for (int i = 0; i < NUM_SLIDERS; i++) {
-     analogSliderValues[i] = map(analogRead(analogInputs[i]), 0, 1023, 0, 100);
+    sliders[i] = analogRead(analogInputs[i]);
+    if (sliders[i] - analogSliderValuesPrev[i] > 2 || sliders[i] - analogSliderValuesPrev[i] < -2){
+      analogSliderValuesPrev[i] = sliders[i];
+      analogSliderValues[i] = sliders[i];
+    }
+
   }
 }
 
@@ -111,7 +119,7 @@ void sendSliderValues() {
   String builtString = String("");
   
   for (int i = 0; i < NUM_SLIDERS; i++) {
-    builtString += String((int)analogSliderValues[i]);
+    builtString += String(analogSliderValues[i]);
     
     if (i < NUM_SLIDERS - 1) {
       builtString += String("|");
