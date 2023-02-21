@@ -35,7 +35,7 @@ global icon
 threads = []
 
 # Create log file
-logging.basicConfig(filename='ctrldeck.log', filemode= 'w', level=logging.DEBUG)
+logging.basicConfig(filename='ctrldeck.log', filemode= 'w', level=logging.WARNING)
 
 portFile = open("COMport", "r")
 nums = portFile.readlines()
