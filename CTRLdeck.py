@@ -198,13 +198,13 @@ def on_closing(icon, item):
     logging.debug('File reset')
     try: # Attempt to close thread. This only works if getValues() loop has stopped.
         serialValuetoVolume.stop_program() # serialValuetoVolume loop must be stopped before thread can be exited
-        logging.warning('Serial to Volume stopped')
+        logging.debug('Serial to Volume stopped')
         sleep(.002)
         t.join()
         logging.debug('Thread for volume control ended')
     except: # If this throws an exception we assume it's because it is not running. Could be more 
         print("couldn't end thread")
-        logging.warning('Could not end thread')
+        logging.debug('Could not end thread')
         pass
     root.destroy()
     icon.stop() # Necessary to destroy system tray icon but I don't know why
