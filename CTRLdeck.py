@@ -172,7 +172,7 @@ def start_clicked():
         serialValuetoVolume.stop_program()
         logging.info('SerialtoVolume stopped before running')
     except:
-        logging.warning('SerialtoVolume could not stop')
+        logging.info('SerialtoVolume could not stop')
         pass
     # Creates thread and appends it to thread list
     global t
