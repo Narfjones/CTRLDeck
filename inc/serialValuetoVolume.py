@@ -231,16 +231,16 @@ def getValues():
                     # timeEnd = float( time.perf_counter())
                     # timeTaken = str(timeEnd - timeStart)
                     # print("String Convserion: " + timeTaken )
-                    for i in range(len(sliderStrs)):
-                        if (sliderStrs[i] != ''): # Runs if any slider has process assignment
-                            # timeStart = float( time.perf_counter())
-                            # Convert digit strings to integer, maps (0,100) input to (0,1) output and rounds to two decimal places
-                            for i in range(numSliders):
-                                try:
-                                    sliders[i] = float(float(sliderStrs[i]) * .01) # The smallest number of sliders is 2 so this will always run. 
-                                    sliders[i] = round(sliders[i], 2)
-                                except:
-                                    sliders[i] = 'null'
+                        for i in range(len(sliderStrs)):
+                            if (sliderStrs[i] != ''): # Runs if any slider has process assignment
+                                # timeStart = float( time.perf_counter())
+                                # Convert digit strings to integer, maps (0,100) input to (0,1) output and rounds to two decimal places
+                                for i in range(numSliders):
+                                    try:
+                                        sliders[i] = float(float(sliderStrs[i]) * .01) # The smallest number of sliders is 2 so this will always run. 
+                                        sliders[i] = round(sliders[i], 2)
+                                    except:
+                                        sliders[i] = 'null'
 
                         else: # Skip if no sliders or no process assignments
                             pass
@@ -257,30 +257,30 @@ def getValues():
                     # timeStart = float( time.perf_counter())
                     # Check new value against previous value and send new volume if it has changed
 
-                    for i in range(numSliders):
-                        if sliders[i] != previousSliders[i]:
-                            previousSliders[i] = sliders[i]
-                            try:
-                                if sliders[i] <= .00: # These are currently acting as a deadband. There is probably a better way.
-                                    sliders[i] = 0.00
-                                    volumeSlider(i)
-                                else:
+                        for i in range(numSliders):
+                            if sliders[i] != previousSliders[i]:
+                                previousSliders[i] = sliders[i]
+                                try:
+                                    if sliders[i] <= .00: # These are currently acting as a deadband. There is probably a better way.
+                                        sliders[i] = 0.00
+                                        volumeSlider(i)
+                                    else:
+                                        pass
+                                except TypeError:
                                     pass
-                            except TypeError:
+                                volumeSlider(i)
+                                if (sliders[i] != 'null'):
+                                    if (len(faders) < numSliders):
+                                        faders.append(sliders[i])
+                                    else:
+                                        faders[i] = sliders[i]
+                            else:
                                 pass
-                            volumeSlider(i)
-                            if (sliders[i] != 'null'):
-                                if (len(faders) < numSliders):
-                                    faders.append(sliders[i])
-                                else:
-                                    faders[i] = sliders[i]
+
+                        if running == False:
+                            break
                         else:
                             pass
-
-                    if running == False:
-                        break
-                    else:
-                        pass
 
         except serial.serialutil.SerialException:
             if running == False:
