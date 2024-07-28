@@ -56,40 +56,40 @@ void loop() {
     Serial.println(key);
     switch (key) {
       case '1':
-        sendMacroCommand(KEY_F24);
+        sendMacroCommand('KEY_F24');
         break;
       case '2':
-        sendMacroCommand(KEY_F23);
+        sendMacroCommand('KEY_F23');
         break;
       case '3':
-        sendMacroCommand(KEY_F22);
+        sendMacroCommand('KEY_F22');
         break;
       case '4':
-        sendMacroCommand(KEY_F21);
+        sendMacroCommand('KEY_F21');
         break;
       case '5':
-        sendMacroCommand(KEY_F20);
+        sendMacroCommand('KEY_F20');
         break;
       case '6':
-        sendMacroCommand(KEY_F19);
+        sendMacroCommand('KEY_F19');
         break;
         case '7':
-        sendMacroCommand(KEY_F18);
+        sendMacroCommand('KEY_F18');
         break;
       case '8':
-        sendMacroCommand(KEY_F17);
+        sendMacroCommand('KEY_F17');
         break;
       case '9':
-        sendMacroCommand(KEY_F16);
+        sendMacroCommand('KEY_F16');
         break;
       case '0':
-        sendMacroCommand(KEY_F15);
+        sendMacroCommand('KEY_F15');
         break;
       case 'A':
-        sendMacroCommand(KEY_F14);
+        sendMacroCommand('KEY_F14');
         break;
       case 'B':
-        sendMacroCommand(KEY_F13);
+        sendMacroCommand('KEY_F13');
         break;
     }
 
